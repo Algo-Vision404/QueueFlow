@@ -1,0 +1,149 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// QueueFlow - Transport Queue Management System
+// ============================================
+
+// Pickup locations / stations
+model Location {
+  id          String   @id @default(cuid())
+  name        String
+  address     String
+  latitude    Float?
+  longitude   Float?
+  isActive    Boolean  @default(true)
+  capacity    Int      @default(50) // max concurrent queue entries
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  queues      Queue[]
+  agents      Agent[]
+  drivers     Driver[]
+}
+
+// Daily queue instances per location
+model Queue {
+  id          String   @id @default(cuid())
+  locationId  String
+  date        String   // ISO date string "2025-01-15"
+  status      String   @default("active") // active, paused, closed
+  totalServed Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  location    Location  @relation(fields: [locationId], references: [id])
+  entries     QueueEntry[]
+  boardings   BoardingSession[]
+}
+
+// Individual passengers in the queue
+model QueueEntry {
+  id              String   @id @default(cuid())
+  queueId         String
+  ticketNumber    Int      // sequential number per queue (1, 2, 3...)
+  channel         String   @default("agent") // ussd, sms, web, agent, ivr
+  passengerPhone  String?  // phone number for USSD/SMS
+  passengerName   String?  // name if provided
+  status          String   @default("waiting") // waiting, called, boarding, boarded, expired, cancelled
+  position        Int      // current position in queue
+  estimatedWait   Int?     // estimated wait in minutes
+  calledAt        DateTime?
+  boardedAt       DateTime?
+  expiresAt       DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  queue           Queue    @relation(fields: [queueId], references: [id])
+  boardingSession BoardingSession? @relation(fields: [boardingSessionId], references: [id])
+  boardingSessionId String?
+}
+
+// Drivers and their vehicles
+model Driver {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String   @unique
+  vehiclePlate String
+  vehicleType String   @default("minibus") // taxi, minibus, bus
+  capacity    Int      @default(14)
+  isActive    Boolean  @default(true)
+  currentLocationId String?
+  status      String   @default("offline") // offline, available, boarding, departed
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  currentLocation Location? @relation(fields: [currentLocationId], references: [id])
+  boardings   BoardingSession[]
+}
+
+// Boarding sessions - when a vehicle loads passengers
+model BoardingSession {
+  id              String   @id @default(cuid())
+  queueId         String
+  driverId        String
+  vehicleCapacity Int
+  passengersLoaded Int     @default(0)
+  status          String   @default("loading") // loading, completed, cancelled
+  startedAt       DateTime @default(now())
+  completedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  queue           Queue    @relation(fields: [queueId], references: [id])
+  driver          Driver   @relation(fields: [driverId], references: [id])
+  entries         QueueEntry[]
+}
+
+// Human agents/operators at pickup points
+model Agent {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String   @unique
+  locationId  String
+  isActive    Boolean  @default(true)
+  pin         String   // 4-digit PIN for authentication
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  location    Location  @relation(fields: [locationId], references: [id])
+}
+
+// Transaction records for monetization
+model Transaction {
+  id          String   @id @default(cuid())
+  type        String   // passenger_fee, driver_fee, premium, agent_commission
+  amount      Float
+  currency    String   @default("GHS") // Ghana Cedis as example
+  status      String   @default("completed") // pending, completed, failed, refunded
+  referenceId String?  // queue entry or boarding session id
+  description String
+  createdAt   DateTime @default(now())
+
+  metadata    String?  // JSON string for additional data
+}
+
+// System configuration
+model SystemConfig {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt
+}
+
+// Activity log for audit trail
+model ActivityLog {
+  id          String   @id @default(cuid())
+  action      String   // join_queue, call_passenger, board_passenger, etc.
+  actorType   String   // passenger, agent, driver, system
+  actorId     String?
+  details     String?  // JSON string
+  createdAt   DateTime @default(now())
+}

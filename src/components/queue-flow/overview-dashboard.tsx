@@ -1,0 +1,270 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { Users, UserCheck, Clock, Car, TrendingUp, ArrowUpRight, Activity } from 'lucide-react';
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell
+} from 'recharts';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+
+const queueActivityData = [
+  { hour: '5 AM', queue: 4 },
+  { hour: '6 AM', queue: 12 },
+  { hour: '6:30 AM', queue: 22 },
+  { hour: '7 AM', queue: 45 },
+  { hour: '7:30 AM', queue: 58 },
+  { hour: '8 AM', queue: 52 },
+  { hour: '8:30 AM', queue: 38 },
+  { hour: '9 AM', queue: 24 },
+  { hour: '9:30 AM', queue: 15 },
+  { hour: '10 AM', queue: 8 },
+];
+
+const channelData = [
+  { name: 'USSD', value: 42, color: '#059669' },
+  { name: 'Agent', value: 28, color: '#10b981' },
+  { name: 'SMS', value: 15, color: '#34d399' },
+  { name: 'Web', value: 10, color: '#6ee7b7' },
+  { name: 'IVR', value: 5, color: '#a7f3d0' },
+];
+
+const recentBoardings = [
+  { vehicle: 'GC-2847-WX', driver: 'Kwame Asante', passengers: 14, time: '7:32 AM', status: 'Completed' },
+  { vehicle: 'AW-9921-XR', driver: 'Ama Mensah', passengers: 12, time: '7:28 AM', status: 'Completed' },
+  { vehicle: 'GN-1053-BK', driver: 'Kofi Boateng', passengers: 16, time: '7:25 AM', status: 'In Transit' },
+  { vehicle: 'GR-7732-ZD', driver: 'Esi Owusu', passengers: 11, time: '7:21 AM', status: 'Completed' },
+  { vehicle: 'GS-4488-NP', driver: 'Yaw Adjei', passengers: 14, time: '7:18 AM', status: 'In Transit' },
+];
+
+const locationQueues = [
+  { name: 'Kwame Nkrumah Circle', count: 23, max: 50 },
+  { name: 'Kaneshie Station', count: 16, max: 40 },
+  { name: 'Tema Station', count: 8, max: 30 },
+];
+
+const stats = [
+  { icon: Users, label: 'Total in Queue', value: '47', trend: '+12%', trendLabel: 'vs yesterday', color: 'text-emerald-600' },
+  { icon: UserCheck, label: 'Total Served Today', value: '128', trend: '+8%', trendLabel: 'vs yesterday', color: 'text-emerald-600' },
+  { icon: Clock, label: 'Avg Wait Time', value: '~12 min', trend: '-3 min', trendLabel: 'vs yesterday', color: 'text-emerald-600' },
+  { icon: Car, label: 'Active Drivers', value: '8', trend: '+2', trendLabel: 'from last hour', color: 'text-emerald-600' },
+];
+
+function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-popover border border-border rounded-lg px-3 py-2 shadow-md text-sm">
+        <p className="font-medium text-foreground">{label}</p>
+        <p className="text-emerald-600">{payload[0].value} passengers in queue</p>
+      </div>
+    );
+  }
+  return null;
+}
+
+function PieLabel({ name, value }: { name: string; value: number }) {
+  return (
+    <text x={0} y={0} textAnchor="middle" dominantBaseline="central" className="fill-foreground text-xs font-medium">
+      {name}
+    </text>
+  );
+}
+
+export function OverviewDashboard() {
+  return (
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Dashboard Overview</h1>
+        <p className="text-muted-foreground mt-1">Real-time queue metrics and performance analytics</p>
+      </div>
+
+      {/* Top Stats Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map((stat) => (
+          <Card key={stat.label} className="border-border/60 hover:border-emerald-200 transition-colors">
+            <CardContent className="p-5">
+              <div className="flex items-center justify-between">
+                <div className={`p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40`}>
+                  <stat.icon className="w-5 h-5 text-emerald-600" />
+                </div>
+                <Badge variant="secondary" className="text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-400 text-[11px] gap-0.5">
+                  <ArrowUpRight className="w-3 h-3" />
+                  {stat.trend}
+                </Badge>
+              </div>
+              <div className="mt-4">
+                <p className="text-2xl font-bold tracking-tight text-foreground">{stat.value}</p>
+                <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+              </div>
+              <p className="text-[11px] text-muted-foreground mt-2">{stat.trendLabel}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* Queue Activity Chart */}
+        <Card className="lg:col-span-3 border-border/60">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-base font-semibold">Queue Activity</CardTitle>
+                <CardDescription className="text-xs mt-0.5">Morning commuter queue size (today)</CardDescription>
+              </div>
+              <Activity className="w-4 h-4 text-emerald-600" />
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={queueActivityData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
+                  <XAxis
+                    dataKey="hour"
+                    tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar
+                    dataKey="queue"
+                    fill="#059669"
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={40}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Channel Breakdown */}
+        <Card className="lg:col-span-2 border-border/60">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-base font-semibold">Channel Breakdown</CardTitle>
+                <CardDescription className="text-xs mt-0.5">How passengers join the queue</CardDescription>
+              </div>
+              <TrendingUp className="w-4 h-4 text-emerald-600" />
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="h-52">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={channelData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={55}
+                    outerRadius={85}
+                    paddingAngle={3}
+                    dataKey="value"
+                  >
+                    {channelData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value: number) => [`${value}%`, '']}
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--popover))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mt-2">
+              {channelData.map((channel) => (
+                <div key={channel.name} className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: channel.color }} />
+                  <span className="text-xs text-muted-foreground">{channel.name}</span>
+                  <span className="text-xs font-medium text-foreground ml-auto">{channel.value}%</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Bottom Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Recent Boarding Sessions */}
+        <Card className="lg:col-span-2 border-border/60">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base font-semibold">Recent Boarding Sessions</CardTitle>
+            <CardDescription className="text-xs">Last 5 vehicle boarding events</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-xs">Vehicle Plate</TableHead>
+                  <TableHead className="text-xs">Driver</TableHead>
+                  <TableHead className="text-xs text-center">Passengers</TableHead>
+                  <TableHead className="text-xs">Time</TableHead>
+                  <TableHead className="text-xs">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recentBoardings.map((boarding) => (
+                  <TableRow key={boarding.vehicle}>
+                    <TableCell className="text-sm font-medium font-mono">{boarding.vehicle}</TableCell>
+                    <TableCell className="text-sm">{boarding.driver}</TableCell>
+                    <TableCell className="text-sm text-center">{boarding.passengers}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{boarding.time}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="secondary"
+                        className={
+                          boarding.status === 'Completed'
+                            ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 text-[11px]'
+                            : 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 text-[11px]'
+                        }
+                      >
+                        {boarding.status}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        {/* Queue by Location */}
+        <Card className="border-border/60">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base font-semibold">Queue by Location</CardTitle>
+            <CardDescription className="text-xs">Current queue distribution</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-0 space-y-5">
+            {locationQueues.map((loc) => (
+              <div key={loc.name} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-foreground">{loc.name}</span>
+                  <span className="text-sm font-semibold text-emerald-600">{loc.count}</span>
+                </div>
+                <Progress value={(loc.count / loc.max) * 100} className="h-2 [&>[data-slot=progress-indicator]]:bg-emerald-500" />
+                <p className="text-[11px] text-muted-foreground">{loc.count} of {loc.max} capacity</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
