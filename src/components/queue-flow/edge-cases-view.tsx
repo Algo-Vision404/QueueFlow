@@ -25,9 +25,9 @@ interface EdgeCaseItem {
 function EdgeCaseCard({ item }: { item: EdgeCaseItem }) {
   const severityMap: Record<string, { label: string; className: string }> = {
     critical: { label: 'Critical', className: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400 border-red-200 dark:border-red-800' },
-    high: { label: 'High', className: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 border-amber-200 dark:border-amber-800' },
-    medium: { label: 'Medium', className: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800' },
-    low: { label: 'Low', className: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' },
+    high: { label: 'High', className: 'bg-linen text-foreground dark:bg-linen dark:text-foreground border-border' },
+    medium: { label: 'Medium', className: 'bg-cashew text-soft dark:bg-cashew dark:text-soft border-border' },
+    low: { label: 'Low', className: 'bg-background text-soft dark:bg-background dark:text-soft border-border' },
   };
 
   const sev = severityMap[item.severity];
@@ -64,13 +64,13 @@ function EdgeCaseCard({ item }: { item: EdgeCaseItem }) {
         {/* Mitigations */}
         <div>
           <div className="flex items-center gap-1.5 mb-2">
-            <Shield className="w-3.5 h-3.5 text-emerald-500" />
+            <Shield className="w-3.5 h-3.5 text-foreground" />
             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Mitigations</span>
           </div>
           <ul className="space-y-1.5">
             {item.mitigations.map((mit, idx) => (
               <li key={idx} className="flex items-start gap-2 text-sm text-foreground/80">
-                <CheckCircle className="w-3.5 h-3.5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                <CheckCircle className="w-3.5 h-3.5 text-foreground mt-0.5 flex-shrink-0" />
                 <span className="leading-relaxed">{mit}</span>
               </li>
             ))}
@@ -83,13 +83,13 @@ function EdgeCaseCard({ item }: { item: EdgeCaseItem }) {
             <Separator />
             <div>
               <div className="flex items-center gap-1.5 mb-2">
-                <Zap className="w-3.5 h-3.5 text-amber-500" />
+                <Zap className="w-3.5 h-3.5 text-soft" />
                 <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recovery</span>
               </div>
               <ul className="space-y-1.5">
                 {item.recovery.map((rec, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-sm text-foreground/80">
-                    <Zap className="w-3.5 h-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
+                    <Zap className="w-3.5 h-3.5 text-soft mt-0.5 flex-shrink-0" />
                     <span className="leading-relaxed">{rec}</span>
                   </li>
                 ))}
@@ -125,10 +125,10 @@ export function EdgeCasesView() {
       ],
       accentColor: 'text-red-600 dark:text-red-400',
       accentBg: 'bg-red-100 dark:bg-red-900/30',
-      accentBorder: 'border-red-200 dark:border-red-800',
+      accentBorder: 'border-border',
     },
     {
-      icon: <Smartphone className="w-5 h-5 text-amber-600 dark:text-amber-400" />,
+      icon: <Smartphone className="w-5 h-5 text-foreground" />,
       title: 'Users Without Phones',
       severity: 'high',
       scenario: 'Some passengers may not own a phone at all — elderly, children, or extremely low-income individuals. They cannot join via USSD or receive SMS notifications.',
@@ -142,9 +142,9 @@ export function EdgeCasesView() {
         'Lost paper tickets can be reissued by agent with identity verification',
         'Agent maintains a manual logbook as ultimate backup',
       ],
-      accentColor: 'text-amber-600 dark:text-amber-400',
-      accentBg: 'bg-amber-100 dark:bg-amber-900/30',
-      accentBorder: 'border-amber-200 dark:border-amber-800',
+      accentColor: 'text-foreground',
+      accentBg: 'bg-cashew dark:bg-cashew',
+      accentBorder: 'border-border',
     },
     {
       icon: <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />,
@@ -164,10 +164,10 @@ export function EdgeCasesView() {
       ],
       accentColor: 'text-red-600 dark:text-red-400',
       accentBg: 'bg-red-100 dark:bg-red-900/30',
-      accentBorder: 'border-red-200 dark:border-red-800',
+      accentBorder: 'border-border',
     },
     {
-      icon: <Users className="w-5 h-5 text-amber-600 dark:text-amber-400" />,
+      icon: <Users className="w-5 h-5 text-foreground" />,
       title: 'Queue Abuse',
       severity: 'high',
       scenario: 'Multiple queue entries per person, queue jumping, or selling positions. One person joining on behalf of a group and distributing positions for money.',
@@ -182,12 +182,12 @@ export function EdgeCasesView() {
         'One-tap report abuse feature for agents and passengers',
         'Banned numbers list for repeat offenders',
       ],
-      accentColor: 'text-amber-600 dark:text-amber-400',
-      accentBg: 'bg-amber-100 dark:bg-amber-900/30',
-      accentBorder: 'border-amber-200 dark:border-amber-800',
+      accentColor: 'text-foreground',
+      accentBg: 'bg-cashew dark:bg-cashew',
+      accentBorder: 'border-border',
     },
     {
-      icon: <Zap className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />,
+      icon: <Zap className="w-5 h-5 text-foreground" />,
       title: 'Peak Overload',
       severity: 'critical',
       scenario: 'During rush hours (morning/evening), 500+ people may attempt to join simultaneously. USSD gateway rate limits, API latency spikes, and agent dashboards lag.',
@@ -202,12 +202,12 @@ export function EdgeCasesView() {
         'Simplified USSD menus during peak — fewer navigation steps to reduce gateway load',
         'CDN-cached static content to reduce server load',
       ],
-      accentColor: 'text-yellow-600 dark:text-yellow-400',
-      accentBg: 'bg-yellow-100 dark:bg-yellow-900/30',
-      accentBorder: 'border-yellow-200 dark:border-yellow-800',
+      accentColor: 'text-foreground',
+      accentBg: 'bg-cashew dark:bg-cashew',
+      accentBorder: 'border-border',
     },
     {
-      icon: <Battery className="w-5 h-5 text-slate-600 dark:text-slate-400" />,
+      icon: <Battery className="w-5 h-5 text-soft" />,
       title: 'Power / Infrastructure Failure',
       severity: 'medium',
       scenario: 'Locations may experience power outages or internet downtime. Agent tablets run out of battery. Display boards go dark.',
@@ -222,12 +222,12 @@ export function EdgeCasesView() {
         'Agent receives summary of missed operations after reconnection',
         'Fallback to manual paper-based system with structured logbooks',
       ],
-      accentColor: 'text-slate-600 dark:text-slate-400',
-      accentBg: 'bg-slate-100 dark:bg-slate-800',
-      accentBorder: 'border-slate-200 dark:border-slate-700',
+      accentColor: 'text-soft',
+      accentBg: 'bg-cashew dark:bg-cashew',
+      accentBorder: 'border-border',
     },
     {
-      icon: <Globe className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />,
+      icon: <Globe className="w-5 h-5 text-foreground" />,
       title: 'Multilingual Support',
       severity: 'medium',
       scenario: 'Ghana has multiple official languages (English, Twi, Ga, Hausa, Ewe). USSD sessions and SMS must be comprehensible to users who may not read English well.',
@@ -237,12 +237,12 @@ export function EdgeCasesView() {
         'SMS notifications localized based on user language preference',
         'Display board supports multiple languages simultaneously',
       ],
-      accentColor: 'text-emerald-600 dark:text-emerald-400',
-      accentBg: 'bg-emerald-100 dark:bg-emerald-900/30',
-      accentBorder: 'border-emerald-200 dark:border-emerald-800',
+      accentColor: 'text-foreground',
+      accentBg: 'bg-cashew dark:bg-cashew',
+      accentBorder: 'border-border',
     },
     {
-      icon: <Shield className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />,
+      icon: <Shield className="w-5 h-5 text-foreground" />,
       title: 'Data Privacy & Security',
       severity: 'high',
       scenario: 'Phone numbers displayed publicly on queue boards could expose user data. Data breaches could leak passenger information. Regulatory compliance (GDPR, Ghana DPA) required.',
@@ -258,17 +258,17 @@ export function EdgeCasesView() {
         'Regular security audits and penetration testing',
         'Data minimization — collect only essential fields',
       ],
-      accentColor: 'text-emerald-600 dark:text-emerald-400',
-      accentBg: 'bg-emerald-100 dark:bg-emerald-900/30',
-      accentBorder: 'border-emerald-200 dark:border-emerald-800',
+      accentColor: 'text-foreground',
+      accentBg: 'bg-cashew dark:bg-cashew',
+      accentBorder: 'border-border',
     },
   ];
 
   const severitySummary = [
     { label: 'Critical', count: edgeCases.filter(e => e.severity === 'critical').length, className: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400 border-red-200 dark:border-red-800' },
-    { label: 'High', count: edgeCases.filter(e => e.severity === 'high').length, className: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 border-amber-200 dark:border-amber-800' },
-    { label: 'Medium', count: edgeCases.filter(e => e.severity === 'medium').length, className: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800' },
-    { label: 'Low', count: edgeCases.filter(e => e.severity === 'low').length, className: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' },
+    { label: 'High', count: edgeCases.filter(e => e.severity === 'high').length, className: 'bg-linen text-foreground dark:bg-linen dark:text-foreground border-border' },
+    { label: 'Medium', count: edgeCases.filter(e => e.severity === 'medium').length, className: 'bg-cashew text-soft dark:bg-cashew dark:text-soft border-border' },
+    { label: 'Low', count: edgeCases.filter(e => e.severity === 'low').length, className: 'bg-background text-soft dark:bg-background dark:text-soft border-border' },
   ];
 
   return (
@@ -276,8 +276,8 @@ export function EdgeCasesView() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-1">
-          <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30">
-            <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+          <div className="p-2 rounded-lg bg-cashew">
+            <AlertTriangle className="w-5 h-5 text-foreground" />
           </div>
           <div>
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Edge Cases & Failure Modes</h2>
@@ -308,11 +308,11 @@ export function EdgeCasesView() {
       </div>
 
       {/* Bottom note */}
-      <Card className="border-dashed border-2 border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/20">
+      <Card className="border-dashed border-2 border-border bg-cashew/50">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 mt-0.5">
-              <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <div className="p-2 rounded-lg bg-cashew mt-0.5">
+              <CheckCircle className="w-4 h-4 text-foreground" />
             </div>
             <div>
               <h4 className="font-semibold text-sm mb-1">Defensive Design Philosophy</h4>

@@ -85,27 +85,27 @@ interface Vehicle {
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 const statusColors: Record<EntryStatus, string> = {
-  waiting: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
-  called: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
-  boarding: 'bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-300',
-  boarded: 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400',
+  waiting: 'bg-cashew text-foreground',
+  called: 'bg-warm text-foreground',
+  boarding: 'bg-linen text-foreground',
+  boarded: 'bg-cashew text-soft',
   expired: 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300',
-  cancelled: 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400',
+  cancelled: 'bg-cashew text-soft',
 };
 
 const statusDot: Record<EntryStatus, string> = {
-  waiting: 'bg-amber-500',
-  called: 'bg-emerald-500',
-  boarding: 'bg-sky-500',
-  boarded: 'bg-zinc-400',
+  waiting: 'bg-foreground',
+  called: 'bg-linen',
+  boarding: 'bg-warm',
+  boarded: 'bg-soft',
   expired: 'bg-red-500',
-  cancelled: 'bg-zinc-400',
+  cancelled: 'bg-soft',
 };
 
 const vehicleStatusColors: Record<VehicleStatus, string> = {
-  available: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
-  boarding: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
-  departed: 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400',
+  available: 'bg-cashew text-foreground',
+  boarding: 'bg-warm text-foreground',
+  departed: 'bg-cashew text-soft',
 };
 
 // ── Mock Data ───────────────────────────────────────────────────────────────
@@ -280,14 +280,14 @@ export function AgentPanel() {
         <CardContent className="p-4 md:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
+              <div className="w-12 h-12 rounded-full bg-foreground flex items-center justify-center text-background font-bold text-lg shadow-md">
                 AM
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="text-lg font-semibold">Ama Mensah</h2>
-                  <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-0 text-[11px]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 inline-block animate-pulse" />
+                  <Badge className="bg-cashew text-foreground border-0 text-[11px]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-foreground mr-1.5 inline-block animate-pulse" />
                     Online
                   </Badge>
                 </div>
@@ -298,7 +298,7 @@ export function AgentPanel() {
               </div>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-emerald-600">{passengers.filter(p => p.status === 'waiting').length}</p>
+              <p className="text-2xl font-bold text-foreground">{passengers.filter(p => p.status === 'waiting').length}</p>
               <p className="text-xs text-muted-foreground">Waiting in Queue</p>
             </div>
           </div>
@@ -309,31 +309,31 @@ export function AgentPanel() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Button
           onClick={() => setShowForm(!showForm)}
-          className="h-auto py-4 flex flex-col items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white shadow-md"
+          className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background hover:bg-foreground/90 shadow-md"
         >
           <UserPlus className="w-6 h-6" />
           <span className="font-semibold text-sm">Add Passenger</span>
-          <span className="text-[11px] text-emerald-100">Register new passenger</span>
+          <span className="text-[11px] text-background/70">Register new passenger</span>
         </Button>
 
         <Button
           onClick={handleCallNextGroup}
           disabled={queuePaused}
-          className="h-auto py-4 flex flex-col items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white shadow-md"
+          className="h-auto py-4 flex flex-col items-center gap-2 bg-cashew text-foreground border border-border hover:bg-linen shadow-md"
         >
           <Megaphone className="w-6 h-6" />
           <span className="font-semibold text-sm">Call Next Group</span>
-          <span className="text-[11px] text-amber-100">Next 5 passengers</span>
+          <span className="text-[11px] text-soft">Next 5 passengers</span>
         </Button>
 
         {queuePaused ? (
           <Button
             onClick={handleResume}
-            className="h-auto py-4 flex flex-col items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white shadow-md"
+            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background hover:bg-foreground/90 shadow-md"
           >
             <Check className="w-6 h-6" />
             <span className="font-semibold text-sm">Resume Queue</span>
-            <span className="text-[11px] text-emerald-100">Restore normal operations</span>
+            <span className="text-[11px] text-background/70">Restore normal operations</span>
           </Button>
         ) : (
           <AlertDialog>
@@ -374,10 +374,10 @@ export function AgentPanel() {
 
       {/* ── Add Passenger Form ─────────────────────────────────────────── */}
       {showForm && (
-        <Card className="border-emerald-200 dark:border-emerald-800">
+        <Card className="border-border">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <UserPlus className="w-4 h-4 text-emerald-600" />
+              <UserPlus className="w-4 h-4 text-foreground" />
               Add New Passenger
             </CardTitle>
             <CardDescription>Register a new passenger into the queue system</CardDescription>
@@ -429,7 +429,7 @@ export function AgentPanel() {
               <Button variant="outline" onClick={() => setShowForm(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleAddPassenger} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+              <Button onClick={handleAddPassenger} className="bg-foreground text-background hover:bg-foreground/90">
                 <UserPlus className="w-4 h-4 mr-1.5" />
                 Add to Queue
               </Button>
@@ -497,7 +497,7 @@ export function AgentPanel() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            className="h-7 w-7 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950"
+                            className="h-7 w-7 p-0 text-foreground hover:text-foreground/80 hover:bg-cashew"
                             onClick={() => handleCall(p.id)}
                             title="Call passenger"
                           >
@@ -506,7 +506,7 @@ export function AgentPanel() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            className="h-7 w-7 p-0 text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950"
+                            className="h-7 w-7 p-0 text-foreground hover:text-foreground/80 hover:bg-cashew"
                             onClick={() => handleSkip(p.id)}
                             title="Skip / No-show"
                           >
@@ -543,7 +543,7 @@ export function AgentPanel() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <Truck className="w-4 h-4 text-emerald-600" />
+                <Truck className="w-4 h-4 text-foreground" />
                 Boarding Control
               </CardTitle>
               <CardDescription>Manage vehicle boarding</CardDescription>
@@ -574,17 +574,17 @@ export function AgentPanel() {
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-xs">
                           <span className="text-muted-foreground">Loading passengers...</span>
-                          <span className="font-semibold text-amber-600">{v.loaded}/{v.capacity}</span>
+                          <span className="font-semibold text-foreground">{v.loaded}/{v.capacity}</span>
                         </div>
                         <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
                           <div
-                            className="h-full rounded-full bg-amber-500 transition-all duration-500"
+                            className="h-full rounded-full bg-foreground transition-all duration-500"
                             style={{ width: `${Math.min((v.loaded / v.capacity) * 100, 100)}%` }}
                           />
                         </div>
                         <Button
                           size="sm"
-                          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                          className="w-full bg-cashew text-foreground border border-border hover:bg-linen"
                           onClick={() => handleCompleteBoarding(v.id)}
                         >
                           <Check className="w-3.5 h-3.5 mr-1.5" />
@@ -596,7 +596,7 @@ export function AgentPanel() {
                     {v.status === 'available' && (
                       <Button
                         size="sm"
-                        className="w-full bg-amber-500 hover:bg-amber-600 text-white"
+                        className="w-full bg-foreground text-background hover:bg-foreground/90"
                         onClick={() => handleStartBoarding(v.id)}
                       >
                         <Users className="w-3.5 h-3.5 mr-1.5" />
@@ -606,7 +606,7 @@ export function AgentPanel() {
 
                     {v.status === 'departed' && (
                       <p className="text-xs text-muted-foreground flex items-center gap-1">
-                        <Check className="w-3.5 h-3.5 text-emerald-500" />
+                        <Check className="w-3.5 h-3.5 text-foreground" />
                         Trip completed
                       </p>
                     )}
@@ -641,7 +641,7 @@ export function AgentPanel() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <Shield className="w-4 h-4 text-amber-600" />
+                <Shield className="w-4 h-4 text-foreground" />
                 Exception Handling
               </CardTitle>
               <CardDescription>Report queue incidents</CardDescription>
@@ -660,7 +660,7 @@ export function AgentPanel() {
                 className="w-full justify-start gap-2 text-sm"
                 onClick={handleQueueJump}
               >
-                <AlertTriangle className="w-4 h-4 text-amber-500" />
+                <AlertTriangle className="w-4 h-4 text-soft" />
                 Queue Jump Report
               </Button>
               <Button
@@ -668,7 +668,7 @@ export function AgentPanel() {
                 className="w-full justify-start gap-2 text-sm"
                 onClick={handleLostItem}
               >
-                <MapPin className="w-4 h-4 text-purple-500" />
+                <MapPin className="w-4 h-4 text-soft" />
                 Lost Item Report
               </Button>
             </CardContent>

@@ -15,11 +15,11 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 
 const costBreakdownData = [
-  { category: 'USSD/SMS Telecom', cost: 180, color: '#059669' },
-  { category: 'Agent Salaries', cost: 300, color: '#10b981' },
-  { category: 'Cloud Infrastructure', cost: 50, color: '#34d399' },
-  { category: 'Display/Signage', cost: 20, color: '#6ee7b7' },
-  { category: 'Maintenance', cost: 30, color: '#a7f3d0' },
+  { category: 'USSD/SMS Telecom', cost: 180, color: '#0c0b0b' },
+  { category: 'Agent Salaries', cost: 300, color: '#979585' },
+  { category: 'Cloud Infrastructure', cost: 50, color: '#b8a88a' },
+  { category: 'Display/Signage', cost: 20, color: '#dddbca' },
+  { category: 'Maintenance', cost: 30, color: '#e9e6d7' },
 ];
 
 const revenueProjectionsData = [
@@ -39,10 +39,10 @@ const scalingData = [
 ];
 
 const revenueCards = [
-  { icon: DollarSign, label: 'Daily Revenue', value: '$45', subtext: 'Per location', color: 'text-emerald-600', bgColor: 'bg-emerald-50 dark:bg-emerald-950/40' },
-  { icon: TrendingUp, label: 'Monthly Revenue', value: '$1,350', subtext: 'At 1 location', color: 'text-emerald-600', bgColor: 'bg-emerald-50 dark:bg-emerald-950/40' },
-  { icon: Target, label: 'Profit Margin', value: '62%', subtext: 'Net after costs', color: 'text-emerald-600', bgColor: 'bg-emerald-50 dark:bg-emerald-950/40' },
-  { icon: Calendar, label: 'Break-even', value: '3 months', subtext: 'At 1 location', color: 'text-emerald-600', bgColor: 'bg-emerald-50 dark:bg-emerald-950/40' },
+  { icon: DollarSign, label: 'Daily Revenue', value: '$45', subtext: 'Per location', color: 'text-foreground', bgColor: 'bg-cashew' },
+  { icon: TrendingUp, label: 'Monthly Revenue', value: '$1,350', subtext: 'At 1 location', color: 'text-foreground', bgColor: 'bg-cashew' },
+  { icon: Target, label: 'Profit Margin', value: '62%', subtext: 'Net after costs', color: 'text-foreground', bgColor: 'bg-cashew' },
+  { icon: Calendar, label: 'Break-even', value: '3 months', subtext: 'At 1 location', color: 'text-foreground', bgColor: 'bg-cashew' },
 ];
 
 const unitEconomics = [
@@ -64,9 +64,9 @@ const pricingTiers = [
     price: 'Free for passengers',
     revenue: '$0.15 embedded in fare',
     features: ['USSD queue join', 'Position updates via USSD', 'Basic queue info', 'No smartphone needed'],
-    color: 'border-emerald-200 dark:border-emerald-900',
-    iconColor: 'text-emerald-600',
-    iconBg: 'bg-emerald-50 dark:bg-emerald-950/40',
+    color: 'border-border',
+    iconColor: 'text-foreground',
+    iconBg: 'bg-cashew',
   },
   {
     name: 'Standard',
@@ -75,9 +75,9 @@ const pricingTiers = [
     price: '$0.05/passenger',
     revenue: '$0.20 total per passenger',
     features: ['SMS notifications', 'Queue position alerts', 'Estimated wait time', 'Boarding confirmation', 'Multi-channel support'],
-    color: 'border-emerald-300 dark:border-emerald-800',
-    iconColor: 'text-emerald-600',
-    iconBg: 'bg-emerald-50 dark:bg-emerald-950/40',
+    color: 'border-soft',
+    iconColor: 'text-foreground',
+    iconBg: 'bg-cashew',
     recommended: true,
   },
   {
@@ -87,9 +87,9 @@ const pricingTiers = [
     price: '$0.15/passenger',
     revenue: '$0.30 total per passenger',
     features: ['Web/mobile app', 'Priority queue placement', 'Real-time tracking', 'Trip history', 'Digital receipts', 'Priority boarding'],
-    color: 'border-emerald-400 dark:border-emerald-700',
-    iconColor: 'text-emerald-600',
-    iconBg: 'bg-emerald-50 dark:bg-emerald-950/40',
+    color: 'border-foreground/20',
+    iconColor: 'text-foreground',
+    iconBg: 'bg-cashew',
   },
 ];
 
@@ -123,7 +123,7 @@ export function MonetizationView() {
       {/* Revenue Model Header Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {revenueCards.map((card) => (
-          <Card key={card.label} className="border-border/60 hover:border-emerald-200 transition-colors">
+          <Card key={card.label} className="border-border/60 hover:border-border transition-colors">
             <CardContent className="p-5">
               <div className="flex items-center gap-3">
                 <div className={`p-2.5 rounded-xl ${card.bgColor}`}>
@@ -163,13 +163,13 @@ export function MonetizationView() {
                     <TableCell className="text-sm">
                       <div className="flex items-center gap-2">
                         {row.type === 'revenue' && (
-                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          <div className="w-1.5 h-1.5 rounded-full bg-foreground" />
                         )}
                         {row.type === 'cost' && (
-                          <div className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                          <div className="w-1.5 h-1.5 rounded-full bg-destructive" />
                         )}
                         {row.type === 'profit' && (
-                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                          <div className="w-1.5 h-1.5 rounded-full bg-foreground" />
                         )}
                         {row.type === 'metric' && (
                           <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
@@ -186,9 +186,9 @@ export function MonetizationView() {
                     <TableCell className="text-sm text-right font-medium font-mono">
                       <span className={
                         row.type === 'profit'
-                          ? 'text-emerald-600'
+                          ? 'text-foreground'
                           : row.type === 'cost'
-                            ? 'text-red-500'
+                            ? 'text-destructive'
                             : 'text-foreground'
                       }>
                         {row.value}
@@ -210,7 +210,7 @@ export function MonetizationView() {
                 <CardTitle className="text-base font-semibold">Monthly Cost Breakdown</CardTitle>
                 <CardDescription className="text-xs mt-0.5">Total: ${totalMonthlyCost}/month (1 location)</CardDescription>
               </div>
-              <Badge variant="secondary" className="text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-400 text-[11px]">
+              <Badge variant="secondary" className="text-foreground bg-cashew text-[11px]">
                 ${totalMonthlyCost}/mo
               </Badge>
             </div>
@@ -263,7 +263,7 @@ export function MonetizationView() {
               <CardTitle className="text-base font-semibold">Revenue Projections</CardTitle>
               <CardDescription className="text-xs mt-0.5">Monthly revenue as locations scale from 1 to 10</CardDescription>
             </div>
-            <TrendingUp className="w-4 h-4 text-emerald-600" />
+            <TrendingUp className="w-4 h-4 text-foreground" />
           </div>
         </CardHeader>
         <CardContent className="pt-2">
@@ -291,19 +291,19 @@ export function MonetizationView() {
                   type="monotone"
                   dataKey="revenue"
                   name="Monthly Revenue"
-                  stroke="#059669"
+                  stroke="#0c0b0b"
                   strokeWidth={2.5}
-                  dot={{ fill: '#059669', r: 4 }}
-                  activeDot={{ r: 6, fill: '#059669' }}
+                  dot={{ fill: '#0c0b0b', r: 4 }}
+                  activeDot={{ r: 6, fill: '#0c0b0b' }}
                 />
                 <Line
                   type="stepAfter"
                   dataKey="locations"
                   name="Locations"
-                  stroke="#6ee7b7"
+                  stroke="#979585"
                   strokeWidth={2}
                   strokeDasharray="5 5"
-                  dot={{ fill: '#6ee7b7', r: 3 }}
+                  dot={{ fill: '#979585', r: 3 }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -317,10 +317,10 @@ export function MonetizationView() {
         <p className="text-sm text-muted-foreground mb-4">Three service tiers for different passenger segments</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {pricingTiers.map((tier) => (
-            <Card key={tier.name} className={`relative border ${tier.color} ${tier.recommended ? 'ring-1 ring-emerald-500 shadow-sm' : ''}`}>
+            <Card key={tier.name} className={`relative border ${tier.color} ${tier.recommended ? 'ring-1 ring-foreground shadow-sm' : ''}`}>
               {tier.recommended && (
                 <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
-                  <Badge className="bg-emerald-600 text-white text-[10px] px-2.5 py-0.5">
+                  <Badge className="bg-foreground text-background text-[10px] px-2.5 py-0.5">
                     Recommended
                   </Badge>
                 </div>
@@ -345,7 +345,7 @@ export function MonetizationView() {
                 <ul className="space-y-2">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2 text-xs text-muted-foreground">
-                      <CheckCircle className="w-3.5 h-3.5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-3.5 h-3.5 text-foreground mt-0.5 flex-shrink-0" />
                       <span>{feature}</span>
                     </li>
                   ))}
@@ -389,22 +389,22 @@ export function MonetizationView() {
                       <TableCell className="text-sm text-center font-mono">
                         {row.dailyPassengers.toLocaleString()}
                       </TableCell>
-                      <TableCell className="text-sm text-center font-mono text-emerald-600">
+                      <TableCell className="text-sm text-center font-mono text-foreground">
                         ${row.dailyRevenue}
                       </TableCell>
-                      <TableCell className="text-sm text-center font-mono text-emerald-600 font-medium">
+                      <TableCell className="text-sm text-center font-mono text-foreground font-medium">
                         ${row.monthlyRevenue.toLocaleString()}
                       </TableCell>
-                      <TableCell className="text-sm text-center font-mono text-red-500">
+                      <TableCell className="text-sm text-center font-mono text-destructive">
                         ${row.monthlyCosts.toLocaleString()}
                       </TableCell>
-                      <TableCell className="text-sm text-center font-mono font-semibold text-emerald-700 dark:text-emerald-400">
+                      <TableCell className="text-sm text-center font-mono font-semibold text-foreground">
                         ${row.profit.toLocaleString()}
                       </TableCell>
                       <TableCell className="text-center">
                         <Badge
                           variant="secondary"
-                          className="bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 text-[11px]"
+                          className="bg-cashew text-foreground text-[11px]"
                         >
                           {margin}%
                         </Badge>
@@ -415,8 +415,8 @@ export function MonetizationView() {
               </TableBody>
             </Table>
           </div>
-          <div className="mt-4 p-3 rounded-lg bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/50 dark:border-emerald-900/50">
-            <p className="text-xs text-emerald-700 dark:text-emerald-400">
+          <div className="mt-4 p-3 rounded-lg bg-cashew/50 border border-border">
+            <p className="text-xs text-foreground">
               <strong>Key Insight:</strong> Profit margins increase from 28% at 1 location to 63% at 25 locations due to economies of scale. Fixed costs (cloud, maintenance) are distributed across more locations while variable costs grow linearly.
             </p>
           </div>

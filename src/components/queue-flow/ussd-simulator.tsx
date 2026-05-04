@@ -330,7 +330,7 @@ export function USSDSimulator() {
               {/* Screen */}
               <div className="bg-zinc-100 dark:bg-zinc-950 min-h-[420px] flex flex-col">
                 {/* Session header */}
-                <div className="bg-emerald-600 px-4 py-2 flex items-center justify-between">
+                <div className="bg-foreground px-4 py-2 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-white">
                     <Smartphone className="w-3.5 h-3.5" />
                     <span className="text-xs font-semibold">*384*200#</span>
@@ -357,12 +357,12 @@ export function USSDSimulator() {
                       onChange={(e) => setInputValue(e.target.value)}
                       onKeyDown={handleKeyDown}
                       placeholder={menus[currentStep].inputHint}
-                      className="flex-1 h-10 px-3 text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 font-mono"
+                      className="flex-1 h-10 px-3 text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-soft/20 focus:border-soft font-mono"
                       aria-label="USSD input"
                     />
                     <Button
                       size="sm"
-                      className="h-10 px-4 bg-emerald-600 hover:bg-emerald-700 text-white"
+                      className="h-10 px-4 bg-foreground text-background"
                       onClick={handleSend}
                       disabled={!inputValue.trim()}
                     >
@@ -413,7 +413,7 @@ export function USSDSimulator() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <Info className="w-4 h-4 text-emerald-600" />
+                <Info className="w-4 h-4 text-foreground" />
                 Session Info
               </CardTitle>
             </CardHeader>
@@ -430,7 +430,7 @@ export function USSDSimulator() {
               <Separator />
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Cost</span>
-                <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-0 text-xs">
+                <Badge className="bg-cashew text-foreground border-0 text-xs">
                   Free
                 </Badge>
               </div>
@@ -451,15 +451,15 @@ export function USSDSimulator() {
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Queue Status</span>
                 {queueJoined && !queueCancelled ? (
-                  <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-0 text-xs">
+                  <Badge className="bg-cashew text-foreground border-0 text-xs">
                     Active #047
                   </Badge>
                 ) : queueCancelled ? (
-                  <Badge className="bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400 border-0 text-xs">
+                  <Badge className="bg-cashew text-soft border-0 text-xs">
                     Cancelled
                   </Badge>
                 ) : (
-                  <Badge className="bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400 border-0 text-xs">
+                  <Badge className="bg-cashew text-soft border-0 text-xs">
                     None
                   </Badge>
                 )}

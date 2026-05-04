@@ -66,15 +66,15 @@ function generateEntry(position: number): QueueEntry {
 function getStatusColor(status: QueueStatus): string {
   switch (status) {
     case 'waiting':
-      return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400';
+      return 'bg-cashew text-foreground';
     case 'called':
-      return 'bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400';
+      return 'bg-linen text-foreground';
     case 'boarding':
-      return 'bg-sky-100 text-sky-700 dark:bg-sky-950/50 dark:text-sky-400';
+      return 'bg-warm text-foreground';
     case 'boarded':
-      return 'bg-gray-100 text-gray-500 dark:bg-gray-800/50 dark:text-gray-400';
+      return 'bg-foreground/5 text-soft';
     case 'cancelled':
-      return 'bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-400';
+      return 'bg-destructive/10 text-destructive';
     default:
       return '';
   }
@@ -83,15 +83,15 @@ function getStatusColor(status: QueueStatus): string {
 function getTicketCircleColor(status: QueueStatus): string {
   switch (status) {
     case 'waiting':
-      return 'bg-emerald-500 text-white';
+      return 'bg-foreground text-background';
     case 'called':
-      return 'bg-amber-500 text-white';
+      return 'bg-foreground/70 text-background';
     case 'boarding':
-      return 'bg-sky-500 text-white';
+      return 'bg-foreground/50 text-background';
     case 'boarded':
-      return 'bg-gray-400 text-white';
+      return 'bg-foreground/20 text-background';
     case 'cancelled':
-      return 'bg-red-500 text-white';
+      return 'bg-destructive text-destructive-foreground';
     default:
       return '';
   }
@@ -172,10 +172,10 @@ export function LiveQueue() {
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold tracking-tight text-foreground">Live Queue</h1>
               <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-foreground opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-foreground" />
               </span>
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-400 px-2 py-0.5 rounded-md">
+              <span className="text-xs font-bold uppercase tracking-wider text-foreground bg-cashew px-2 py-0.5 rounded-md">
                 Live
               </span>
             </div>
@@ -184,10 +184,10 @@ export function LiveQueue() {
         </div>
         <div className="flex items-center gap-3">
           <Badge variant="outline" className="text-sm px-3 py-1">
-            <Users className="w-3.5 h-3.5 mr-1.5 text-emerald-600" />
+            <Users className="w-3.5 h-3.5 mr-1.5 text-foreground" />
             {entries.filter((e) => e.status !== 'boarded' && e.status !== 'cancelled').length} in queue
           </Badge>
-          <Button onClick={handleSimulate} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2">
+          <Button onClick={handleSimulate} className="bg-foreground text-background hover:bg-foreground/90 gap-2">
             <ArrowUpCircle className="w-4 h-4" />
             Simulate New Entry
           </Button>
@@ -196,46 +196,46 @@ export function LiveQueue() {
 
       {/* Queue Stats Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Card className="border-emerald-200 dark:border-emerald-900 bg-emerald-50/50 dark:bg-emerald-950/20">
+        <Card className="border-border bg-cashew">
           <CardContent className="p-3 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-emerald-500 flex items-center justify-center">
-              <Clock className="w-4.5 h-4.5 text-white" />
+            <div className="w-9 h-9 rounded-lg bg-foreground flex items-center justify-center">
+              <Clock className="w-4.5 h-4.5 text-background" />
             </div>
             <div>
-              <p className="text-xl font-bold text-emerald-700 dark:text-emerald-400">{waitingCount}</p>
+              <p className="text-xl font-bold text-foreground">{waitingCount}</p>
               <p className="text-[11px] text-muted-foreground">Waiting</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-amber-200 dark:border-amber-900 bg-amber-50/50 dark:bg-amber-950/20">
+        <Card className="border-border bg-linen">
           <CardContent className="p-3 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-amber-500 flex items-center justify-center">
-              <Megaphone className="w-4.5 h-4.5 text-white" />
+            <div className="w-9 h-9 rounded-lg bg-foreground/70 flex items-center justify-center">
+              <Megaphone className="w-4.5 h-4.5 text-background" />
             </div>
             <div>
-              <p className="text-xl font-bold text-amber-700 dark:text-amber-400">{calledCount}</p>
+              <p className="text-xl font-bold text-foreground">{calledCount}</p>
               <p className="text-[11px] text-muted-foreground">Called</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-sky-200 dark:border-sky-900 bg-sky-50/50 dark:bg-sky-950/20">
+        <Card className="border-border bg-warm">
           <CardContent className="p-3 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-sky-500 flex items-center justify-center">
-              <Car className="w-4.5 h-4.5 text-white" />
+            <div className="w-9 h-9 rounded-lg bg-foreground/50 flex items-center justify-center">
+              <Car className="w-4.5 h-4.5 text-background" />
             </div>
             <div>
-              <p className="text-xl font-bold text-sky-700 dark:text-sky-400">{boardingCount}</p>
+              <p className="text-xl font-bold text-foreground">{boardingCount}</p>
               <p className="text-[11px] text-muted-foreground">Boarding</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/20">
+        <Card className="border-border bg-foreground/5">
           <CardContent className="p-3 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-gray-500 flex items-center justify-center">
-              <UserCheck className="w-4.5 h-4.5 text-white" />
+            <div className="w-9 h-9 rounded-lg bg-foreground/20 flex items-center justify-center">
+              <UserCheck className="w-4.5 h-4.5 text-background" />
             </div>
             <div>
-              <p className="text-xl font-bold text-gray-600 dark:text-gray-400">{servedCount}</p>
+              <p className="text-xl font-bold text-soft">{servedCount}</p>
               <p className="text-[11px] text-muted-foreground">Served</p>
             </div>
           </CardContent>
@@ -294,7 +294,7 @@ export function LiveQueue() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-8 text-xs gap-1 border-emerald-300 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-400"
+                      className="h-8 text-xs gap-1 border-border text-foreground hover:bg-cashew"
                       onClick={() => handleCall(entry.id)}
                     >
                       <Megaphone className="w-3 h-3" />
@@ -305,7 +305,7 @@ export function LiveQueue() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-8 text-xs gap-1 border-sky-300 text-sky-700 hover:bg-sky-50 dark:border-sky-800 dark:text-sky-400"
+                      className="h-8 text-xs gap-1 border-border text-foreground hover:bg-linen"
                       onClick={() => handleBoard(entry.id)}
                     >
                       <Car className="w-3 h-3" />

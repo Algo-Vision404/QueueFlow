@@ -25,11 +25,11 @@ const queueActivityData = [
 ];
 
 const channelData = [
-  { name: 'USSD', value: 42, color: '#059669' },
-  { name: 'Agent', value: 28, color: '#10b981' },
-  { name: 'SMS', value: 15, color: '#34d399' },
-  { name: 'Web', value: 10, color: '#6ee7b7' },
-  { name: 'IVR', value: 5, color: '#a7f3d0' },
+  { name: 'USSD', value: 42, color: '#0c0b0b' },
+  { name: 'Agent', value: 28, color: '#979585' },
+  { name: 'SMS', value: 15, color: '#b8a88a' },
+  { name: 'Web', value: 10, color: '#dddbca' },
+  { name: 'IVR', value: 5, color: '#e9e6d7' },
 ];
 
 const recentBoardings = [
@@ -47,10 +47,10 @@ const locationQueues = [
 ];
 
 const stats = [
-  { icon: Users, label: 'Total in Queue', value: '47', trend: '+12%', trendLabel: 'vs yesterday', color: 'text-emerald-600' },
-  { icon: UserCheck, label: 'Total Served Today', value: '128', trend: '+8%', trendLabel: 'vs yesterday', color: 'text-emerald-600' },
-  { icon: Clock, label: 'Avg Wait Time', value: '~12 min', trend: '-3 min', trendLabel: 'vs yesterday', color: 'text-emerald-600' },
-  { icon: Car, label: 'Active Drivers', value: '8', trend: '+2', trendLabel: 'from last hour', color: 'text-emerald-600' },
+  { icon: Users, label: 'Total in Queue', value: '47', trend: '+12%', trendLabel: 'vs yesterday', color: 'text-foreground' },
+  { icon: UserCheck, label: 'Total Served Today', value: '128', trend: '+8%', trendLabel: 'vs yesterday', color: 'text-foreground' },
+  { icon: Clock, label: 'Avg Wait Time', value: '~12 min', trend: '-3 min', trendLabel: 'vs yesterday', color: 'text-foreground' },
+  { icon: Car, label: 'Active Drivers', value: '8', trend: '+2', trendLabel: 'from last hour', color: 'text-foreground' },
 ];
 
 function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) {
@@ -58,7 +58,7 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
     return (
       <div className="bg-popover border border-border rounded-lg px-3 py-2 shadow-md text-sm">
         <p className="font-medium text-foreground">{label}</p>
-        <p className="text-emerald-600">{payload[0].value} passengers in queue</p>
+        <p className="text-foreground">{payload[0].value} passengers in queue</p>
       </div>
     );
   }
@@ -85,13 +85,13 @@ export function OverviewDashboard() {
       {/* Top Stats Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => (
-          <Card key={stat.label} className="border-border/60 hover:border-emerald-200 transition-colors">
+          <Card key={stat.label} className="border-border/60 hover:border-border transition-colors">
             <CardContent className="p-5">
               <div className="flex items-center justify-between">
-                <div className={`p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40`}>
-                  <stat.icon className="w-5 h-5 text-emerald-600" />
+                <div className={`p-2.5 rounded-xl bg-cashew`}>
+                  <stat.icon className="w-5 h-5 text-foreground" />
                 </div>
-                <Badge variant="secondary" className="text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-400 text-[11px] gap-0.5">
+                <Badge variant="secondary" className="text-foreground bg-cashew text-[11px] gap-0.5">
                   <ArrowUpRight className="w-3 h-3" />
                   {stat.trend}
                 </Badge>
@@ -116,7 +116,7 @@ export function OverviewDashboard() {
                 <CardTitle className="text-base font-semibold">Queue Activity</CardTitle>
                 <CardDescription className="text-xs mt-0.5">Morning commuter queue size (today)</CardDescription>
               </div>
-              <Activity className="w-4 h-4 text-emerald-600" />
+              <Activity className="w-4 h-4 text-foreground" />
             </div>
           </CardHeader>
           <CardContent className="pt-0">
@@ -137,7 +137,7 @@ export function OverviewDashboard() {
                   <Tooltip content={<CustomTooltip />} />
                   <Bar
                     dataKey="queue"
-                    fill="#059669"
+                    fill="#0c0b0b"
                     radius={[4, 4, 0, 0]}
                     maxBarSize={40}
                   />
@@ -155,7 +155,7 @@ export function OverviewDashboard() {
                 <CardTitle className="text-base font-semibold">Channel Breakdown</CardTitle>
                 <CardDescription className="text-xs mt-0.5">How passengers join the queue</CardDescription>
               </div>
-              <TrendingUp className="w-4 h-4 text-emerald-600" />
+              <TrendingUp className="w-4 h-4 text-foreground" />
             </div>
           </CardHeader>
           <CardContent className="pt-0">
@@ -231,8 +231,8 @@ export function OverviewDashboard() {
                         variant="secondary"
                         className={
                           boarding.status === 'Completed'
-                            ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 text-[11px]'
-                            : 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 text-[11px]'
+                            ? 'bg-cashew text-foreground text-[11px]'
+                            : 'bg-warm text-foreground text-[11px]'
                         }
                       >
                         {boarding.status}
@@ -256,9 +256,9 @@ export function OverviewDashboard() {
               <div key={loc.name} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-foreground">{loc.name}</span>
-                  <span className="text-sm font-semibold text-emerald-600">{loc.count}</span>
+                  <span className="text-sm font-semibold text-foreground">{loc.count}</span>
                 </div>
-                <Progress value={(loc.count / loc.max) * 100} className="h-2 [&>[data-slot=progress-indicator]]:bg-emerald-500" />
+                <Progress value={(loc.count / loc.max) * 100} className="h-2 [&>[data-slot=progress-indicator]]:bg-foreground" />
                 <p className="text-[11px] text-muted-foreground">{loc.count} of {loc.max} capacity</p>
               </div>
             ))}

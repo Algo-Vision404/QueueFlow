@@ -13,11 +13,11 @@ import { Separator } from '@/components/ui/separator';
 
 function MethodBadge({ method }: { method: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH' }) {
   const styleMap: Record<string, string> = {
-    GET: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800',
-    POST: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 border-amber-200 dark:border-amber-800',
-    DELETE: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400 border-red-200 dark:border-red-800',
-    PUT: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700',
-    PATCH: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700',
+    GET: 'bg-cashew text-foreground dark:bg-cashew dark:text-foreground border-border',
+    POST: 'bg-foreground/10 text-foreground dark:bg-foreground/20 dark:text-foreground border-border',
+    DELETE: 'bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive border-destructive/30',
+    PUT: 'bg-cashew text-foreground dark:bg-cashew dark:text-foreground border-border',
+    PATCH: 'bg-cashew text-foreground dark:bg-cashew dark:text-foreground border-border',
   };
 
   return (
@@ -31,11 +31,11 @@ function CodeBlock({ code, label }: { code: string; label?: string }) {
   return (
     <div className="relative">
       {label && (
-        <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-1 bg-muted rounded-t-md border border-border border-b-0">
+        <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-1 bg-cashew rounded-t-md border border-border border-b-0">
           <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
         </div>
       )}
-      <pre className={`bg-muted rounded-md p-3 font-mono text-xs leading-relaxed overflow-x-auto ${label ? 'pt-8' : ''}`}>
+      <pre className={`bg-cashew rounded-md p-3 font-mono text-xs leading-relaxed overflow-x-auto ${label ? 'pt-8' : ''}`}>
         <code>{code}</code>
       </pre>
     </div>
@@ -138,11 +138,11 @@ function QueueManagementTab() {
 
   return (
     <div className="space-y-4">
-      <Card className="border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/20">
+      <Card className="border-border bg-cashew/50">
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-base">📋</span>
-            <h3 className="font-semibold text-sm text-emerald-700 dark:text-emerald-400">Queue Management</h3>
+            <h3 className="font-semibold text-sm text-foreground">Queue Management</h3>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
             Core queue operations for passengers and agents. All endpoints accept and return JSON. Authenticated agents get extended access.
@@ -228,11 +228,11 @@ function AgentOperationsTab() {
 
   return (
     <div className="space-y-4">
-      <Card className="border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20">
+      <Card className="border-border bg-warm/50">
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-base">👤</span>
-            <h3 className="font-semibold text-sm text-amber-700 dark:text-amber-400">Agent Operations</h3>
+            <h3 className="font-semibold text-sm text-foreground">Agent Operations</h3>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
             Agent-specific endpoints for managing queues at physical locations. All agent endpoints require authentication via the login endpoint.
@@ -303,11 +303,11 @@ function DriverOperationsTab() {
 
   return (
     <div className="space-y-4">
-      <Card className="border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30">
+      <Card className="border-border bg-linen/20">
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-base">🚐</span>
-            <h3 className="font-semibold text-sm text-slate-700 dark:text-slate-300">Driver Operations</h3>
+            <h3 className="font-semibold text-sm text-foreground">Driver Operations</h3>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
             Driver endpoints for arrival reporting, passenger assignment, and boarding confirmation. Drivers can access via mobile web or USSD.
@@ -374,11 +374,11 @@ function USSDHandlerTab() {
 
   return (
     <div className="space-y-4">
-      <Card className="border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/20">
+      <Card className="border-border bg-cashew/50">
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-base">📱</span>
-            <h3 className="font-semibold text-sm text-emerald-700 dark:text-emerald-400">USSD Handler</h3>
+            <h3 className="font-semibold text-sm text-foreground">USSD Handler</h3>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
             USSD session handler processes multi-step menu interactions from telecom gateways. Supports Africa&apos;s Talking and MTN API formats.
@@ -426,8 +426,8 @@ export function ApiDocs() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-1">
-          <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30">
-            <svg className="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="p-2 rounded-lg bg-cashew">
+            <svg className="w-5 h-5 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
             </svg>
           </div>

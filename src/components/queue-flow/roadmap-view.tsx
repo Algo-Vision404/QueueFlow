@@ -115,34 +115,34 @@ function getStatusConfig(status: RoadmapPhase['status']) {
   switch (status) {
     case 'completed':
       return {
-        badge: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800',
-        dot: 'bg-emerald-500',
+        badge: 'bg-foreground text-primary-foreground',
+        dot: 'bg-foreground',
         dotRing: '',
-        line: 'bg-emerald-300 dark:bg-emerald-700',
+        line: 'bg-border',
         label: 'Completed',
       };
     case 'in-progress':
       return {
-        badge: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 border-amber-200 dark:border-amber-800',
-        dot: 'bg-amber-500 animate-pulse',
-        dotRing: 'ring-4 ring-amber-500/20',
-        line: 'bg-slate-200 dark:bg-slate-700',
+        badge: 'bg-linen text-foreground dark:bg-linen dark:text-foreground border-border',
+        dot: 'bg-linen animate-pulse',
+        dotRing: 'ring-4 ring-linen/30',
+        line: 'bg-border',
         label: 'In Progress',
       };
     case 'planned':
       return {
-        badge: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border-slate-200 dark:border-slate-700',
-        dot: 'bg-slate-400',
+        badge: 'bg-cashew text-soft dark:bg-cashew dark:text-soft border-border',
+        dot: 'bg-cashew',
         dotRing: '',
-        line: 'bg-slate-200 dark:bg-slate-700',
+        line: 'bg-border',
         label: 'Planned',
       };
     case 'future':
       return {
-        badge: 'bg-slate-50 text-slate-500 dark:bg-slate-900 dark:text-slate-500 border-dashed border-slate-300 dark:border-slate-700',
-        dot: 'bg-slate-300 dark:bg-slate-600',
+        badge: 'bg-background text-soft dark:bg-background dark:text-soft border-dashed border-border',
+        dot: 'bg-border',
         dotRing: '',
-        line: 'border-l-2 border-dashed border-slate-200 dark:border-slate-700',
+        line: 'border-l-2 border-dashed border-border',
         label: 'Future',
       };
   }
@@ -172,7 +172,7 @@ function PhaseCard({ phase, isLast }: { phase: RoadmapPhase; isLast: boolean }) 
 
         {/* Connecting line */}
         {!isLast && (
-          <div className={`w-0.5 flex-1 min-h-[60px] ${phase.status === 'future' ? 'border-l-2 border-dashed border-slate-200 dark:border-slate-700' : config.line}`} />
+          <div className={`w-0.5 flex-1 min-h-[60px] ${phase.status === 'future' ? 'border-l-2 border-dashed border-border' : config.line}`} />
         )}
       </div>
 
@@ -180,9 +180,9 @@ function PhaseCard({ phase, isLast }: { phase: RoadmapPhase; isLast: boolean }) 
       <div className={`flex-1 pb-8 ${isLast ? 'pb-0' : ''}`}>
         <Card className={`overflow-hidden transition-shadow hover:shadow-md ${
           phase.status === 'in-progress' 
-            ? 'border-amber-300 dark:border-amber-700 shadow-amber-100 dark:shadow-amber-900/20 shadow-sm' 
+            ? 'border-border shadow-sm' 
             : phase.status === 'future'
-              ? 'border-dashed border-slate-300 dark:border-slate-700 opacity-75'
+              ? 'border-dashed border-border opacity-75'
               : ''
         }`}>
           <CardHeader className="pb-3">
@@ -209,8 +209,8 @@ function PhaseCard({ phase, isLast }: { phase: RoadmapPhase; isLast: boolean }) 
               <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all duration-500 ${
-                    phase.status === 'completed' ? 'bg-emerald-500' : 
-                    phase.status === 'in-progress' ? 'bg-amber-500' : 'bg-slate-400'
+                    phase.status === 'completed' ? 'bg-foreground' : 
+                    phase.status === 'in-progress' ? 'bg-foreground' : 'bg-soft'
                   }`}
                   style={{ width: `${progress}%` }}
                 />
@@ -225,9 +225,9 @@ function PhaseCard({ phase, isLast }: { phase: RoadmapPhase; isLast: boolean }) 
               {phase.items.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-2.5 text-sm">
                   {item.done ? (
-                    <CheckCircle className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-foreground mt-0.5 flex-shrink-0" />
                   ) : (
-                    <Circle className="w-4 h-4 text-slate-300 dark:text-slate-600 mt-0.5 flex-shrink-0" />
+                    <Circle className="w-4 h-4 text-soft mt-0.5 flex-shrink-0" />
                   )}
                   <span className={item.done ? 'text-foreground/70 line-through' : 'text-foreground/90'}>
                     {item.text}
@@ -281,27 +281,27 @@ function RoadmapSummary() {
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      <Card className="border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/20">
+      <Card className="border-border bg-cashew">
         <CardContent className="p-3 text-center">
-          <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{completed}</p>
+          <p className="text-2xl font-bold text-foreground">{completed}</p>
           <p className="text-[11px] text-muted-foreground font-medium">Completed</p>
         </CardContent>
       </Card>
-      <Card className="border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20">
+      <Card className="border-border bg-linen/50">
         <CardContent className="p-3 text-center">
-          <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{inProgress}</p>
+          <p className="text-2xl font-bold text-foreground">{inProgress}</p>
           <p className="text-[11px] text-muted-foreground font-medium">In Progress</p>
         </CardContent>
       </Card>
-      <Card className="border-slate-200 dark:border-slate-700">
+      <Card className="border-border bg-cashew/50">
         <CardContent className="p-3 text-center">
-          <p className="text-2xl font-bold text-slate-600 dark:text-slate-400">{planned}</p>
+          <p className="text-2xl font-bold text-soft">{planned}</p>
           <p className="text-[11px] text-muted-foreground font-medium">Planned</p>
         </CardContent>
       </Card>
-      <Card className="border-slate-200 dark:border-slate-700">
+      <Card className="border-border">
         <CardContent className="p-3 text-center">
-          <p className="text-2xl font-bold text-slate-600 dark:text-slate-400">{future}</p>
+          <p className="text-2xl font-bold text-soft">{future}</p>
           <p className="text-[11px] text-muted-foreground font-medium">Future</p>
         </CardContent>
       </Card>
@@ -323,11 +323,11 @@ function OverallProgress() {
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-semibold">Overall Progress</span>
-          <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{progress}%</span>
+          <span className="text-sm font-bold text-foreground">{progress}%</span>
         </div>
         <div className="h-3 rounded-full bg-muted overflow-hidden">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400 transition-all duration-700"
+            className="h-full rounded-full bg-foreground transition-all duration-700"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -348,8 +348,8 @@ export function RoadmapView() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-1">
-          <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
-            <Clock className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+          <div className="p-2 rounded-lg bg-cashew">
+            <Clock className="w-5 h-5 text-foreground" />
           </div>
           <div>
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight">MVP Roadmap</h2>
@@ -380,11 +380,11 @@ export function RoadmapView() {
       </div>
 
       {/* Bottom note */}
-      <Card className="border-dashed border-2 border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/20">
+      <Card className="border-dashed border-2 border-border bg-cashew/50">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 mt-0.5">
-              <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <div className="p-2 rounded-lg bg-cashew mt-0.5">
+              <TrendingUp className="w-4 h-4 text-foreground" />
             </div>
             <div>
               <h4 className="font-semibold text-sm mb-1">Agile & Iterative Approach</h4>

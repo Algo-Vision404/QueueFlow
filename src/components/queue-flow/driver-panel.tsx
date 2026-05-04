@@ -40,19 +40,19 @@ interface TripRecord {
 const statusConfig: Record<DriverStatus, { label: string; className: string }> = {
   offline: {
     label: 'Offline',
-    className: 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400',
+    className: 'bg-cashew text-soft',
   },
   available: {
     label: 'Available',
-    className: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
+    className: 'bg-cashew text-foreground',
   },
   boarding: {
     label: 'Boarding',
-    className: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
+    className: 'bg-warm text-foreground',
   },
   departed: {
     label: 'Departed',
-    className: 'bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-300',
+    className: 'bg-linen text-foreground',
   },
 };
 
@@ -136,8 +136,8 @@ export function DriverPanel() {
       case 'offline':
         return (
           <div className="text-center space-y-6 py-8">
-            <div className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mx-auto">
-              <Navigation className="w-10 h-10 text-emerald-600" />
+            <div className="w-20 h-20 rounded-full bg-cashew flex items-center justify-center mx-auto">
+              <Navigation className="w-10 h-10 text-foreground" />
             </div>
             <div>
               <h3 className="text-xl font-semibold">Ready to Start?</h3>
@@ -145,7 +145,7 @@ export function DriverPanel() {
             </div>
             <Button
               size="lg"
-              className="h-16 w-full max-w-xs mx-auto text-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg rounded-xl"
+              className="h-16 w-full max-w-xs mx-auto text-lg bg-foreground text-background hover:bg-foreground/90 shadow-lg rounded-xl"
               onClick={handleReportArrival}
             >
               <MapPin className="w-6 h-6 mr-2" />
@@ -156,8 +156,8 @@ export function DriverPanel() {
       case 'available':
         return (
           <div className="text-center space-y-6 py-8">
-            <div className="w-20 h-20 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mx-auto">
-              <Clock className="w-10 h-10 text-amber-600 animate-pulse" />
+            <div className="w-20 h-20 rounded-full bg-cashew flex items-center justify-center mx-auto">
+              <Clock className="w-10 h-10 text-foreground animate-pulse" />
             </div>
             <div>
               <h3 className="text-xl font-semibold">Waiting for Assignment...</h3>
@@ -205,7 +205,7 @@ export function DriverPanel() {
                     className={`
                       text-center py-1.5 px-1 rounded-md text-xs font-mono border transition-colors
                       ${idx < boardingProgress
-                        ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300'
+                        ? 'bg-cashew border-border text-foreground'
                         : 'bg-muted/50 border-border text-muted-foreground'
                       }
                     `}
@@ -221,7 +221,7 @@ export function DriverPanel() {
             <div className="grid grid-cols-2 gap-3">
               <Button
                 size="lg"
-                className="h-14 text-base bg-emerald-600 hover:bg-emerald-700 text-white shadow-md"
+                className="h-14 text-base bg-foreground text-background hover:bg-foreground/90 shadow-md"
                 onClick={handleConfirmBoarded}
                 disabled={boardingProgress >= 14}
               >
@@ -243,8 +243,8 @@ export function DriverPanel() {
       case 'departed':
         return (
           <div className="text-center space-y-6 py-8">
-            <div className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mx-auto">
-              <CheckCircle className="w-10 h-10 text-emerald-600" />
+            <div className="w-20 h-20 rounded-full bg-cashew flex items-center justify-center mx-auto">
+              <CheckCircle className="w-10 h-10 text-foreground" />
             </div>
             <div>
               <h3 className="text-xl font-semibold">Trip Completed!</h3>
@@ -252,7 +252,7 @@ export function DriverPanel() {
             </div>
             <Button
               size="lg"
-              className="h-16 w-full max-w-xs mx-auto text-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg rounded-xl"
+              className="h-16 w-full max-w-xs mx-auto text-lg bg-foreground text-background hover:bg-foreground/90 shadow-lg rounded-xl"
               onClick={handleReportNewArrival}
             >
               <Navigation className="w-6 h-6 mr-2" />
@@ -270,7 +270,7 @@ export function DriverPanel() {
         <CardContent className="p-4 md:p-6">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold text-lg shadow-md flex-shrink-0">
+              <div className="w-14 h-14 rounded-full bg-foreground flex items-center justify-center text-background font-bold text-lg shadow-md flex-shrink-0">
                 KA
               </div>
               <div className="min-w-0">
@@ -316,8 +316,8 @@ export function DriverPanel() {
             {trips.map((trip) => (
               <div key={trip.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
-                    <span className="text-xs font-bold text-emerald-600">#{trip.tripNo}</span>
+                  <div className="w-8 h-8 rounded-lg bg-cashew flex items-center justify-center">
+                    <span className="text-xs font-bold text-foreground">#{trip.tripNo}</span>
                   </div>
                   <div>
                     <p className="text-sm font-medium">{trip.destination}</p>
@@ -341,28 +341,28 @@ export function DriverPanel() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <Card className="text-center">
           <CardContent className="p-4 space-y-1">
-            <Navigation className="w-5 h-5 mx-auto text-emerald-600" />
+            <Navigation className="w-5 h-5 mx-auto text-foreground" />
             <p className="text-2xl font-bold">{todayTrips}</p>
             <p className="text-xs text-muted-foreground">Today&apos;s Trips</p>
           </CardContent>
         </Card>
         <Card className="text-center">
           <CardContent className="p-4 space-y-1">
-            <Users className="w-5 h-5 mx-auto text-amber-600" />
+            <Users className="w-5 h-5 mx-auto text-foreground" />
             <p className="text-2xl font-bold">{totalPassengers}</p>
             <p className="text-xs text-muted-foreground">Total Passengers</p>
           </CardContent>
         </Card>
         <Card className="text-center">
           <CardContent className="p-4 space-y-1">
-            <DollarSign className="w-5 h-5 mx-auto text-emerald-600" />
+            <DollarSign className="w-5 h-5 mx-auto text-foreground" />
             <p className="text-2xl font-bold">$12.00</p>
             <p className="text-xs text-muted-foreground">Earnings</p>
           </CardContent>
         </Card>
         <Card className="text-center">
           <CardContent className="p-4 space-y-1">
-            <Star className="w-5 h-5 mx-auto text-amber-500" />
+            <Star className="w-5 h-5 mx-auto text-foreground" />
             <p className="text-2xl font-bold">4.8</p>
             <p className="text-xs text-muted-foreground">Rating</p>
           </CardContent>

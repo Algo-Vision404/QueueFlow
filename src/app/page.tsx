@@ -53,59 +53,59 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Top bar - mobile */}
-      <header className="lg:hidden sticky top-0 z-50 bg-background border-b border-border px-4 py-3 flex items-center justify-between">
+      <header className="lg:hidden sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border px-4 py-3 flex items-center justify-between">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 rounded-lg hover:bg-accent transition-colors"
+          className="p-2 rounded-lg hover:bg-cashew transition-colors"
           aria-label="Toggle navigation"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             {sidebarOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
             ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
             )}
           </svg>
         </button>
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center">
-            <span className="text-white text-xs font-bold">QF</span>
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-foreground flex items-center justify-center">
+            <span className="text-background text-[10px] font-bold tracking-tight">QF</span>
           </div>
-          <span className="font-semibold text-sm">QueueFlow</span>
+          <span className="font-semibold text-sm tracking-tight">QueueFlow</span>
         </div>
         <div className="w-9" />
       </header>
 
       <div className="flex flex-1">
-        {/* Sidebar */}
+        {/* Sidebar — Sandbar-inspired: cream bg, dark text, warm borders */}
         <aside className={`
-          fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-transform duration-200 ease-in-out lg:relative lg:translate-x-0 lg:z-auto
+          fixed inset-y-0 left-0 z-50 w-64 bg-cashew border-r border-border transform transition-transform duration-200 ease-in-out lg:relative lg:translate-x-0 lg:z-auto
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
           {/* Logo */}
           <div className="h-16 flex items-center gap-3 px-6 border-b border-border">
-            <div className="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center shadow-sm">
-              <span className="text-white text-sm font-bold">QF</span>
+            <div className="w-9 h-9 rounded-lg bg-foreground flex items-center justify-center">
+              <span className="text-cream text-xs font-bold tracking-tight">QF</span>
             </div>
             <div>
-              <h1 className="font-bold text-base leading-tight">QueueFlow</h1>
-              <p className="text-[11px] text-muted-foreground leading-tight">Transport Queue System</p>
+              <h1 className="font-bold text-[15px] leading-tight tracking-tight">QueueFlow</h1>
+              <p className="text-[11px] text-soft leading-tight">Transport Queue System</p>
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden ml-auto p-1 rounded hover:bg-accent"
+              className="lg:hidden ml-auto p-1 rounded-md hover:bg-background transition-colors"
               aria-label="Close sidebar"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg className="w-4 h-4 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
 
           {/* Location selector */}
           <div className="px-4 py-3 border-b border-border">
-            <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">Active Location</label>
-            <select className="mt-1 w-full text-sm bg-background border border-input rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+            <label className="text-[10px] uppercase tracking-[0.08em] text-soft font-medium">Active Location</label>
+            <select className="mt-1.5 w-full text-sm bg-background border border-border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-soft/20 focus:border-soft transition-colors">
               <option>Kwame Nkrumah Circle</option>
               <option>Kaneshie Station</option>
               <option>Tema Station</option>
@@ -123,15 +123,15 @@ export default function HomePage() {
                     setSidebarOpen(false);
                   }}
                   className={`
-                    w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150
+                    w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-200
                     ${activeSection === item.id
-                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 shadow-sm'
-                      : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                      ? 'bg-background text-foreground shadow-sm border border-border'
+                      : 'text-soft hover:bg-background/60 hover:text-foreground'
                     }
                   `}
                   aria-current={activeSection === item.id ? 'page' : undefined}
                 >
-                  <span className="text-base flex-shrink-0">{item.icon}</span>
+                  <span className="text-[15px] flex-shrink-0">{item.icon}</span>
                   <span>{item.label}</span>
                 </button>
               ))}
@@ -141,17 +141,17 @@ export default function HomePage() {
           {/* Footer */}
           <div className="p-4 border-t border-border">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs text-muted-foreground">System Online</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-foreground animate-pulse" />
+              <span className="text-[11px] text-soft">System Online</span>
             </div>
-            <p className="text-[10px] text-muted-foreground mt-1">v1.0.0 MVP</p>
+            <p className="text-[10px] text-soft/60 mt-1">v1.0.0 MVP</p>
           </div>
         </aside>
 
         {/* Overlay */}
         {sidebarOpen && (
           <div
-            className="fixed inset-0 z-40 bg-black/40 lg:hidden"
+            className="fixed inset-0 z-40 bg-rock/30 backdrop-blur-sm lg:hidden"
             onClick={() => setSidebarOpen(false)}
             aria-hidden="true"
           />
@@ -163,10 +163,10 @@ export default function HomePage() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeSection}
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.2 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.15 }}
               >
                 {renderSection()}
               </motion.div>

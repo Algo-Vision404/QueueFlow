@@ -35,12 +35,12 @@ function ArchitectureDiagram() {
   ];
 
   return (
-    <div className="relative bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 rounded-xl p-4 sm:p-6 lg:p-8 overflow-x-auto">
+    <div className="relative bg-gradient-to-b from-cashew to-linen/30 dark:from-cashew dark:to-linen/20 rounded-xl p-4 sm:p-6 lg:p-8 overflow-x-auto">
       {/* Access Channels Layer */}
       <div className="mb-2">
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-2 h-2 rounded-full bg-emerald-500" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+          <div className="w-2 h-2 rounded-full bg-foreground" />
+          <span className="text-xs font-semibold uppercase tracking-wider text-foreground">
             Access Channels
           </span>
         </div>
@@ -48,7 +48,7 @@ function ArchitectureDiagram() {
           {channels.map((ch) => (
             <div
               key={ch.label}
-              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg shadow-sm transition-colors min-w-[80px] sm:min-w-[100px] justify-center"
+              className="flex items-center gap-2 bg-foreground hover:bg-foreground/90 text-primary-foreground px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg shadow-sm transition-colors min-w-[80px] sm:min-w-[100px] justify-center"
             >
               <span className="text-sm sm:text-base">{ch.icon}</span>
               <span className="text-xs sm:text-sm font-medium">{ch.label}</span>
@@ -60,28 +60,28 @@ function ArchitectureDiagram() {
       {/* Arrow connector 1 */}
       <div className="flex justify-center my-3">
         <div className="flex flex-col items-center">
-          <div className="w-px h-6 bg-slate-300 dark:bg-slate-600" />
-          <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-slate-300 dark:border-t-slate-600" />
+          <div className="w-px h-6 bg-soft" />
+          <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-soft" />
         </div>
       </div>
 
       {/* API Gateway & Queue Engine Layer */}
       <div className="mb-2">
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-2 h-2 rounded-full bg-amber-500" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+          <div className="w-2 h-2 rounded-full bg-soft" />
+          <span className="text-xs font-semibold uppercase tracking-wider text-foreground">
             API Gateway & Queue Engine
           </span>
         </div>
         <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
           {engine.map((item, idx) => (
             <React.Fragment key={item.label}>
-              <div className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg shadow-sm transition-colors min-w-[100px] sm:min-w-[120px] justify-center">
+              <div className="flex items-center gap-2 bg-soft hover:bg-soft/80 text-foreground px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg shadow-sm transition-colors min-w-[100px] sm:min-w-[120px] justify-center">
                 <span className="text-sm sm:text-base">{item.icon}</span>
                 <span className="text-xs sm:text-sm font-medium">{item.label}</span>
               </div>
               {idx < engine.length - 1 && (
-                <div className="hidden sm:flex items-center text-amber-400">
+                <div className="hidden sm:flex items-center text-foreground/60">
                   <svg width="20" height="12" viewBox="0 0 20 12" fill="none">
                     <path d="M0 6H18M18 6L12 2M18 6L12 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
@@ -95,16 +95,16 @@ function ArchitectureDiagram() {
       {/* Arrow connector 2 */}
       <div className="flex justify-center my-3">
         <div className="flex flex-col items-center">
-          <div className="w-px h-6 bg-slate-300 dark:bg-slate-600" />
-          <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-slate-300 dark:border-t-slate-600" />
+          <div className="w-px h-6 bg-soft" />
+          <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-soft" />
         </div>
       </div>
 
       {/* Data & Infrastructure Layer */}
       <div>
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-2 h-2 rounded-full bg-slate-500" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+          <div className="w-2 h-2 rounded-full bg-linen" />
+          <span className="text-xs font-semibold uppercase tracking-wider text-soft">
             Data & Infrastructure
           </span>
         </div>
@@ -112,7 +112,7 @@ function ArchitectureDiagram() {
           {infra.map((item) => (
             <div
               key={item.label}
-              className="flex items-center gap-2 bg-slate-600 hover:bg-slate-700 text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg shadow-sm transition-colors min-w-[100px] sm:min-w-[120px] justify-center"
+              className="flex items-center gap-2 bg-linen hover:bg-linen/80 text-foreground px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg shadow-sm transition-colors min-w-[100px] sm:min-w-[120px] justify-center"
             >
               <span className="text-sm sm:text-base">{item.icon}</span>
               <span className="text-xs sm:text-sm font-medium">{item.label}</span>
@@ -134,69 +134,69 @@ function DataFlowDiagram() {
       title: 'Passenger joins queue',
       desc: 'Via USSD, SMS, Agent app, or Web interface',
       icon: '🚶',
-      color: 'emerald',
+      color: 'cashew',
     },
     {
       num: 2,
       title: 'Queue Engine assigns ticket',
       desc: 'Ticket number and position calculated & stored',
       icon: '🎫',
-      color: 'amber',
+      color: 'warm',
     },
     {
       num: 3,
       title: 'Wait time estimated & sent',
       desc: 'SMS notification with estimated wait time',
       icon: '⏱️',
-      color: 'emerald',
+      color: 'cashew',
     },
     {
       num: 4,
       title: 'Driver arrives & reports',
       desc: 'Driver confirms arrival via app or USSD',
       icon: '🚐',
-      color: 'slate',
+      color: 'linen',
     },
     {
       num: 5,
       title: 'Agent triggers boarding',
       desc: 'Agent initiates boarding call for next group',
       icon: '📢',
-      color: 'amber',
+      color: 'warm',
     },
     {
       num: 6,
       title: 'Passengers notified',
       desc: 'SMS batch + display board update for next N passengers',
       icon: '📲',
-      color: 'emerald',
+      color: 'cashew',
     },
     {
       num: 7,
       title: 'Boarding & verification',
       desc: 'Passengers board in order, agent verifies tickets',
       icon: '✅',
-      color: 'amber',
+      color: 'warm',
     },
     {
       num: 8,
       title: 'Driver confirms completion',
       desc: 'System updates queue, next cycle begins',
       icon: '🏁',
-      color: 'slate',
+      color: 'linen',
     },
   ];
 
   const colorMap: Record<string, string> = {
-    emerald: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800',
-    amber: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 border-amber-200 dark:border-amber-800',
-    slate: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700',
+    cashew: 'bg-cashew text-foreground dark:bg-cashew dark:text-foreground border-border',
+    warm: 'bg-warm text-foreground dark:bg-warm dark:text-foreground border-border',
+    linen: 'bg-linen/50 text-foreground dark:bg-linen dark:text-foreground border-border',
   };
 
   const dotColorMap: Record<string, string> = {
-    emerald: 'bg-emerald-500',
-    amber: 'bg-amber-500',
-    slate: 'bg-slate-500',
+    cashew: 'bg-foreground',
+    warm: 'bg-foreground',
+    linen: 'bg-foreground',
   };
 
   return (
@@ -210,7 +210,7 @@ function DataFlowDiagram() {
                 {step.num}
               </div>
               {idx < steps.length - 1 && (
-                <div className="w-px h-full min-h-[40px] bg-slate-200 dark:bg-slate-700 my-1" />
+                <div className="w-px h-full min-h-[40px] bg-border my-1" />
               )}
             </div>
 
@@ -247,16 +247,16 @@ function TechStackTable() {
   ];
 
   const layerColorMap: Record<string, string> = {
-    Frontend: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-    Mobile: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-    Backend: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-    Database: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
-    Cache: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
-    'Real-time': 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
-    'Queue Processing': 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-    Telecom: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-    Hosting: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
-    Monitoring: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+    Frontend: 'bg-cashew text-foreground dark:bg-cashew dark:text-foreground',
+    Mobile: 'bg-cashew text-foreground dark:bg-cashew dark:text-foreground',
+    Backend: 'bg-cashew text-foreground dark:bg-cashew dark:text-foreground',
+    Database: 'bg-cashew text-foreground dark:bg-cashew dark:text-foreground',
+    Cache: 'bg-cashew text-foreground dark:bg-cashew dark:text-foreground',
+    'Real-time': 'bg-cashew text-foreground dark:bg-cashew dark:text-foreground',
+    'Queue Processing': 'bg-cashew text-foreground dark:bg-cashew dark:text-foreground',
+    Telecom: 'bg-cashew text-foreground dark:bg-cashew dark:text-foreground',
+    Hosting: 'bg-cashew text-foreground dark:bg-cashew dark:text-foreground',
+    Monitoring: 'bg-cashew text-foreground dark:bg-cashew dark:text-foreground',
   };
 
   return (
@@ -296,47 +296,47 @@ function MultiChannelView() {
     {
       name: 'USSD',
       icon: '📱',
-      color: 'emerald',
+      color: 'cashew',
       flow: ['Phone (Feature)', 'Telecom Gateway', 'USSD Handler', 'Queue API'],
       description: 'Dial *384*200# to join queue, check position, or get updates',
     },
     {
       name: 'SMS',
       icon: '💬',
-      color: 'emerald',
+      color: 'cashew',
       flow: ['Phone (Any)', 'SMS Gateway', 'SMS Handler', 'Queue API'],
       description: 'Text JOIN to short code, receive position updates via SMS',
     },
     {
       name: 'Web App',
       icon: '🌐',
-      color: 'amber',
+      color: 'warm',
       flow: ['Browser', 'Next.js Frontend', 'API Routes', 'Queue API'],
       description: 'Smartphone users access dashboard, join queue, track position',
     },
     {
       name: 'Agent App',
       icon: '👤',
-      color: 'amber',
+      color: 'warm',
       flow: ['Tablet', 'Agent App (PWA)', 'API Routes', 'Queue API'],
       description: 'Agents manage queue, add passengers, trigger boarding',
     },
   ];
 
   const colorClasses: Record<string, { bg: string; border: string; dot: string; text: string; arrow: string }> = {
-    emerald: {
-      bg: 'bg-emerald-50 dark:bg-emerald-950/30',
-      border: 'border-emerald-200 dark:border-emerald-800',
-      dot: 'bg-emerald-500',
-      text: 'text-emerald-700 dark:text-emerald-400',
-      arrow: 'text-emerald-400',
+    cashew: {
+      bg: 'bg-cashew dark:bg-cashew',
+      border: 'border-border',
+      dot: 'bg-foreground',
+      text: 'text-foreground',
+      arrow: 'text-soft',
     },
-    amber: {
-      bg: 'bg-amber-50 dark:bg-amber-950/30',
-      border: 'border-amber-200 dark:border-amber-800',
-      dot: 'bg-amber-500',
-      text: 'text-amber-700 dark:text-amber-400',
-      arrow: 'text-amber-400',
+    warm: {
+      bg: 'bg-warm dark:bg-warm',
+      border: 'border-border',
+      dot: 'bg-soft',
+      text: 'text-foreground',
+      arrow: 'text-soft',
     },
   };
 
@@ -358,7 +358,7 @@ function MultiChannelView() {
               <div className="flex flex-wrap items-center gap-1.5">
                 {ch.flow.map((step, idx) => (
                   <React.Fragment key={step}>
-                    <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium border ${colors.border} bg-white dark:bg-slate-900`}>
+                    <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium border ${colors.border} bg-white dark:bg-background`}>
                       <div className={`w-1.5 h-1.5 rounded-full ${colors.dot}`} />
                       {step}
                     </div>
@@ -387,8 +387,8 @@ export function ArchitectureView() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-1">
-          <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
-            <Layers className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+          <div className="p-2 rounded-lg bg-cashew">
+            <Layers className="w-5 h-5 text-foreground" />
           </div>
           <div>
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight">System Architecture</h2>
@@ -411,7 +411,7 @@ export function ArchitectureView() {
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
-                <Server className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <Server className="w-4 h-4 text-foreground" />
                 High-Level Architecture
               </CardTitle>
               <CardDescription>
@@ -424,33 +424,33 @@ export function ArchitectureView() {
           </Card>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <Card className="border-emerald-200 dark:border-emerald-800">
+            <Card className="border-border">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                  <span className="font-semibold text-sm text-emerald-700 dark:text-emerald-400">Access Channels</span>
+                  <div className="w-3 h-3 rounded-full bg-foreground" />
+                  <span className="font-semibold text-sm text-foreground">Access Channels</span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   Multiple input channels ensure all passengers can join regardless of device capability — from basic feature phones to smartphones.
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-amber-200 dark:border-amber-800">
+            <Card className="border-border">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-3 h-3 rounded-full bg-amber-500" />
-                  <span className="font-semibold text-sm text-amber-700 dark:text-amber-400">Processing Engine</span>
+                  <div className="w-3 h-3 rounded-full bg-soft" />
+                  <span className="font-semibold text-sm text-foreground">Processing Engine</span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   The core queue logic handles ticket assignment, wait calculation, boarding orchestration, and multi-channel notifications.
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-slate-200 dark:border-slate-700">
+            <Card className="border-border">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-3 h-3 rounded-full bg-slate-500" />
-                  <span className="font-semibold text-sm text-slate-600 dark:text-slate-400">Infrastructure</span>
+                  <div className="w-3 h-3 rounded-full bg-linen" />
+                  <span className="font-semibold text-sm text-soft">Infrastructure</span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   Persistent storage, caching for performance, real-time WebSocket updates, and telecom gateway integration.
@@ -465,7 +465,7 @@ export function ArchitectureView() {
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
-                <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                <Zap className="w-4 h-4 text-foreground" />
                 Data Flow — Queue Lifecycle
               </CardTitle>
               <CardDescription>
@@ -483,7 +483,7 @@ export function ArchitectureView() {
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
-                <Server className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                <Server className="w-4 h-4 text-foreground" />
                 Technology Stack
               </CardTitle>
               <CardDescription>
@@ -501,7 +501,7 @@ export function ArchitectureView() {
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
-                <Smartphone className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <Smartphone className="w-4 h-4 text-foreground" />
                 Multi-Channel Architecture
               </CardTitle>
               <CardDescription>
@@ -513,11 +513,11 @@ export function ArchitectureView() {
             </CardContent>
           </Card>
 
-          <Card className="border-dashed border-2 border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/20">
+          <Card className="border-dashed border-2 border-border bg-cashew/50">
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 mt-0.5">
-                  <Shield className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <div className="p-2 rounded-lg bg-cashew mt-0.5">
+                  <Shield className="w-4 h-4 text-foreground" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm mb-1">Unified Backend Design</h4>
