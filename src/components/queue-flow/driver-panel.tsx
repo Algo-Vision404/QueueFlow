@@ -21,6 +21,7 @@ import {
   Truck,
   Navigation,
   AlertTriangle,
+  Receipt,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -74,6 +75,15 @@ export function DriverPanel() {
   // Ticket range for current boarding
   const boardingTickets = Array.from({ length: 14 }, (_, i) => `#${String(45 + i).padStart(3, '0')}`);
 
+  // Earnings calculations
+  const farePerPassenger = 1.50;
+  const commissionPerPassenger = 0.15;
+  const faresCollected = totalPassengers * farePerPassenger;
+  const queueFlowCommission = totalPassengers * commissionPerPassenger;
+  const netEarnings = faresCollected - queueFlowCommission;
+  const dailyTarget = 50;
+  const earningsProgress = Math.min((netEarnings / dailyTarget) * 100, 100);
+
   const handleReportArrival = () => {
     setDriverStatus('available');
     toast.success('Arrival reported', {
@@ -94,7 +104,7 @@ export function DriverPanel() {
           tripNo: todayTrips + 1,
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           passengers: 14,
-          duration: '—',
+          duration: '\u2014',
           destination: 'Accra Central',
         };
         setTrips((prev) => [newTrip, ...prev].slice(0, 5));
@@ -266,7 +276,7 @@ export function DriverPanel() {
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       {/* ── Driver Status Header ──────────────────────────────────────── */}
-      <Card>
+      <Card className="glass-card">
         <CardContent className="p-4 md:p-6">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -296,14 +306,14 @@ export function DriverPanel() {
       </Card>
 
       {/* ── Main Action Area ──────────────────────────────────────────── */}
-      <Card className="border-2">
+      <Card className="glass-card border-2 border-foreground/10">
         <CardContent className="p-4 md:p-6">
           {renderMainAction()}
         </CardContent>
       </Card>
 
       {/* ── Trip History ──────────────────────────────────────────────── */}
-      <Card>
+      <Card className="glass-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
             <Clock className="w-4 h-4 text-muted-foreground" />
@@ -339,28 +349,28 @@ export function DriverPanel() {
 
       {/* ── Driver Stats ──────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Card className="text-center">
+        <Card className="glass-card text-center">
           <CardContent className="p-4 space-y-1">
             <Navigation className="w-5 h-5 mx-auto text-foreground" />
             <p className="text-2xl font-bold">{todayTrips}</p>
             <p className="text-xs text-muted-foreground">Today&apos;s Trips</p>
           </CardContent>
         </Card>
-        <Card className="text-center">
+        <Card className="glass-card text-center">
           <CardContent className="p-4 space-y-1">
             <Users className="w-5 h-5 mx-auto text-foreground" />
             <p className="text-2xl font-bold">{totalPassengers}</p>
             <p className="text-xs text-muted-foreground">Total Passengers</p>
           </CardContent>
         </Card>
-        <Card className="text-center">
+        <Card className="glass-card text-center">
           <CardContent className="p-4 space-y-1">
             <DollarSign className="w-5 h-5 mx-auto text-foreground" />
             <p className="text-2xl font-bold">$12.00</p>
             <p className="text-xs text-muted-foreground">Earnings</p>
           </CardContent>
         </Card>
-        <Card className="text-center">
+        <Card className="glass-card text-center">
           <CardContent className="p-4 space-y-1">
             <Star className="w-5 h-5 mx-auto text-foreground" />
             <p className="text-2xl font-bold">4.8</p>
@@ -368,6 +378,82 @@ export function DriverPanel() {
           </CardContent>
         </Card>
       </div>
+
+      {/* ── Today's Earnings ──────────────────────────────────────────── */}
+      <Card className="glass-card">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Receipt className="w-4 h-4 text-foreground" />
+            Today&apos;s Earnings
+          </CardTitle>
+          <CardDescription>Fare breakdown and commission</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Earnings Table */}
+          <div className="space-y-0">
+            <div className="flex items-center justify-between py-2.5 border-b border-border">
+              <span className="text-sm text-muted-foreground flex items-center gap-2">
+                <Navigation className="w-3.5 h-3.5" />
+                Trips completed
+              </span>
+              <span className="text-sm font-semibold">{todayTrips}</span>
+            </div>
+            <div className="flex items-center justify-between py-2.5 border-b border-border">
+              <span className="text-sm text-muted-foreground flex items-center gap-2">
+                <Users className="w-3.5 h-3.5" />
+                Passengers
+              </span>
+              <span className="text-sm font-semibold">{totalPassengers}</span>
+            </div>
+            <div className="flex items-center justify-between py-2.5 border-b border-border">
+              <span className="text-sm text-muted-foreground flex items-center gap-2">
+                <DollarSign className="w-3.5 h-3.5" />
+                Fares collected
+              </span>
+              <span className="text-sm font-semibold">${faresCollected.toFixed(2)}</span>
+            </div>
+            <div className="flex items-center justify-between py-2.5 border-b border-border">
+              <span className="text-sm text-muted-foreground flex items-center gap-2">
+                <Receipt className="w-3.5 h-3.5" />
+                QueueFlow commission
+              </span>
+              <span className="text-sm font-semibold text-red-600 dark:text-red-400">
+                -${queueFlowCommission.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between py-2.5">
+              <span className="text-sm font-semibold flex items-center gap-2">
+                <DollarSign className="w-3.5 h-3.5 text-foreground" />
+                Net earnings
+              </span>
+              <span className="text-lg font-bold text-foreground">
+                ${netEarnings.toFixed(2)}
+              </span>
+            </div>
+          </div>
+
+          {/* Daily Target Progress */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Daily target</span>
+              <span className="font-medium">
+                ${netEarnings.toFixed(2)} / ${dailyTarget.toFixed(2)}
+              </span>
+            </div>
+            <div className="relative">
+              <Progress value={earningsProgress} className="h-3" />
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <span className="text-[10px] font-bold text-background mix-blend-normal">
+                  {Math.round(earningsProgress)}%
+                </span>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              ${Math.max(dailyTarget - netEarnings, 0).toFixed(2)} remaining to reach daily goal
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

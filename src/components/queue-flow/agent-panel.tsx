@@ -55,6 +55,9 @@ import {
   Users,
   ChevronDown,
   ChevronUp,
+  TrendingUp,
+  UserX,
+  Star,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -135,6 +138,9 @@ const recentBoardings = [
   { id: 'b2', plate: 'AW 3345 T', passengers: 18, time: '07:15 AM' },
   { id: 'b3', plate: 'GR 7781 V', passengers: 14, time: '06:50 AM' },
 ];
+
+// ── Sparkline Data ──────────────────────────────────────────────────────────
+const sparklineHeights = [40, 65, 45, 80, 55, 70, 90, 60, 75, 50];
 
 // ── Component ───────────────────────────────────────────────────────────────
 export function AgentPanel() {
@@ -276,7 +282,7 @@ export function AgentPanel() {
   return (
     <div className="space-y-6">
       {/* ── Header ─────────────────────────────────────────────────────── */}
-      <Card>
+      <Card className="glass-card">
         <CardContent className="p-4 md:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -374,7 +380,7 @@ export function AgentPanel() {
 
       {/* ── Add Passenger Form ─────────────────────────────────────────── */}
       {showForm && (
-        <Card className="border-border">
+        <Card className="glass-card border-border">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <UserPlus className="w-4 h-4 text-foreground" />
@@ -441,7 +447,7 @@ export function AgentPanel() {
       {/* ── Main Content Grid ──────────────────────────────────────────── */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* ── Current Queue View (takes 2 cols) ─────────────────────────── */}
-        <Card className="xl:col-span-2">
+        <Card className="glass-card xl:col-span-2">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div>
@@ -540,7 +546,7 @@ export function AgentPanel() {
         {/* ── Right Sidebar ────────────────────────────────────────────── */}
         <div className="space-y-6">
           {/* Boarding Control Panel */}
-          <Card>
+          <Card className="glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
                 <Truck className="w-4 h-4 text-foreground" />
@@ -638,7 +644,7 @@ export function AgentPanel() {
           </Card>
 
           {/* Exception Handling */}
-          <Card>
+          <Card className="glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
                 <Shield className="w-4 h-4 text-foreground" />
@@ -671,6 +677,76 @@ export function AgentPanel() {
                 <MapPin className="w-4 h-4 text-soft" />
                 Lost Item Report
               </Button>
+            </CardContent>
+          </Card>
+
+          {/* Queue Analytics */}
+          <Card className="glass-card">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-foreground" />
+                Queue Analytics
+              </CardTitle>
+              <CardDescription>Real-time queue performance</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {/* Mini Stats */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-muted-foreground">
+                    <Clock className="w-3.5 h-3.5" />
+                    Avg. wait time
+                  </span>
+                  <span className="font-semibold">12 min</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-muted-foreground">
+                    <TrendingUp className="w-3.5 h-3.5" />
+                    Throughput
+                  </span>
+                  <span className="font-semibold">8 pax/min</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-muted-foreground">
+                    <UserX className="w-3.5 h-3.5" />
+                    No-show rate
+                  </span>
+                  <span className="font-semibold">5.2%</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2 text-muted-foreground">
+                    <Star className="w-3.5 h-3.5" />
+                    Satisfaction
+                  </span>
+                  <span className="font-semibold">4.6/5</span>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Sparkline-style bar visualization */}
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">
+                  Hourly Throughput
+                </p>
+                <div className="flex items-end gap-1.5 h-10">
+                  {sparklineHeights.map((height, idx) => (
+                    <div
+                      key={idx}
+                      className={`flex-1 rounded-sm transition-all duration-300 ${
+                        idx === sparklineHeights.length - 2
+                          ? 'bg-foreground'
+                          : 'bg-foreground/20'
+                      }`}
+                      style={{ height: `${height}%` }}
+                    />
+                  ))}
+                </div>
+                <div className="flex justify-between mt-1">
+                  <span className="text-[10px] text-muted-foreground">5AM</span>
+                  <span className="text-[10px] text-muted-foreground">Now</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

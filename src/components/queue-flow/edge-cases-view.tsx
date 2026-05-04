@@ -33,7 +33,7 @@ function EdgeCaseCard({ item }: { item: EdgeCaseItem }) {
   const sev = severityMap[item.severity];
 
   return (
-    <Card className={`border ${item.accentBorder} hover:shadow-md transition-shadow`}>
+    <Card className={`glass-card border ${item.accentBorder} hover:shadow-md transition-shadow`}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-3">
@@ -308,7 +308,7 @@ export function EdgeCasesView() {
       </div>
 
       {/* Bottom note */}
-      <Card className="border-dashed border-2 border-border bg-cashew/50">
+      <Card className="glass-card border-dashed border-2 border-border bg-cashew/50">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
             <div className="p-2 rounded-lg bg-cashew mt-0.5">

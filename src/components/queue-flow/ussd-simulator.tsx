@@ -19,6 +19,8 @@ import {
   Signal,
   BatteryFull,
   Wifi,
+  MessageSquare,
+  Activity,
 } from 'lucide-react';
 
 // ── Types ───────────────────────────────────────────────────────────────────
@@ -271,7 +273,7 @@ export function USSDSimulator() {
     if (key === '#' || key === '*') {
       // Just append to input for realism
       setInputValue((prev) => prev + key);
-    } else if (key === '⌫') {
+    } else if (key === '\u232B') {
       setInputValue((prev) => prev.slice(0, -1));
     } else {
       setInputValue((prev) => prev + key);
@@ -300,7 +302,7 @@ export function USSDSimulator() {
 
   return (
     <div className="space-y-6">
-      {/* ── Title ─────────────────────────────────────────────────────── */}
+      {/* Title */}
       <div className="text-center space-y-1">
         <h2 className="text-2xl font-bold">USSD Simulator</h2>
         <p className="text-muted-foreground text-sm">
@@ -309,7 +311,7 @@ export function USSDSimulator() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        {/* ── Phone Frame ─────────────────────────────────────────────── */}
+        {/* Phone Frame */}
         <div className="lg:col-span-2 flex justify-center">
           <div className="w-full max-w-sm">
             {/* Phone outer shell */}
@@ -329,15 +331,25 @@ export function USSDSimulator() {
 
               {/* Screen */}
               <div className="bg-zinc-100 dark:bg-zinc-950 min-h-[420px] flex flex-col">
-                {/* Session header */}
+                {/* Session header with latency indicator */}
                 <div className="bg-foreground px-4 py-2 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-white">
                     <Smartphone className="w-3.5 h-3.5" />
                     <span className="text-xs font-semibold">*384*200#</span>
                   </div>
-                  <Badge className="bg-white/20 text-white border-0 text-[10px] hover:bg-white/20">
-                    ACTIVE
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    {/* Network Latency Indicator */}
+                    <div className="flex items-center gap-1.5 text-white/70">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                      </span>
+                      <span className="text-[10px] font-medium">120ms</span>
+                    </div>
+                    <Badge className="bg-white/20 text-white border-0 text-[10px] hover:bg-white/20">
+                      ACTIVE
+                    </Badge>
+                  </div>
                 </div>
 
                 {/* USSD Display */}
@@ -392,7 +404,7 @@ export function USSDSimulator() {
                       className="h-9 rounded-lg bg-zinc-200 dark:bg-zinc-700 text-sm font-medium text-zinc-600 dark:text-zinc-400 active:bg-zinc-300 dark:active:bg-zinc-600 transition-colors"
                       aria-label="Backspace"
                     >
-                      ⌫ Delete
+                      Delete
                     </button>
                     <div />
                   </div>
@@ -407,10 +419,10 @@ export function USSDSimulator() {
           </div>
         </div>
 
-        {/* ── Right Sidebar ───────────────────────────────────────────── */}
+        {/* Right Sidebar */}
         <div className="space-y-6">
           {/* Info Panel */}
-          <Card>
+          <Card className="glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
                 <Info className="w-4 h-4 text-foreground" />
@@ -478,7 +490,7 @@ export function USSDSimulator() {
           </Button>
 
           {/* Session Log */}
-          <Card>
+          <Card className="glass-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Session Log</CardTitle>
               <CardDescription>All USSD interactions with timestamps</CardDescription>
@@ -505,6 +517,43 @@ export function USSDSimulator() {
                   </div>
                 ))}
                 <div ref={logEndRef} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* SMS Preview Panel */}
+          <Card className="glass-card">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-foreground" />
+                SMS Preview
+              </CardTitle>
+              <CardDescription>
+                Notification the passenger would receive
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {/* SMS Bubble */}
+              <div className="bg-muted rounded-2xl rounded-tl-sm p-4 space-y-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="flex items-center justify-center w-7 h-7 rounded-full bg-foreground text-primary-foreground">
+                    <Activity className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold leading-none">QueueFlow</p>
+                    <p className="text-[10px] text-muted-foreground">Service Notification</p>
+                  </div>
+                </div>
+                <Separator />
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  Your QueueFlow ticket <span className="font-mono font-semibold text-foreground">#047</span>.
+                  Position: <span className="font-semibold text-foreground">8th</span>.
+                  Est. wait: <span className="font-semibold text-foreground">~8 min</span>.
+                  You will be notified when it&apos;s your turn.
+                </p>
+                <p className="text-[10px] text-muted-foreground/60 text-right">
+                  Now
+                </p>
               </div>
             </CardContent>
           </Card>

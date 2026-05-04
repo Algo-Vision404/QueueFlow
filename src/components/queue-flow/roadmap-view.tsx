@@ -178,7 +178,7 @@ function PhaseCard({ phase, isLast }: { phase: RoadmapPhase; isLast: boolean }) 
 
       {/* Content */}
       <div className={`flex-1 pb-8 ${isLast ? 'pb-0' : ''}`}>
-        <Card className={`overflow-hidden transition-shadow hover:shadow-md ${
+        <Card className={`glass-card overflow-hidden transition-shadow hover:shadow-md ${
           phase.status === 'in-progress' 
             ? 'border-border shadow-sm' 
             : phase.status === 'future'
@@ -281,25 +281,25 @@ function RoadmapSummary() {
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      <Card className="border-border bg-cashew">
+      <Card className="glass-card glass-stat border-border bg-cashew">
         <CardContent className="p-3 text-center">
           <p className="text-2xl font-bold text-foreground">{completed}</p>
           <p className="text-[11px] text-muted-foreground font-medium">Completed</p>
         </CardContent>
       </Card>
-      <Card className="border-border bg-linen/50">
+      <Card className="glass-card glass-stat border-border bg-linen/50">
         <CardContent className="p-3 text-center">
           <p className="text-2xl font-bold text-foreground">{inProgress}</p>
           <p className="text-[11px] text-muted-foreground font-medium">In Progress</p>
         </CardContent>
       </Card>
-      <Card className="border-border bg-cashew/50">
+      <Card className="glass-card glass-stat border-border bg-cashew/50">
         <CardContent className="p-3 text-center">
           <p className="text-2xl font-bold text-soft">{planned}</p>
           <p className="text-[11px] text-muted-foreground font-medium">Planned</p>
         </CardContent>
       </Card>
-      <Card className="border-border">
+      <Card className="glass-card glass-stat border-border">
         <CardContent className="p-3 text-center">
           <p className="text-2xl font-bold text-soft">{future}</p>
           <p className="text-[11px] text-muted-foreground font-medium">Future</p>
@@ -319,7 +319,7 @@ function OverallProgress() {
   const progress = Math.round((doneItems / totalItems) * 100);
 
   return (
-    <Card>
+    <Card className="glass-card">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-semibold">Overall Progress</span>
@@ -380,7 +380,7 @@ export function RoadmapView() {
       </div>
 
       {/* Bottom note */}
-      <Card className="border-dashed border-2 border-border bg-cashew/50">
+      <Card className="glass-card border-dashed border-2 border-border bg-cashew/50">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
             <div className="p-2 rounded-lg bg-cashew mt-0.5">

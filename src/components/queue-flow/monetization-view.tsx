@@ -123,7 +123,7 @@ export function MonetizationView() {
       {/* Revenue Model Header Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {revenueCards.map((card) => (
-          <Card key={card.label} className="border-border/60 hover:border-border transition-colors">
+          <Card key={card.label} className="glass-card glass-stat border-border/60 hover:border-border transition-colors">
             <CardContent className="p-5">
               <div className="flex items-center gap-3">
                 <div className={`p-2.5 rounded-xl ${card.bgColor}`}>
@@ -143,7 +143,7 @@ export function MonetizationView() {
       {/* Unit Economics + Cost Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Unit Economics Table */}
-        <Card className="border-border/60">
+        <Card className="glass-card border-border/60">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-semibold">Unit Economics</CardTitle>
             <CardDescription className="text-xs">Per-passenger financial breakdown</CardDescription>
@@ -203,7 +203,7 @@ export function MonetizationView() {
         </Card>
 
         {/* Cost Breakdown Chart */}
-        <Card className="border-border/60">
+        <Card className="glass-card border-border/60">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div>
@@ -256,7 +256,7 @@ export function MonetizationView() {
       </div>
 
       {/* Revenue Projections */}
-      <Card className="border-border/60">
+      <Card className="glass-card border-border/60">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <div>
@@ -317,7 +317,7 @@ export function MonetizationView() {
         <p className="text-sm text-muted-foreground mb-4">Three service tiers for different passenger segments</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {pricingTiers.map((tier) => (
-            <Card key={tier.name} className={`relative border ${tier.color} ${tier.recommended ? 'ring-1 ring-foreground shadow-sm' : ''}`}>
+            <Card key={tier.name} className={`glass-card relative border ${tier.color} ${tier.recommended ? 'ring-1 ring-foreground shadow-sm' : ''}`}>
               {tier.recommended && (
                 <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
                   <Badge className="bg-foreground text-background text-[10px] px-2.5 py-0.5">
@@ -357,7 +357,7 @@ export function MonetizationView() {
       </div>
 
       {/* Scaling Economics */}
-      <Card className="border-border/60">
+      <Card className="glass-card border-border/60">
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold">Scaling Economics</CardTitle>
           <CardDescription className="text-xs">Revenue and cost projections at scale</CardDescription>

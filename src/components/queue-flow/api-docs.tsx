@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { ClipboardList, UserCheck, Truck, Smartphone } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -138,10 +139,10 @@ function QueueManagementTab() {
 
   return (
     <div className="space-y-4">
-      <Card className="border-border bg-cashew/50">
+      <Card className="glass-card border-border bg-cashew/50">
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-base">📋</span>
+            <ClipboardList className="w-4 h-4" />
             <h3 className="font-semibold text-sm text-foreground">Queue Management</h3>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
@@ -228,10 +229,10 @@ function AgentOperationsTab() {
 
   return (
     <div className="space-y-4">
-      <Card className="border-border bg-warm/50">
+      <Card className="glass-card border-border bg-warm/50">
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-base">👤</span>
+            <UserCheck className="w-4 h-4" />
             <h3 className="font-semibold text-sm text-foreground">Agent Operations</h3>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
@@ -303,10 +304,10 @@ function DriverOperationsTab() {
 
   return (
     <div className="space-y-4">
-      <Card className="border-border bg-linen/20">
+      <Card className="glass-card border-border bg-linen/20">
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-base">🚐</span>
+            <Truck className="w-4 h-4" />
             <h3 className="font-semibold text-sm text-foreground">Driver Operations</h3>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
@@ -374,10 +375,10 @@ function USSDHandlerTab() {
 
   return (
     <div className="space-y-4">
-      <Card className="border-border bg-cashew/50">
+      <Card className="glass-card border-border bg-cashew/50">
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-base">📱</span>
+            <Smartphone className="w-4 h-4" />
             <h3 className="font-semibold text-sm text-foreground">USSD Handler</h3>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
@@ -390,7 +391,7 @@ function USSDHandlerTab() {
         <EndpointCard key={`${ep.method}-${ep.path}`} endpoint={ep} />
       ))}
 
-      <Card>
+      <Card className="glass-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-base">USSD Session Flow Examples</CardTitle>
           <CardDescription>Step-by-step interaction examples showing the menu navigation</CardDescription>

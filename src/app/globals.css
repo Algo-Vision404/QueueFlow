@@ -42,7 +42,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  /* Sandbar-inspired custom tokens */
+  /* Custom tokens */
   --color-cream: var(--cream);
   --color-rock: var(--rock);
   --color-soft: var(--soft);
@@ -51,12 +51,14 @@
   --color-cotton: var(--cotton);
   --color-sand: var(--sand);
   --color-warm: var(--warm);
+  --color-glass: var(--glass);
+  --color-glass-border: var(--glass-border);
+  --color-glass-strong: var(--glass-strong);
 }
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0.625rem;
 
-  /* Sandbar Design System — warm cream palette */
   --background: #faf8f0;
   --foreground: #0c0b0b;
   --card: #ffffff;
@@ -76,7 +78,6 @@
   --input: #e9e6d7;
   --ring: #979585;
 
-  /* Sandbar custom tokens */
   --cream: #faf8f0;
   --rock: #0c0b0b;
   --soft: #979585;
@@ -86,6 +87,11 @@
   --sand: #fcfae9;
   --warm: #f3f2e6;
 
+  /* Glassmorphism tokens */
+  --glass: rgba(255, 255, 255, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --glass-strong: rgba(255, 255, 255, 0.65);
+
   /* Warm earth-tone chart palette */
   --chart-1: #0c0b0b;
   --chart-2: #979585;
@@ -93,62 +99,62 @@
   --chart-4: #b8a88a;
   --chart-5: #e9e6d7;
 
-  /* Sidebar — warm cream with subtle distinction */
-  --sidebar: #f2f0e6;
+  --sidebar: rgba(242, 240, 230, 0.7);
   --sidebar-foreground: #0c0b0b;
   --sidebar-primary: #0c0b0b;
   --sidebar-primary-foreground: #faf8f0;
-  --sidebar-accent: #e9e6d7;
+  --sidebar-accent: rgba(233, 230, 215, 0.5);
   --sidebar-accent-foreground: #0c0b0b;
-  --sidebar-border: #e9e6d7;
+  --sidebar-border: rgba(233, 230, 215, 0.5);
   --sidebar-ring: #979585;
 }
 
 .dark {
   --background: #1a1916;
   --foreground: #f2f0e6;
-  --card: #252420;
+  --card: rgba(37, 36, 32, 0.6);
   --card-foreground: #f2f0e6;
-  --popover: #252420;
+  --popover: rgba(37, 36, 32, 0.8);
   --popover-foreground: #f2f0e6;
   --primary: #f2f0e6;
   --primary-foreground: #0c0b0b;
-  --secondary: #302e28;
+  --secondary: rgba(48, 46, 40, 0.6);
   --secondary-foreground: #f2f0e6;
-  --muted: #302e28;
+  --muted: rgba(48, 46, 40, 0.6);
   --muted-foreground: #979585;
-  --accent: #302e28;
+  --accent: rgba(48, 46, 40, 0.6);
   --accent-foreground: #f2f0e6;
   --destructive: #ef4444;
-  --border: #3a3830;
-  --input: #3a3830;
+  --border: rgba(58, 56, 48, 0.6);
+  --input: rgba(58, 56, 48, 0.8);
   --ring: #979585;
 
-  /* Dark mode custom tokens */
   --cream: #1a1916;
   --rock: #f2f0e6;
   --soft: #979585;
-  --cashew: #302e28;
-  --linen: #4a4840;
-  --cotton: #201f1c;
-  --sand: #252418;
-  --warm: #302e28;
+  --cashew: rgba(48, 46, 40, 0.6);
+  --linen: rgba(74, 72, 64, 0.6);
+  --cotton: rgba(32, 31, 28, 0.6);
+  --sand: rgba(37, 36, 24, 0.6);
+  --warm: rgba(48, 46, 40, 0.6);
 
-  /* Dark mode charts */
+  --glass: rgba(37, 36, 32, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-strong: rgba(37, 36, 32, 0.7);
+
   --chart-1: #f2f0e6;
   --chart-2: #b8a88a;
   --chart-3: #6b6560;
   --chart-4: #979585;
   --chart-5: #4a4840;
 
-  /* Dark mode sidebar */
-  --sidebar: #1a1916;
+  --sidebar: rgba(26, 25, 22, 0.7);
   --sidebar-foreground: #f2f0e6;
   --sidebar-primary: #f2f0e6;
   --sidebar-primary-foreground: #0c0b0b;
-  --sidebar-accent: #302e28;
+  --sidebar-accent: rgba(48, 46, 40, 0.5);
   --sidebar-accent-foreground: #f2f0e6;
-  --sidebar-border: #3a3830;
+  --sidebar-border: rgba(58, 56, 48, 0.5);
   --sidebar-ring: #979585;
 }
 
@@ -161,4 +167,97 @@
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
   }
+}
+
+/* Glassmorphism utility classes */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-strong {
+  background: var(--glass-strong);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-sidebar {
+  background: var(--sidebar);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-right: 1px solid var(--sidebar-border);
+}
+
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.dark .glass-card {
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.2),
+    0 1px 2px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-header {
+  background: var(--glass-strong);
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.glass-stat {
+  background: var(--glass);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass-stat {
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Subtle animated gradient background */
+.bg-mesh {
+  background-image:
+    radial-gradient(at 20% 30%, rgba(221, 219, 202, 0.3) 0px, transparent 50%),
+    radial-gradient(at 80% 70%, rgba(242, 240, 230, 0.4) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(252, 251, 245, 0.3) 0px, transparent 50%);
+}
+
+.dark .bg-mesh {
+  background-image:
+    radial-gradient(at 20% 30%, rgba(74, 72, 64, 0.3) 0px, transparent 50%),
+    radial-gradient(at 80% 70%, rgba(48, 46, 40, 0.4) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(37, 36, 32, 0.3) 0px, transparent 50%);
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--soft);
 }
