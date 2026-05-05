@@ -1,20 +1,39 @@
 'use client';
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   Users, UserCheck, Clock, Car, Phone, Smartphone, Globe, UserCircle,
-  ArrowUpCircle, XCircle, Megaphone, Search, Download, Filter
+  ArrowUpCircle, XCircle, Megaphone, Search, Download, Filter,
+  Zap, Timer, AlertTriangle, TrendingUp
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import {
+  AnimatedCounter,
+  Sparkline,
+  ConfettiBurst,
+  ProgressRing,
+} from '@/lib/animations';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
-type QueueStatus = 'waiting' | 'called' | 'boarding' | 'boarded' | 'cancelled';
+/* ══════════════════════════════════════════════════════════════════════════
+   TYPES
+   ══════════════════════════════════════════════════════════════════════════ */
+
+type QueueStatus = 'waiting' | 'called' | 'boarding' | 'boarded' | 'cancelled' | 'expired';
 type QueueChannel = 'USSD' | 'SMS' | 'Web' | 'Agent' | 'IVR';
-
-type FilterStatus = 'all' | 'waiting' | 'called' | 'boarding';
+type FilterStatus = 'all' | 'waiting' | 'called' | 'boarding' | 'expired';
 
 interface QueueEntry {
   id: string;
@@ -26,7 +45,12 @@ interface QueueEntry {
   position: number;
   estimatedWait: string;
   joinTime: string;
+  joinTimestamp: number; // ms since epoch — for no-show detection
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CONSTANTS
+   ══════════════════════════════════════════════════════════════════════════ */
 
 const sampleNames = [
   'Abena Serwaa', 'Kofi Mensah', 'Ama Boateng', 'Kwame Asante', 'Esi Darko',
@@ -47,9 +71,16 @@ const filterOptions: { label: string; value: FilterStatus }[] = [
   { label: 'Waiting', value: 'waiting' },
   { label: 'Called', value: 'called' },
   { label: 'Boarding', value: 'boarding' },
+  { label: 'Expired', value: 'expired' },
 ];
 
-function generateEntry(position: number): QueueEntry {
+const NO_SHOW_MS = 15 * 60 * 1000; // 15 minutes
+
+/* ══════════════════════════════════════════════════════════════════════════
+   HELPERS
+   ══════════════════════════════════════════════════════════════════════════ */
+
+function generateEntry(position: number, ageOffsetMs: number = 0): QueueEntry {
   const name = sampleNames[Math.floor(Math.random() * sampleNames.length)];
   const phone = samplePhones[Math.floor(Math.random() * samplePhones.length)];
   const channel = channels[Math.floor(Math.random() * channels.length)];
@@ -70,6 +101,7 @@ function generateEntry(position: number): QueueEntry {
     position,
     estimatedWait: status === 'boarded' ? '0 min' : `~${waitMin} min`,
     joinTime: `${hour}:${String(minute).padStart(2, '0')} AM`,
+    joinTimestamp: Date.now() - ageOffsetMs,
   };
 }
 
@@ -85,6 +117,8 @@ function getStatusColor(status: QueueStatus): string {
       return 'bg-foreground/5 text-soft';
     case 'cancelled':
       return 'bg-destructive/10 text-destructive';
+    case 'expired':
+      return 'bg-destructive/15 text-destructive';
     default:
       return '';
   }
@@ -102,6 +136,8 @@ function getTicketCircleColor(status: QueueStatus): string {
       return 'bg-foreground/20 text-background';
     case 'cancelled':
       return 'bg-destructive text-destructive-foreground';
+    case 'expired':
+      return 'bg-destructive/80 text-destructive-foreground';
     default:
       return '';
   }
@@ -124,18 +160,281 @@ function getChannelIcon(channel: QueueChannel) {
   }
 }
 
+/* ── Sparkline trend data (stable seed per stat) ──────────────────────── */
+function makeTrend(seed: number, len: number = 8): number[] {
+  const arr: number[] = [];
+  let v = seed;
+  for (let i = 0; i < len; i++) {
+    v += Math.floor(Math.random() * 5) - 2;
+    arr.push(Math.max(0, v));
+  }
+  return arr;
+}
+
+/* ── Throughput data generator ─────────────────────────────────────────── */
+function makeThroughputHistory(): { time: string; value: number }[] {
+  const now = new Date();
+  return Array.from({ length: 20 }, (_, i) => {
+    const t = new Date(now.getTime() - (19 - i) * 60_000);
+    return {
+      time: t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+      value: Math.floor(Math.random() * 6) + 1,
+    };
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PASSENGER FLOW DOTS (CSS-keyframe animated)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+const DOT_COUNT = 8;
+const FLOW_DURATION_BASE = 2.8; // seconds
+
+function PassengerFlowDots() {
+  return (
+    <div className="relative h-6 w-full overflow-hidden select-none">
+      <style>{`
+        @keyframes qflow-dot {
+          0%   { transform: translateX(0); opacity: 0; }
+          8%   { opacity: 1; }
+          85%  { opacity: 1; }
+          100% { transform: translateX(calc(100cqw - 8px)); opacity: 0; }
+        }
+        .qflow-track { container-type: inline-size; display: flex; align-items: center; gap: 14px; width: 100%; height: 100%; }
+      `}</style>
+      <div className="qflow-track">
+        {Array.from({ length: DOT_COUNT }, (_, i) => (
+          <motion.span
+            key={i}
+            className="inline-block w-2 h-2 rounded-full bg-foreground/25 flex-shrink-0"
+            animate={{
+              x: ['0%', '100%'],
+              opacity: [0, 0.6, 0.6, 0],
+            }}
+            transition={{
+              x: {
+                duration: FLOW_DURATION_BASE + i * 0.15,
+                repeat: Infinity,
+                ease: 'linear',
+                delay: i * 0.35,
+              },
+              opacity: {
+                duration: FLOW_DURATION_BASE + i * 0.15,
+                repeat: Infinity,
+                ease: 'linear',
+                delay: i * 0.35,
+                times: [0, 0.08, 0.85, 1],
+              },
+            }}
+          />
+        ))}
+      </div>
+      {/* Left/right labels */}
+      <span className="absolute left-0 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground font-medium pointer-events-none">Queue</span>
+      <span className="absolute right-0 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground font-medium pointer-events-none">Board</span>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   STAT CARD (with Sparkline + AnimatedCounter)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+function StatCard({
+  label,
+  count,
+  icon,
+  bgColor,
+  iconBg,
+  trendSeed,
+  sparkColor,
+}: {
+  label: string;
+  count: number;
+  icon: React.ReactNode;
+  bgColor: string;
+  iconBg: string;
+  trendSeed: number;
+  sparkColor: string;
+}) {
+  const trend = useMemo(() => makeTrend(trendSeed), [trendSeed]);
+
+  return (
+    <Card className={`glass-stat ${bgColor}`}>
+      <CardContent className="p-2.5 flex items-center gap-2.5">
+        <div className={`w-8 h-8 rounded-lg ${iconBg} flex items-center justify-center flex-shrink-0`}>
+          {icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <AnimatedCounter
+            value={count}
+            className="text-xl font-bold text-foreground leading-none"
+          />
+          <p className="text-[11px] text-muted-foreground">{label}</p>
+        </div>
+        <Sparkline
+          data={trend}
+          width={56}
+          height={24}
+          color={sparkColor}
+          fillColor={sparkColor}
+        />
+      </CardContent>
+    </Card>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THROUGHPUT METER
+   ══════════════════════════════════════════════════════════════════════════ */
+
+function ThroughputMeter({ history }: { history: { time: string; value: number }[] }) {
+  const latest = history[history.length - 1]?.value ?? 0;
+  const avg = Math.round(history.reduce((s, d) => s + d.value, 0) / history.length);
+  const peak = Math.max(...history.map((d) => d.value));
+
+  return (
+    <Card className="glass-card">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <TrendingUp className="w-4 h-4 text-foreground" />
+          Real-Time Throughput
+          <Badge variant="secondary" className="text-[10px] ml-auto">
+            passengers/min
+          </Badge>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="pt-0 space-y-3">
+        {/* Chart */}
+        <div className="h-28 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={history} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
+              <defs>
+                <linearGradient id="throughputGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="var(--foreground)" stopOpacity={0.15} />
+                  <stop offset="100%" stopColor="var(--foreground)" stopOpacity={0.02} />
+                </linearGradient>
+              </defs>
+              <XAxis
+                dataKey="time"
+                tick={{ fontSize: 9, fill: 'var(--muted-foreground)' }}
+                axisLine={false}
+                tickLine={false}
+                interval="preserveStartEnd"
+              />
+              <YAxis
+                tick={{ fontSize: 9, fill: 'var(--muted-foreground)' }}
+                axisLine={false}
+                tickLine={false}
+                domain={[0, 'auto']}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'var(--card)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '8px',
+                  fontSize: '11px',
+                  color: 'var(--foreground)',
+                }}
+                labelStyle={{ color: 'var(--muted-foreground)' }}
+                formatter={(v: number) => [`${v} pax/min`, 'Throughput']}
+              />
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke="var(--foreground)"
+                strokeWidth={2}
+                fill="url(#throughputGrad)"
+                dot={false}
+                activeDot={{ r: 3, strokeWidth: 0, fill: 'var(--foreground)' }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Summary row */}
+        <div className="flex items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-foreground" />
+            <span className="text-muted-foreground">Current:</span>
+            <span className="font-semibold text-foreground">{latest}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-soft" />
+            <span className="text-muted-foreground">Avg:</span>
+            <span className="font-semibold text-foreground">{avg}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-linen" />
+            <span className="text-muted-foreground">Peak:</span>
+            <span className="font-semibold text-foreground">{peak}</span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MAIN COMPONENT
+   ══════════════════════════════════════════════════════════════════════════ */
+
 export function LiveQueue() {
+  /* ── State ────────────────────────────────────────────────────────────── */
   const [entries, setEntries] = useState<QueueEntry[]>(() => {
     const initial: QueueEntry[] = [];
+    // Make a few entries old enough to test no-show detection
     for (let i = 0; i < 18; i++) {
-      initial.push(generateEntry(i + 1));
+      const ageOffset = i === 0 ? NO_SHOW_MS + 60_000 : i === 5 ? NO_SHOW_MS + 120_000 : 0;
+      initial.push(generateEntry(i + 1, ageOffset));
     }
     return initial;
   });
 
   const [searchText, setSearchText] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterStatus>('all');
+  const [confettiTrigger, setConfettiTrigger] = useState(0);
+  const [confettiPos, setConfettiPos] = useState({ x: 0, y: 0 });
+  const [quickBoarding, setQuickBoarding] = useState(false);
 
+  const [throughputHistory, setThroughputHistory] = useState(() => makeThroughputHistory());
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  /* ── No-show detection timer ─────────────────────────────────────────── */
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setEntries((prev) =>
+        prev.map((e) => {
+          if (
+            (e.status === 'waiting' || e.status === 'called') &&
+            Date.now() - e.joinTimestamp >= NO_SHOW_MS
+          ) {
+            return { ...e, status: 'expired' as QueueStatus, estimatedWait: '—' };
+          }
+          return e;
+        })
+      );
+    }, 5000); // check every 5s
+    return () => clearInterval(interval);
+  }, []);
+
+  /* ── Throughput simulation timer ─────────────────────────────────────── */
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setThroughputHistory((prev) => {
+        const now = new Date();
+        const newPoint = {
+          time: now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+          value: Math.floor(Math.random() * 6) + 1,
+        };
+        const next = [...prev.slice(1), newPoint];
+        return next;
+      });
+    }, 15_000); // update every 15s
+    return () => clearInterval(interval);
+  }, []);
+
+  /* ── Computed ────────────────────────────────────────────────────────── */
   const filteredEntries = useMemo(() => {
     return entries.filter((entry) => {
       const matchesSearch =
@@ -154,7 +453,12 @@ export function LiveQueue() {
   const calledCount = entries.filter((e) => e.status === 'called').length;
   const boardingCount = entries.filter((e) => e.status === 'boarding').length;
   const servedCount = entries.filter((e) => e.status === 'boarded').length;
+  const expiredCount = entries.filter((e) => e.status === 'expired').length;
+  const activeQueueCount = entries.filter(
+    (e) => e.status !== 'boarded' && e.status !== 'cancelled' && e.status !== 'expired'
+  ).length;
 
+  /* ── Handlers ────────────────────────────────────────────────────────── */
   const handleSimulate = useCallback(() => {
     const newEntry: QueueEntry = {
       id: crypto.randomUUID(),
@@ -166,29 +470,92 @@ export function LiveQueue() {
       position: 1,
       estimatedWait: '~25 min',
       joinTime: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+      joinTimestamp: Date.now(),
     };
     setEntries((prev) =>
       [newEntry, ...prev.map((e) => ({ ...e, position: e.position + 1 }))]
     );
+    toast.success(`${newEntry.name} joined the queue`);
+  }, []);
+
+  const fireConfetti = useCallback((event?: React.MouseEvent) => {
+    if (event) {
+      setConfettiPos({ x: event.clientX, y: event.clientY });
+    } else {
+      // center of screen
+      setConfettiPos({ x: window.innerWidth / 2, y: window.innerHeight / 3 });
+    }
+    setConfettiTrigger((p) => p + 1);
   }, []);
 
   const handleCall = useCallback((id: string) => {
     setEntries((prev) =>
-      prev.map((e) => (e.id === id ? { ...e, status: 'called' as QueueStatus, estimatedWait: '~5 min' } : e))
+      prev.map((e) =>
+        e.id === id ? { ...e, status: 'called' as QueueStatus, estimatedWait: '~5 min' } : e
+      )
     );
   }, []);
 
-  const handleBoard = useCallback((id: string) => {
-    setEntries((prev) =>
-      prev.map((e) => (e.id === id ? { ...e, status: 'boarding' as QueueStatus, estimatedWait: '~2 min' } : e))
-    );
-  }, []);
+  const handleBoard = useCallback(
+    (id: string, event?: React.MouseEvent) => {
+      setEntries((prev) =>
+        prev.map((e) =>
+          e.id === id ? { ...e, status: 'boarding' as QueueStatus, estimatedWait: '~2 min' } : e
+        )
+      );
+      fireConfetti(event);
+      const entry = entries.find((e) => e.id === id);
+      if (entry) {
+        toast.success(`${entry.name} is boarding!`);
+      }
+    },
+    [entries, fireConfetti]
+  );
 
   const handleCancel = useCallback((id: string) => {
     setEntries((prev) =>
-      prev.map((e) => (e.id === id ? { ...e, status: 'cancelled' as QueueStatus, estimatedWait: '—' } : e))
+      prev.map((e) =>
+        e.id === id ? { ...e, status: 'cancelled' as QueueStatus, estimatedWait: '—' } : e
+      )
     );
   }, []);
+
+  const handleRequeue = useCallback((id: string) => {
+    setEntries((prev) =>
+      prev.map((e) =>
+        e.id === id
+          ? { ...e, status: 'waiting' as QueueStatus, estimatedWait: '~20 min', joinTimestamp: Date.now() }
+          : e
+      )
+    );
+    toast.info('Passenger re-queued');
+  }, []);
+
+  const handleQuickBoard = useCallback(() => {
+    setQuickBoarding(true);
+
+    // Find next 5 eligible entries (called or waiting)
+    setEntries((prev) => {
+      const eligible = prev.filter(
+        (e) => e.status === 'called' || e.status === 'waiting'
+      );
+      const toBoard = eligible.slice(0, 5);
+      const ids = new Set(toBoard.map((e) => e.id));
+
+      const updated = prev.map((e) =>
+        ids.has(e.id)
+          ? { ...e, status: 'boarding' as QueueStatus, estimatedWait: '~2 min' }
+          : e
+      );
+
+      return updated;
+    });
+
+    fireConfetti();
+    toast.success(`Quick Board: boarding ${Math.min(5, entries.filter((e) => e.status === 'called' || e.status === 'waiting').length)} passengers`);
+
+    setTimeout(() => setQuickBoarding(false), 1200);
+  }, [entries, fireConfetti]);
 
   const handleExport = useCallback(() => {
     const headers = ['Ticket #', 'Name', 'Phone', 'Channel', 'Status', 'Position', 'Est. Wait', 'Join Time'];
@@ -206,9 +573,31 @@ export function LiveQueue() {
     toast.success('Queue data exported as CSV');
   }, [entries]);
 
+  /* ══════════════════════════════════════════════════════════════════════
+     RENDER
+     ══════════════════════════════════════════════════════════════════════ */
   return (
-    <div className="space-y-4">
-      {/* Header */}
+    <div className="space-y-4" ref={containerRef}>
+      {/* Confetti Burst overlay */}
+      <ConfettiBurst trigger={confettiTrigger} x={confettiPos.x} y={confettiPos.y} />
+
+      {/* ── Passenger Flow Visualization ────────────────────────────────── */}
+      <Card className="glass-stat overflow-hidden">
+        <CardContent className="px-4 py-3">
+          <div className="flex items-center gap-2 mb-2">
+            <motion.div
+              animate={{ rotate: [0, 15, -15, 0] }}
+              transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+            >
+              <Users className="w-3.5 h-3.5 text-muted-foreground" />
+            </motion.div>
+            <span className="text-xs font-medium text-muted-foreground">Passenger Flow</span>
+          </div>
+          <PassengerFlowDots />
+        </CardContent>
+      </Card>
+
+      {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
           <div>
@@ -228,27 +617,49 @@ export function LiveQueue() {
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="text-sm px-3 py-1">
             <Users className="w-3.5 h-3.5 mr-1.5 text-foreground" />
-            {entries.filter((e) => e.status !== 'boarded' && e.status !== 'cancelled').length} in queue
+            {activeQueueCount} in queue
           </Badge>
-          <Button
-            onClick={handleExport}
-            variant="outline"
-            className="gap-2 border-border text-foreground hover:bg-cashew"
-          >
-            <Download className="w-4 h-4" />
-            <span className="hidden sm:inline">Export</span>
-          </Button>
-          <Button onClick={handleSimulate} className="bg-foreground text-background hover:bg-foreground/90 gap-2">
-            <ArrowUpCircle className="w-4 h-4" />
-            <span className="hidden sm:inline">Simulate New Entry</span>
-            <span className="sm:hidden">+ Entry</span>
-          </Button>
+
+          {/* Quick Board button */}
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.92 }}>
+            <Button
+              onClick={handleQuickBoard}
+              variant="outline"
+              disabled={quickBoarding}
+              className="gap-2 border-border text-foreground hover:bg-warm disabled:opacity-50"
+            >
+              <Zap className={`w-4 h-4 ${quickBoarding ? 'animate-pulse' : ''}`} />
+              <span className="hidden sm:inline">Quick Board</span>
+              <span className="sm:hidden">QB</span>
+            </Button>
+          </motion.div>
+
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.92 }}>
+            <Button
+              onClick={handleExport}
+              variant="outline"
+              className="gap-2 border-border text-foreground hover:bg-cashew"
+            >
+              <Download className="w-4 h-4" />
+              <span className="hidden sm:inline">Export</span>
+            </Button>
+          </motion.div>
+
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.92 }}>
+            <Button
+              onClick={handleSimulate}
+              className="bg-foreground text-background hover:bg-foreground/90 gap-2"
+            >
+              <ArrowUpCircle className="w-4 h-4" />
+              <span className="hidden sm:inline">Simulate New Entry</span>
+              <span className="sm:hidden">+ Entry</span>
+            </Button>
+          </motion.div>
         </div>
       </div>
 
-      {/* Search and Filter Row */}
+      {/* ── Search and Filter Row ───────────────────────────────────────── */}
       <div className="space-y-3">
-        {/* Search Input */}
         <div className="glass-stat rounded-xl p-1">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -261,24 +672,29 @@ export function LiveQueue() {
           </div>
         </div>
 
-        {/* Filter Toggle Buttons */}
         <div className="flex items-center gap-2">
           <Filter className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
           <div className="flex gap-1.5 flex-wrap">
             {filterOptions.map((opt) => (
-              <Button
-                key={opt.value}
-                variant={activeFilter === opt.value ? 'default' : 'outline'}
-                size="sm"
-                className={
-                  activeFilter === opt.value
-                    ? 'h-7 text-xs bg-foreground text-background hover:bg-foreground/90'
-                    : 'h-7 text-xs border-border text-foreground hover:bg-cashew'
-                }
-                onClick={() => setActiveFilter(opt.value)}
-              >
-                {opt.label}
-              </Button>
+              <motion.div key={opt.value} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.92 }}>
+                <Button
+                  variant={activeFilter === opt.value ? 'default' : 'outline'}
+                  size="sm"
+                  className={
+                    activeFilter === opt.value
+                      ? 'h-7 text-xs bg-foreground text-background hover:bg-foreground/90'
+                      : 'h-7 text-xs border-border text-foreground hover:bg-cashew'
+                  }
+                  onClick={() => setActiveFilter(opt.value)}
+                >
+                  {opt.label}
+                  {opt.value === 'expired' && expiredCount > 0 && (
+                    <Badge className="ml-1.5 bg-destructive text-destructive-foreground text-[9px] px-1 py-0 min-w-[16px] badge-bounce">
+                      {expiredCount}
+                    </Badge>
+                  )}
+                </Button>
+              </motion.div>
             ))}
           </div>
           <span className="text-xs text-muted-foreground ml-auto">
@@ -287,55 +703,50 @@ export function LiveQueue() {
         </div>
       </div>
 
-      {/* Queue Stats Bar - compact 2x2 grid */}
+      {/* ── Queue Stats Bar ─────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-3">
-        <Card className="glass-stat bg-cashew">
-          <CardContent className="p-2.5 flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center flex-shrink-0">
-              <Clock className="w-4 h-4 text-background" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xl font-bold text-foreground leading-none">{waitingCount}</p>
-              <p className="text-[11px] text-muted-foreground">Waiting</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="glass-stat bg-linen">
-          <CardContent className="p-2.5 flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-foreground/70 flex items-center justify-center flex-shrink-0">
-              <Megaphone className="w-4 h-4 text-background" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xl font-bold text-foreground leading-none">{calledCount}</p>
-              <p className="text-[11px] text-muted-foreground">Called</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="glass-stat bg-warm">
-          <CardContent className="p-2.5 flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-foreground/50 flex items-center justify-center flex-shrink-0">
-              <Car className="w-4 h-4 text-background" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xl font-bold text-foreground leading-none">{boardingCount}</p>
-              <p className="text-[11px] text-muted-foreground">Boarding</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="glass-stat bg-foreground/5">
-          <CardContent className="p-2.5 flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-foreground/20 flex items-center justify-center flex-shrink-0">
-              <UserCheck className="w-4 h-4 text-background" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xl font-bold text-soft leading-none">{servedCount}</p>
-              <p className="text-[11px] text-muted-foreground">Served</p>
-            </div>
-          </CardContent>
-        </Card>
+        <StatCard
+          label="Waiting"
+          count={waitingCount}
+          icon={<Clock className="w-4 h-4 text-background" />}
+          bgColor="bg-cashew"
+          iconBg="bg-foreground"
+          trendSeed={12}
+          sparkColor="var(--foreground)"
+        />
+        <StatCard
+          label="Called"
+          count={calledCount}
+          icon={<Megaphone className="w-4 h-4 text-background" />}
+          bgColor="bg-linen"
+          iconBg="bg-foreground/70"
+          trendSeed={8}
+          sparkColor="var(--foreground)"
+        />
+        <StatCard
+          label="Boarding"
+          count={boardingCount}
+          icon={<Car className="w-4 h-4 text-background" />}
+          bgColor="bg-warm"
+          iconBg="bg-foreground/50"
+          trendSeed={4}
+          sparkColor="var(--foreground)"
+        />
+        <StatCard
+          label="Served"
+          count={servedCount}
+          icon={<UserCheck className="w-4 h-4 text-background" />}
+          bgColor="bg-foreground/5"
+          iconBg="bg-foreground/20"
+          trendSeed={18}
+          sparkColor="var(--soft)"
+        />
       </div>
 
-      {/* Main Queue Display */}
+      {/* ── Throughput Meter ────────────────────────────────────────────── */}
+      <ThroughputMeter history={throughputHistory} />
+
+      {/* ── Main Queue Display ──────────────────────────────────────────── */}
       <Card className="glass-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold flex items-center gap-2">
@@ -343,6 +754,12 @@ export function LiveQueue() {
             <Badge variant="secondary" className="text-[11px]">
               {filteredEntries.length} shown
             </Badge>
+            {expiredCount > 0 && (
+              <Badge variant="destructive" className="text-[11px] gap-1 badge-bounce">
+                <AlertTriangle className="w-3 h-3" />
+                {expiredCount} expired
+              </Badge>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
@@ -354,85 +771,142 @@ export function LiveQueue() {
             </div>
           ) : (
             <div className="max-h-[600px] overflow-y-auto pr-1 space-y-2 custom-scrollbar">
-              {filteredEntries.map((entry) => (
-                <div
-                  key={entry.id}
-                  className="flex items-center gap-2.5 p-2.5 rounded-xl border border-border/60 bg-card hover:bg-accent/30 transition-colors"
-                >
-                  {/* Ticket Number Circle - smaller for mobile */}
-                  <div
-                    className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs ${getTicketCircleColor(entry.status)}`}
+              <AnimatePresence mode="popLayout">
+                {filteredEntries.map((entry, index) => (
+                  <motion.div
+                    key={entry.id}
+                    layout
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 12, scale: 0.95 }}
+                    transition={{
+                      duration: 0.35,
+                      delay: index * 0.04,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className={`flex items-center gap-2.5 p-2.5 rounded-xl border border-border/60 bg-card transition-colors hover-lift ${
+                      entry.status === 'expired' ? 'ring-1 ring-destructive/30' : ''
+                    }`}
                   >
-                    #{entry.ticketNumber}
-                  </div>
-
-                  {/* Info - badges stacked vertically */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm text-foreground truncate">
-                        {entry.name}
-                      </span>
-                      <span className="text-xs text-muted-foreground hidden sm:inline">{entry.phone}</span>
+                    {/* Ticket Number Circle */}
+                    <div
+                      className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs ${getTicketCircleColor(
+                        entry.status
+                      )}`}
+                    >
+                      #{entry.ticketNumber}
                     </div>
-                    <div className="flex flex-col gap-0.5 mt-0.5">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <Badge variant="secondary" className="text-[11px] gap-1">
-                          {getChannelIcon(entry.channel)}
-                          {entry.channel}
-                        </Badge>
-                        <Badge className={`text-[11px] ${getStatusColor(entry.status)}`}>
-                          {entry.status.charAt(0).toUpperCase() + entry.status.slice(1)}
-                        </Badge>
+
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm text-foreground truncate">
+                          {entry.name}
+                        </span>
+                        <span className="text-xs text-muted-foreground hidden sm:inline">
+                          {entry.phone}
+                        </span>
+                        {/* Expired pulse indicator */}
+                        {entry.status === 'expired' && (
+                          <motion.span
+                            className="relative flex h-2 w-2"
+                            animate={{ scale: [1, 1.4, 1] }}
+                            transition={{ repeat: Infinity, duration: 1.5 }}
+                          >
+                            <span className="absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-destructive traffic-red" />
+                          </motion.span>
+                        )}
                       </div>
-                      <span className="text-[11px] text-muted-foreground">
-                        Pos #{entry.position} &middot; {entry.estimatedWait}
-                      </span>
+                      <div className="flex flex-col gap-0.5 mt-0.5">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <Badge variant="secondary" className="text-[11px] gap-1">
+                            {getChannelIcon(entry.channel)}
+                            {entry.channel}
+                          </Badge>
+                          <Badge
+                            className={`text-[11px] ${getStatusColor(entry.status)} ${
+                              entry.status === 'expired' ? 'badge-bounce' : ''
+                            }`}
+                          >
+                            {entry.status === 'expired' && (
+                              <Timer className="w-3 h-3 mr-0.5" />
+                            )}
+                            {entry.status.charAt(0).toUpperCase() + entry.status.slice(1)}
+                          </Badge>
+                        </div>
+                        <span className="text-[11px] text-muted-foreground">
+                          Pos #{entry.position} &middot; {entry.estimatedWait}
+                          {entry.status === 'expired' && (
+                            <span className="text-destructive ml-1"> — No-show (15 min)</span>
+                          )}
+                        </span>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Actions - touch-friendly min size */}
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
-                    {entry.status === 'waiting' && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-9 min-w-[44px] text-xs gap-1 border-border text-foreground hover:bg-cashew"
-                        onClick={() => handleCall(entry.id)}
-                      >
-                        <Megaphone className="w-3 h-3" />
-                        <span className="hidden sm:inline">Call</span>
-                      </Button>
-                    )}
-                    {entry.status === 'called' && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-9 min-w-[44px] text-xs gap-1 border-border text-foreground hover:bg-linen"
-                        onClick={() => handleBoard(entry.id)}
-                      >
-                        <Car className="w-3 h-3" />
-                        <span className="hidden sm:inline">Board</span>
-                      </Button>
-                    )}
-                    {(entry.status === 'waiting' || entry.status === 'called') && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-9 min-w-[44px] text-xs gap-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
-                        onClick={() => handleCancel(entry.id)}
-                      >
-                        <XCircle className="w-3 h-3" />
-                        <span className="hidden sm:inline">Cancel</span>
-                      </Button>
-                    )}
-                    {(entry.status === 'boarded' || entry.status === 'cancelled') && (
-                      <span className="text-xs text-muted-foreground italic px-2">
-                        {entry.status === 'boarded' ? 'Done' : 'Removed'}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
+                    {/* Actions */}
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      {entry.status === 'waiting' && (
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.92 }}>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-9 min-w-[44px] text-xs gap-1 border-border text-foreground hover:bg-cashew"
+                            onClick={() => handleCall(entry.id)}
+                          >
+                            <Megaphone className="w-3 h-3" />
+                            <span className="hidden sm:inline">Call</span>
+                          </Button>
+                        </motion.div>
+                      )}
+                      {entry.status === 'called' && (
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.92 }}>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-9 min-w-[44px] text-xs gap-1 border-border text-foreground hover:bg-linen"
+                            onClick={(e) => handleBoard(entry.id, e)}
+                          >
+                            <Car className="w-3 h-3" />
+                            <span className="hidden sm:inline">Board</span>
+                          </Button>
+                        </motion.div>
+                      )}
+                      {(entry.status === 'waiting' || entry.status === 'called') && (
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.92 }}>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-9 min-w-[44px] text-xs gap-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
+                            onClick={() => handleCancel(entry.id)}
+                          >
+                            <XCircle className="w-3 h-3" />
+                            <span className="hidden sm:inline">Cancel</span>
+                          </Button>
+                        </motion.div>
+                      )}
+                      {entry.status === 'expired' && (
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.92 }}>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-9 min-w-[44px] text-xs gap-1 border-destructive/50 text-destructive hover:bg-destructive/10"
+                            onClick={() => handleRequeue(entry.id)}
+                          >
+                            <ArrowUpCircle className="w-3 h-3" />
+                            <span className="hidden sm:inline">Re-queue</span>
+                          </Button>
+                        </motion.div>
+                      )}
+                      {(entry.status === 'boarded' || entry.status === 'cancelled') && (
+                        <span className="text-xs text-muted-foreground italic px-2">
+                          {entry.status === 'boarded' ? 'Done' : 'Removed'}
+                        </span>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           )}
         </CardContent>

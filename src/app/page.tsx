@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useQueueFlowStore } from '@/lib/store';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   BarChart3, Users, UserCheck, UserPlus, Truck, Smartphone, Layers, Cable,
   DollarSign, AlertTriangle, Map, Bell, Moon, Sun, Radio,
-  ChevronRight, X, Search, MoreHorizontal
+  ChevronRight, X, Search, MoreHorizontal, Zap, Activity,
+  ChevronDown, ZapOff, Wifi, WifiOff, Thermometer, Target
 } from 'lucide-react';
 import {
   OverviewDashboard
@@ -30,11 +31,12 @@ interface TabDef {
   shortLabel?: string;
   icon: React.ReactNode;
   activeIcon: React.ReactNode;
+  badge?: number;
 }
 
 const primaryTabs: TabDef[] = [
   { id: 'overview', label: 'Home', icon: <BarChart3 className="w-5 h-5" />, activeIcon: <BarChart3 className="w-5 h-5" /> },
-  { id: 'queue', label: 'Queue', icon: <Users className="w-5 h-5" />, activeIcon: <Users className="w-5 h-5" /> },
+  { id: 'queue', label: 'Queue', icon: <Users className="w-5 h-5" />, activeIcon: <Users className="w-5 h-5" />, badge: 47 },
   { id: 'agent', label: 'Agent', icon: <UserCheck className="w-5 h-5" />, activeIcon: <UserCheck className="w-5 h-5" /> },
   { id: 'driver', label: 'Driver', icon: <Truck className="w-5 h-5" />, activeIcon: <Truck className="w-5 h-5" /> },
   { id: 'more', label: 'More', icon: <MoreHorizontal className="w-5 h-5" />, activeIcon: <MoreHorizontal className="w-5 h-5" /> },
@@ -52,10 +54,11 @@ const moreTabs: TabDef[] = [
 const allSectionIds: ActiveSection[] = ['overview', 'queue', 'agent', 'driver', 'ussd', 'architecture', 'api-docs', 'monetization', 'edge-cases', 'roadmap'];
 
 const notifications = [
-  { id: 1, text: 'Vehicle GW-4521-Y arrived at Circle', time: '2m ago', type: 'info' as const },
-  { id: 2, text: 'Queue paused at Kaneshie Station', time: '8m ago', type: 'warning' as const },
-  { id: 3, text: '15 passengers boarded successfully', time: '12m ago', type: 'success' as const },
-  { id: 4, text: 'New driver registered: Emmanuel Tetteh', time: '25m ago', type: 'info' as const },
+  { id: 1, text: 'Vehicle GW-4521-Y arrived at Circle', time: '2m ago', type: 'info' as const, read: false },
+  { id: 2, text: 'Queue paused at Kaneshie Station', time: '8m ago', type: 'warning' as const, read: false },
+  { id: 3, text: '15 passengers boarded successfully', time: '12m ago', type: 'success' as const, read: true },
+  { id: 4, text: 'New driver registered: Emmanuel Tetteh', time: '25m ago', type: 'info' as const, read: true },
+  { id: 5, text: 'System update completed v2.4.1', time: '1h ago', type: 'success' as const, read: true },
 ];
 
 // ── Section render ─────────────────────────────────────────────────────────
@@ -75,6 +78,139 @@ function SectionRenderer({ section }: { section: ActiveSection }) {
   }
 }
 
+// ── Real-time Clock ────────────────────────────────────────────────────────
+function LiveClock() {
+  const [time, setTime] = useState('');
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    const update = () => {
+      const now = new Date();
+      setTime(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
+      setSeconds(now.getSeconds());
+    };
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex items-center gap-1.5 font-mono text-[11px] text-soft tabular-nums">
+      <span>{time}</span>
+      <span className={`w-1 h-1 rounded-full transition-colors ${seconds % 2 === 0 ? 'bg-foreground' : 'bg-transparent'}`} />
+    </div>
+  );
+}
+
+// ── System Status Indicator ────────────────────────────────────────────────
+function SystemStatus() {
+  const [isOnline, setIsOnline] = useState(true);
+  const [latency, setLatency] = useState(42);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLatency(30 + Math.floor(Math.random() * 40));
+    }, 3000);
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  return (
+    <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1.5">
+        {isOnline ? (
+          <Wifi className="w-3 h-3 text-green-500" />
+        ) : (
+          <WifiOff className="w-3 h-3 text-red-500" />
+        )}
+        <span className="text-[10px] text-soft tabular-nums">{latency}ms</span>
+      </div>
+      <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium ${
+        isOnline
+          ? 'bg-green-500/10 text-green-600 dark:text-green-400'
+          : 'bg-red-500/10 text-red-600 dark:text-red-400'
+      }`}>
+        <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'traffic-green bg-green-500' : 'traffic-red bg-red-500'}`} />
+        {isOnline ? 'Live' : 'Offline'}
+      </div>
+    </div>
+  );
+}
+
+// ── Quick Actions Panel ────────────────────────────────────────────────────
+function QuickActions({
+  onAction,
+  isOpen,
+  onToggle,
+}: {
+  onAction: (action: string) => void;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  const actions = [
+    { id: 'add-passenger', label: 'Add Passenger', icon: <UserPlus className="w-5 h-5" />, color: 'bg-foreground text-background' },
+    { id: 'call-next', label: 'Call Next Group', icon: <Radio className="w-5 h-5" />, color: 'bg-foreground/80 text-background' },
+    { id: 'emergency', label: 'Emergency Pause', icon: <ZapOff className="w-5 h-5" />, color: 'bg-red-500 text-white' },
+    { id: 'announce', label: 'Voice Announce', icon: <Activity className="w-5 h-5" />, color: 'bg-foreground/60 text-background' },
+  ];
+
+  return (
+    <>
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40 bg-foreground/20 backdrop-blur-sm"
+              onClick={onToggle}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="fixed bottom-24 right-4 z-50 glass-card rounded-2xl p-3 w-52"
+            >
+              <div className="flex items-center justify-between mb-3 px-1">
+                <span className="text-xs font-semibold text-foreground">Quick Actions</span>
+                <button onClick={onToggle} className="p-1 rounded-lg hover:bg-accent transition-colors">
+                  <X className="w-3.5 h-3.5 text-soft" />
+                </button>
+              </div>
+              <div className="space-y-1">
+                {actions.map((action, idx) => (
+                  <motion.button
+                    key={action.id}
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    onClick={() => { onAction(action.id); onToggle(); }}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-foreground hover:bg-accent/60 active:bg-accent transition-all ripple-container"
+                  >
+                    <span className={`w-8 h-8 rounded-lg ${action.color} flex items-center justify-center`}>
+                      {action.icon}
+                    </span>
+                    {action.label}
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
 // ── Main component ─────────────────────────────────────────────────────────
 export default function HomePage() {
   const { activeSection, setActiveSection } = useQueueFlowStore();
@@ -84,7 +220,9 @@ export default function HomePage() {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [pullY] = useState(0);
+  const [showQuickActions, setShowQuickActions] = useState(false);
+  const [notificationBadge] = useState(notifications.filter(n => !n.read).length);
+  const fabRef = useRef<HTMLDivElement>(null);
 
   // ── Dark mode ──
   useEffect(() => {
@@ -123,9 +261,20 @@ export default function HomePage() {
     setIsRefreshing(true);
     setTimeout(() => {
       setIsRefreshing(false);
-      setPullY(0);
     }, 1200);
   };
+
+  // ── Quick action handler ──
+  const handleQuickAction = useCallback((action: string) => {
+    const messages: Record<string, string> = {
+      'add-passenger': 'New passenger added to queue',
+      'call-next': 'Calling next group of 5 passengers',
+      'emergency': 'Emergency pause activated',
+      'announce': 'Voice announcement queued',
+    };
+    // Could trigger toast here
+    console.log('[QuickAction]', action, messages[action]);
+  }, []);
 
   // ── Determine direction for animation ──
   const [direction, setDirection] = useState(0);
@@ -141,16 +290,28 @@ export default function HomePage() {
     exit: (dir: number) => ({ x: dir > 0 ? '-100%' : '100%', opacity: 0.8 }),
   };
 
+  // ── FAB rotation ──
+  const [fabOpen, setFabOpen] = useState(false);
+
   return (
     <div className="h-dvh flex flex-col bg-background bg-mesh overflow-hidden select-none">
+      {/* ── Floating Orbs (Ambient) ── */}
+      <div className="orb orb-1" />
+      <div className="orb orb-2" />
+      <div className="orb orb-3" />
+
       {/* ── App Header ── */}
-      <header className="flex-shrink-0 glass-header px-4 pt-[env(safe-area-inset-top)] z-40">
+      <header className="flex-shrink-0 glass-header px-4 pt-[env(safe-area-inset-top)] z-40 relative">
         <div className="flex items-center justify-between h-14">
           {/* Left: Logo + Location */}
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 rounded-2xl bg-foreground flex items-center justify-center shadow-sm flex-shrink-0">
+            <motion.div
+              className="w-9 h-9 rounded-2xl bg-foreground flex items-center justify-center shadow-sm flex-shrink-0"
+              whileHover={{ scale: 1.05, rotate: 3 }}
+              whileTap={{ scale: 0.95 }}
+            >
               <span className="text-background text-[11px] font-bold tracking-tight">QF</span>
-            </div>
+            </motion.div>
             <div className="min-w-0">
               <h1 className="font-bold text-sm tracking-tight truncate">QueueFlow</h1>
               <div className="flex items-center gap-1.5">
@@ -163,31 +324,67 @@ export default function HomePage() {
             </div>
           </div>
 
+          {/* Center: System Status (desktop only) */}
+          <div className="hidden md:flex items-center gap-4">
+            <SystemStatus />
+            <LiveClock />
+          </div>
+
           {/* Right: Actions */}
           <div className="flex items-center gap-1 flex-shrink-0">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.92 }}
               onClick={() => setShowSearch(!showSearch)}
               className="p-2.5 rounded-xl active:scale-95 transition-transform"
               aria-label="Search"
             >
               <Search className="w-[18px] h-[18px] text-foreground" />
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.92 }}
               onClick={() => setShowNotifications(!showNotifications)}
               className="relative p-2.5 rounded-xl active:scale-95 transition-transform"
               aria-label="Notifications"
             >
               <Bell className="w-[18px] h-[18px] text-foreground" />
-              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-destructive" />
-            </button>
-            <button
+              {notificationBadge > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-destructive text-white text-[9px] font-bold flex items-center justify-center badge-bounce"
+                >
+                  {notificationBadge}
+                </motion.span>
+              )}
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.92 }}
               onClick={() => setDarkMode(!darkMode)}
               className="p-2.5 rounded-xl active:scale-95 transition-transform"
               aria-label="Toggle dark mode"
             >
-              {darkMode ? <Sun className="w-[18px] h-[18px]" /> : <Moon className="w-[18px] h-[18px]" />}
-            </button>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={darkMode ? 'dark' : 'light'}
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {darkMode ? <Sun className="w-[18px] h-[18px]" /> : <Moon className="w-[18px] h-[18px]" />}
+                </motion.div>
+              </AnimatePresence>
+            </motion.button>
           </div>
+        </div>
+
+        {/* Mobile status bar */}
+        <div className="flex md:hidden items-center justify-between pb-1.5 -mt-0.5">
+          <SystemStatus />
+          <LiveClock />
         </div>
 
         {/* Search bar (collapsible) */}
@@ -204,7 +401,7 @@ export default function HomePage() {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-soft" />
                   <Input
-                    placeholder="Search passengers, tickets..."
+                    placeholder="Search passengers, tickets, drivers..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     autoFocus
@@ -218,7 +415,7 @@ export default function HomePage() {
       </header>
 
       {/* ── Main Content Area (scrollable) ── */}
-      <main className="flex-1 overflow-hidden relative">
+      <main className="flex-1 overflow-hidden relative z-10">
         <div
           className="h-full overflow-y-auto overscroll-y-contain custom-scrollbar"
           style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}
@@ -258,7 +455,7 @@ export default function HomePage() {
 
       {/* ── Bottom Tab Bar ── */}
       <nav
-        className="flex-shrink-0 glass-tab-bar z-40 border-t border-glass-border"
+        className="flex-shrink-0 glass-tab-bar z-40 border-t border-glass-border relative"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
         role="navigation"
         aria-label="Main navigation"
@@ -267,11 +464,13 @@ export default function HomePage() {
           {primaryTabs.map((tab) => {
             const isActive = tab.id !== 'more' && activeSection === tab.id;
             return (
-              <button
+              <motion.button
                 key={tab.id}
                 onClick={() => handleTabPress(tab)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.92 }}
                 className={`
-                  flex flex-col items-center justify-center gap-0.5 min-w-[56px] py-1 px-2 rounded-2xl transition-all duration-200
+                  relative flex flex-col items-center justify-center gap-0.5 min-w-[56px] py-1 px-2 rounded-2xl transition-all duration-200
                   ${isActive ? 'text-foreground' : 'text-soft active:text-foreground'}
                 `}
                 aria-current={isActive ? 'page' : undefined}
@@ -279,8 +478,10 @@ export default function HomePage() {
               >
                 <div className={`relative transition-transform duration-200 ${isActive ? 'scale-110' : ''}`}>
                   {tab.icon}
-                  {tab.id === 'queue' && (
-                    <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-green-500 ring-2 ring-background" />
+                  {tab.badge && (
+                    <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 rounded-full bg-foreground text-background text-[9px] font-bold flex items-center justify-center px-1">
+                      {tab.badge}
+                    </span>
                   )}
                 </div>
                 <span className={`text-[10px] font-medium transition-colors ${isActive ? 'text-foreground' : ''}`}>
@@ -293,7 +494,7 @@ export default function HomePage() {
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}
-              </button>
+              </motion.button>
             );
           })}
         </div>
@@ -321,7 +522,7 @@ export default function HomePage() {
               onDragEnd={(_, info) => {
                 if (info.offset.y > 100) setShowMore(false);
               }}
-              className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl bg-card border-t border-border max-h-[70vh] overflow-hidden"
+              className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl glass-card overflow-hidden"
               style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             >
               {/* Drag handle */}
@@ -343,9 +544,11 @@ export default function HomePage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.05 }}
+                    whileHover={{ x: 4 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={() => handleMoreItem(tab.id)}
                     className={`
-                      w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-sm font-medium transition-all
+                      w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-sm font-medium transition-all ripple-container
                       ${activeSection === tab.id
                         ? 'bg-foreground text-background'
                         : 'text-foreground active:bg-accent'
@@ -387,7 +590,7 @@ export default function HomePage() {
               onDragEnd={(_, info) => {
                 if (info.offset.y > 100) setShowNotifications(false);
               }}
-              className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl bg-card border-t border-border max-h-[70vh] overflow-hidden"
+              className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl glass-card overflow-hidden"
               style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             >
               <div className="flex justify-center pt-3 pb-2">
@@ -396,14 +599,19 @@ export default function HomePage() {
               <div className="px-5 pb-3 flex items-center justify-between">
                 <div>
                   <h2 className="font-semibold text-base">Notifications</h2>
-                  <p className="text-xs text-soft mt-0.5">{notifications.length} new</p>
+                  <p className="text-xs text-soft mt-0.5">{notificationBadge} new</p>
                 </div>
-                <button
-                  onClick={() => setShowNotifications(false)}
-                  className="p-2 rounded-xl active:bg-accent transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button className="text-xs text-foreground/60 hover:text-foreground font-medium transition-colors">
+                    Mark all read
+                  </button>
+                  <button
+                    onClick={() => setShowNotifications(false)}
+                    className="p-2 rounded-xl active:bg-accent transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
               <div className="px-3 pb-4 space-y-1 max-h-[50vh] overflow-y-auto custom-scrollbar">
                 {notifications.map((n, idx) => (
@@ -412,7 +620,10 @@ export default function HomePage() {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.05 }}
-                    className="flex items-start gap-3 px-4 py-3 rounded-2xl active:bg-accent transition-colors"
+                    whileHover={{ x: 2 }}
+                    className={`flex items-start gap-3 px-4 py-3 rounded-2xl active:bg-accent/60 transition-colors ${
+                      !n.read ? 'bg-accent/30' : ''
+                    }`}
                   >
                     <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${
                       n.type === 'info' ? 'bg-blue-500' : n.type === 'warning' ? 'bg-amber-500' : 'bg-green-500'
@@ -421,6 +632,9 @@ export default function HomePage() {
                       <p className="text-sm text-foreground leading-relaxed">{n.text}</p>
                       <p className="text-[11px] text-soft mt-1">{n.time}</p>
                     </div>
+                    {!n.read && (
+                      <div className="w-2 h-2 rounded-full bg-foreground mt-2 flex-shrink-0" />
+                    )}
                   </motion.div>
                 ))}
               </div>
@@ -429,27 +643,43 @@ export default function HomePage() {
         )}
       </AnimatePresence>
 
-      {/* ── FAB (Floating Action Button) ── */}
+      {/* ── FAB (Floating Action Button) with Quick Actions ── */}
       <AnimatePresence>
-        {(activeSection === 'queue' || activeSection === 'agent') && !showMore && !showNotifications && (
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-            className="fixed bottom-20 right-4 z-30"
-          >
-            <button
-              className="w-14 h-14 rounded-full bg-foreground text-background shadow-lg shadow-foreground/25 flex items-center justify-center active:scale-95 transition-transform"
-              aria-label="Quick action"
+        {(activeSection === 'queue' || activeSection === 'agent' || activeSection === 'overview') && !showMore && !showNotifications && (
+          <>
+            <QuickActions
+              onAction={handleQuickAction}
+              isOpen={showQuickActions}
+              onToggle={() => setShowQuickActions(!showQuickActions)}
+            />
+            <motion.div
+              ref={fabRef}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+              className="fixed bottom-20 right-4 z-30"
             >
-              {activeSection === 'queue' ? (
-                <Users className="w-6 h-6" />
-              ) : (
-                <UserPlus className="w-6 h-6" />
-              )}
-            </button>
-          </motion.div>
+              <motion.button
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setShowQuickActions(!showQuickActions)}
+                className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-colors fab-shadow ${
+                  showQuickActions
+                    ? 'bg-foreground text-background rotate-45'
+                    : 'bg-foreground text-background'
+                }`}
+                aria-label="Quick actions"
+              >
+                <motion.div
+                  animate={{ rotate: showQuickActions ? 45 : 0 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                >
+                  <Zap className="w-6 h-6" />
+                </motion.div>
+              </motion.button>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
