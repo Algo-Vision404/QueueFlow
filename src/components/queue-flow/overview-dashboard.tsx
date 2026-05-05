@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback, useSyncExternalStore } from 'r
 import {
   Users, UserCheck, Clock, Car, TrendingUp, ArrowUpRight, Activity, Flame,
   Target, Thermometer, Zap, ArrowDownRight, CheckCircle2, Timer, BarChart3,
-  Calendar, Award
+  Calendar, Award, Volume2, Truck
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -14,7 +14,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { motion } from 'framer-motion';
-import { AnimatedCounter, Sparkline, ProgressRing } from '@/lib/animations';
+import {
+  AnimatedCounter, Sparkline, ProgressRing,
+  SpotlightCard, SoundWave, StatusGrid, GlowingLine, ParallaxTilt,
+  CountdownRing, NumberMorph, ElasticButton, LivePulseDot
+} from '@/lib/animations';
 
 // ── Data ───────────────────────────────────────────────────────────────
 const queueActivityData = [
@@ -115,46 +119,48 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
   return null;
 }
 
-// ── Stat Card with Animation ───────────────────────────────────────────
+// ── Stat Card with Animation + ParallaxTilt ───────────────────────────
 function AnimatedStatCard({ stat, index }: { stat: typeof stats[0]; index: number }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ delay: index * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] as const }}
-    >
-      <Card className="glass-stat hover-lift ripple-container cursor-default">
-        <CardContent className="p-3 sm:p-4">
-          <div className="flex items-center justify-between">
-            <div className="p-2 rounded-lg bg-cashew">
-              <stat.icon className="w-4 h-4 text-foreground" />
+    <ParallaxTilt intensity={4}>
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ delay: index * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] as const }}
+      >
+        <Card className="glass-stat hover-lift ripple-container cursor-default card-shine">
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex items-center justify-between">
+              <div className="p-2 rounded-lg bg-cashew">
+                <stat.icon className="w-4 h-4 text-foreground" />
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Badge
+                  variant="secondary"
+                  className={`text-[10px] gap-0 px-1.5 py-0 ${
+                    stat.trendUp
+                      ? 'bg-green-500/10 text-green-600 dark:text-green-400'
+                      : 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                  }`}
+                >
+                  {stat.trendUp ? <ArrowUpRight className="w-2.5 h-2.5" /> : <ArrowDownRight className="w-2.5 h-2.5" />}
+                  {stat.trend}
+                </Badge>
+              </div>
             </div>
-            <div className="flex items-center gap-1.5">
-              <Badge
-                variant="secondary"
-                className={`text-[10px] gap-0 px-1.5 py-0 ${
-                  stat.trendUp
-                    ? 'bg-green-500/10 text-green-600 dark:text-green-400'
-                    : 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
-                }`}
-              >
-                {stat.trendUp ? <ArrowUpRight className="w-2.5 h-2.5" /> : <ArrowDownRight className="w-2.5 h-2.5" />}
-                {stat.trend}
-              </Badge>
+            <div className="mt-2 flex items-end justify-between">
+              <div>
+                <p className="text-3xl font-bold tracking-tight text-foreground leading-none">
+                  <AnimatedCounter value={stat.value} duration={1500} prefix={stat.suffix === 'm' ? '~' : ''} suffix={stat.suffix === 'm' ? 'm' : ''} />
+                </p>
+                <p className="text-[11px] text-muted-foreground mt-1 leading-tight">{stat.label}</p>
+              </div>
+              <Sparkline data={stat.sparkData} width={56} height={24} />
             </div>
-          </div>
-          <div className="mt-2 flex items-end justify-between">
-            <div>
-              <p className="text-3xl font-bold tracking-tight text-foreground leading-none">
-                <AnimatedCounter value={stat.value} duration={1500} prefix={stat.suffix === 'm' ? '~' : ''} suffix={stat.suffix === 'm' ? 'm' : ''} />
-              </p>
-              <p className="text-[11px] text-muted-foreground mt-1 leading-tight">{stat.label}</p>
-            </div>
-            <Sparkline data={stat.sparkData} width={56} height={24} />
-          </div>
-        </CardContent>
-      </Card>
-    </motion.div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </ParallaxTilt>
   );
 }
 
@@ -196,6 +202,57 @@ function ActivityFeedItem({ boarding, index }: { boarding: typeof recentBoarding
   );
 }
 
+// ── Vehicle Countdown Component ────────────────────────────────────────
+function VehicleCountdown({ vehicle }: { vehicle: { plate: string; driver: string; route: string; eta: number; capacity: number; loaded: number } }) {
+  const [remaining, setRemaining] = useState(vehicle.eta);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setRemaining((prev) => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const minutes = Math.floor(remaining / 60);
+  const seconds = remaining % 60;
+  const progress = 1 - remaining / vehicle.eta;
+
+  return (
+    <div className="flex items-center gap-3 p-2.5 rounded-xl border border-border/60 hover:bg-accent/30 transition-colors">
+      <CountdownRing
+        seconds={remaining}
+        maxSeconds={vehicle.eta}
+        size={44}
+        strokeWidth={3}
+        color={remaining < 120 ? '#ef4444' : remaining < 300 ? '#eab308' : '#22c55e'}
+      />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="font-bold font-mono text-sm text-foreground">{vehicle.plate}</span>
+          <Badge variant="secondary" className="text-[10px] bg-cashew text-foreground">
+            {vehicle.route}
+          </Badge>
+        </div>
+        <p className="text-[11px] text-muted-foreground mt-0.5">{vehicle.driver} — {vehicle.loaded}/{vehicle.capacity} seats</p>
+        <div className="mt-1.5 h-1 bg-muted rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-foreground/30 rounded-full"
+            initial={{ width: 0 }}
+            animate={{ width: `${progress * 100}%` }}
+            transition={{ duration: 1, ease: 'linear' }}
+          />
+        </div>
+      </div>
+      <div className="text-right flex-shrink-0">
+        <span className="font-mono text-sm font-bold text-foreground tabular-nums">
+          {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+        </span>
+        <p className="text-[10px] text-muted-foreground">ETA</p>
+      </div>
+    </div>
+  );
+}
+
 /* ── useSyncExternalStore-based greeting (no hydration mismatch) ── */
 let _greetMinute = -1;
 let _greetSnap = { greeting: '', currentDate: '' };
@@ -227,6 +284,28 @@ function useGreeting() {
 
 export function OverviewDashboard() {
   const { currentDate, greeting } = useGreeting();
+
+  // Simulate live queue count changes
+  const [liveQueueCount, setLiveQueueCount] = useState(47);
+  const [liveServedCount, setLiveServedCount] = useState(128);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setLiveQueueCount((prev) => {
+        const delta = Math.random() > 0.6 ? -1 : 1;
+        return Math.max(20, Math.min(80, prev + delta));
+      });
+      setLiveServedCount((prev) => prev + (Math.random() > 0.7 ? 1 : 0));
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Override first two stats with live values
+  const liveStats = stats.map((stat, idx) => {
+    if (idx === 0) return { ...stat, value: liveQueueCount };
+    if (idx === 1) return { ...stat, value: liveServedCount };
+    return stat;
+  });
 
   return (
     <div className="space-y-4">
@@ -281,9 +360,81 @@ export function OverviewDashboard() {
         ))}
       </motion.div>
 
+      {/* ── System Health Status Grid ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.12 }}
+      >
+        <SpotlightCard className="glass-stat p-3">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Activity className="w-4 h-4 text-foreground" />
+              <span className="text-xs font-semibold text-foreground">System Health</span>
+            </div>
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-green-500/10">
+              <LivePulseDot color="bg-green-500" size={5} />
+              <span className="text-[10px] font-medium text-green-600 dark:text-green-400">All systems go</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { label: 'Queue Engine', status: 98, active: 47 },
+              { label: 'USSD Gateway', status: 100, active: 12 },
+              { label: 'SMS Service', status: 95, active: 8 },
+              { label: 'API Server', status: 99, active: 64 },
+            ].map((sys) => (
+              <div key={sys.label} className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-foreground font-medium">{sys.label}</span>
+                  <span className="text-[10px] font-mono tabular-nums text-green-600 dark:text-green-400">{sys.status}%</span>
+                </div>
+                <StatusGrid cells={20} activeCount={Math.round(sys.active / 100 * 20)} />
+              </div>
+            ))}
+          </div>
+        </SpotlightCard>
+      </motion.div>
+
+      {/* ── Glowing Line Divider ── */}
+      <GlowingLine />
+
+      {/* ── Voice Announcement Widget ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+      >
+        <SpotlightCard className="glass-stat p-3">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center">
+                <Volume2 className="w-4 h-4 text-background" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-foreground">Voice Announcement</p>
+                <p className="text-[10px] text-muted-foreground">Auto-call passengers via PA system</p>
+              </div>
+            </div>
+            <Badge variant="secondary" className="text-[10px] bg-green-500/10 text-green-600 dark:text-green-400">
+              Active
+            </Badge>
+          </div>
+          <div className="flex items-center gap-3">
+            <SoundWave isPlaying={true} barCount={32} className="flex-1" />
+            <ElasticButton variant="accent" className="text-xs px-3 py-1.5">
+              Make Announcement
+            </ElasticButton>
+          </div>
+        </SpotlightCard>
+      </motion.div>
+
+      {/* ── Glowing Line Divider ── */}
+      <GlowingLine />
+
       {/* ── Top Stats Grid with Animated Counters ── */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {stats.map((stat, idx) => (
+        {liveStats.map((stat, idx) => (
           <AnimatedStatCard key={stat.label} stat={stat} index={idx} />
         ))}
       </div>
@@ -347,6 +498,45 @@ export function OverviewDashboard() {
           </CardContent>
         </Card>
       </motion.div>
+
+      {/* ── Vehicle Arrival Countdown ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.65 }}
+      >
+        <Card className="glass-card">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  <Truck className="w-4 h-4 text-foreground" />
+                  Incoming Vehicles
+                </CardTitle>
+                <CardDescription className="text-xs mt-0.5">Estimated arrival countdown</CardDescription>
+              </div>
+              <div className="flex items-center gap-1">
+                <LivePulseDot color="bg-green-500" size={6} />
+                <span className="text-[10px] text-green-600 dark:text-green-400 font-medium">3 incoming</span>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="space-y-3">
+              {[
+                { plate: 'GC-2847-WX', driver: 'Kwame Asante', route: 'Accra Central', eta: 180, capacity: 14, loaded: 8 },
+                { plate: 'AW-9921-XR', driver: 'Ama Mensah', route: 'Tema Station', eta: 420, capacity: 18, loaded: 0 },
+                { plate: 'GN-1053-BK', driver: 'Kofi Boateng', route: 'Kasoa', eta: 660, capacity: 16, loaded: 0 },
+              ].map((v) => (
+                <VehicleCountdown key={v.plate} vehicle={v} />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* ── Glowing Line Divider ── */}
+      <GlowingLine />
 
       {/* ── Charts Row ── */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">

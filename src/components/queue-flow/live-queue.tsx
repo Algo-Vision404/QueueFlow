@@ -4,7 +4,7 @@ import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import {
   Users, UserCheck, Clock, Car, Phone, Smartphone, Globe, UserCircle,
   ArrowUpCircle, XCircle, Megaphone, Search, Download, Filter,
-  Zap, Timer, AlertTriangle, TrendingUp
+  Zap, Timer, AlertTriangle, TrendingUp, Activity, Flame, UserPlus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,6 +17,8 @@ import {
   Sparkline,
   ConfettiBurst,
   ProgressRing,
+  SpotlightCard, GlowingLine, ParallaxTilt, SoundWave,
+  CountdownRing, LivePulseDot, ElasticButton, MarqueeTicker
 } from '@/lib/animations';
 import {
   AreaChart,
@@ -411,6 +413,13 @@ export function LiveQueue() {
   const [throughputHistory, setThroughputHistory] = useState(() => makeThroughputHistory());
   const containerRef = useRef<HTMLDivElement>(null);
 
+  /* ── Hydration-safe nowMs for countdown timer ────────────────────────── */
+  const [nowMs, setNowMs] = useState(1700000000000);
+  useEffect(() => {
+    const timer = setInterval(() => setNowMs(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   /* ── No-show detection timer ─────────────────────────────────────────── */
   useEffect(() => {
     const interval = setInterval(() => {
@@ -468,6 +477,10 @@ export function LiveQueue() {
   const activeQueueCount = entries.filter(
     (e) => e.status !== 'boarded' && e.status !== 'cancelled' && e.status !== 'expired'
   ).length;
+
+  /* ── Status banner computed values ───────────────────────────────────── */
+  const activeCount = waitingCount;
+  const boardedCount = servedCount;
 
   /* ── Handlers ────────────────────────────────────────────────────────── */
   const handleSimulate = useCallback(() => {
@@ -592,6 +605,29 @@ export function LiveQueue() {
       {/* Confetti Burst overlay */}
       <ConfettiBurst trigger={confettiTrigger} x={confettiPos.x} y={confettiPos.y} />
 
+      {/* ── Live Queue Status Banner ── */}
+      <div className="flex items-center gap-2 px-3 py-2 rounded-2xl glass-stat mb-4">
+        <LivePulseDot color="bg-green-500" size={8} />
+        <span className="text-xs font-semibold text-foreground flex-1">Live Queue Active</span>
+        <div className="flex items-center gap-3 text-[11px]">
+          <span className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+            <span className="text-muted-foreground">{activeCount} waiting</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+            <span className="text-muted-foreground">{calledCount} called</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-foreground" />
+            <span className="text-muted-foreground">{boardedCount} boarded</span>
+          </span>
+        </div>
+      </div>
+
+      {/* ── GlowingLine: after status banner, before main content ── */}
+      <GlowingLine className="my-3" />
+
       {/* ── Passenger Flow Visualization ────────────────────────────────── */}
       <Card className="glass-stat overflow-hidden">
         <CardContent className="px-4 py-3">
@@ -631,6 +667,9 @@ export function LiveQueue() {
             {activeQueueCount} in queue
           </Badge>
 
+          {/* SoundWave visualizer for boarding */}
+          <SoundWave isPlaying={quickBoarding} barCount={16} />
+
           {/* Quick Board button */}
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.92 }}>
             <Button
@@ -656,16 +695,12 @@ export function LiveQueue() {
             </Button>
           </motion.div>
 
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.92 }}>
-            <Button
-              onClick={handleSimulate}
-              className="bg-foreground text-background hover:bg-foreground/90 gap-2"
-            >
-              <ArrowUpCircle className="w-4 h-4" />
-              <span className="hidden sm:inline">Simulate New Entry</span>
-              <span className="sm:hidden">+ Entry</span>
-            </Button>
-          </motion.div>
+          {/* ElasticButton: Add Passenger */}
+          <ElasticButton onClick={handleSimulate} variant="accent" className="text-xs">
+            <UserPlus className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Add Passenger</span>
+            <span className="sm:hidden">+ Entry</span>
+          </ElasticButton>
         </div>
       </div>
 
@@ -714,48 +749,82 @@ export function LiveQueue() {
         </div>
       </div>
 
-      {/* ── Queue Stats Bar ─────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 gap-3">
-        <StatCard
-          label="Waiting"
-          count={waitingCount}
-          icon={<Clock className="w-4 h-4 text-background" />}
-          bgColor="bg-cashew"
-          iconBg="bg-foreground"
-          trendSeed={12}
-          sparkColor="var(--foreground)"
-        />
-        <StatCard
-          label="Called"
-          count={calledCount}
-          icon={<Megaphone className="w-4 h-4 text-background" />}
-          bgColor="bg-linen"
-          iconBg="bg-foreground/70"
-          trendSeed={8}
-          sparkColor="var(--foreground)"
-        />
-        <StatCard
-          label="Boarding"
-          count={boardingCount}
-          icon={<Car className="w-4 h-4 text-background" />}
-          bgColor="bg-warm"
-          iconBg="bg-foreground/50"
-          trendSeed={4}
-          sparkColor="var(--foreground)"
-        />
-        <StatCard
-          label="Served"
-          count={servedCount}
-          icon={<UserCheck className="w-4 h-4 text-background" />}
-          bgColor="bg-foreground/5"
-          iconBg="bg-foreground/20"
-          trendSeed={18}
-          sparkColor="var(--soft)"
-        />
+      {/* ── GlowingLine: before enhanced stat cards ── */}
+      <GlowingLine className="my-3" />
+
+      {/* ── Enhanced Stat Cards ── */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <ParallaxTilt intensity={3}>
+          <SpotlightCard className="glass-stat p-3">
+            <div className="flex items-center gap-2 mb-1.5">
+              <div className="w-6 h-6 rounded-lg bg-cashew flex items-center justify-center">
+                <Users className="w-3.5 h-3.5 text-foreground" />
+              </div>
+              <span className="text-[11px] text-muted-foreground">Total Entries</span>
+            </div>
+            <p className="text-2xl font-bold text-foreground tabular-nums">{filteredEntries.length}</p>
+            <Sparkline data={entries.slice(-8).map((_, i) => 30 + i * 3 + ((i * 7) % 5) - 2)} width={60} height={20} />
+          </SpotlightCard>
+        </ParallaxTilt>
+
+        <ParallaxTilt intensity={3}>
+          <SpotlightCard className="glass-stat p-3">
+            <div className="flex items-center gap-2 mb-1.5">
+              <div className="w-6 h-6 rounded-lg bg-cashew flex items-center justify-center">
+                <Activity className="w-3.5 h-3.5 text-foreground" />
+              </div>
+              <span className="text-[11px] text-muted-foreground">Throughput</span>
+            </div>
+            <p className="text-2xl font-bold text-foreground tabular-nums">{throughputHistory.length > 0 ? throughputHistory[throughputHistory.length - 1].value : 0}<span className="text-sm font-normal text-muted-foreground">/min</span></p>
+            <Sparkline data={throughputHistory.slice(-8).map(t => t.value)} width={60} height={20} />
+          </SpotlightCard>
+        </ParallaxTilt>
+
+        <ParallaxTilt intensity={3}>
+          <SpotlightCard className="glass-stat p-3">
+            <div className="flex items-center gap-2 mb-1.5">
+              <div className="w-6 h-6 rounded-lg bg-cashew flex items-center justify-center">
+                <Flame className="w-3.5 h-3.5 text-foreground" />
+              </div>
+              <span className="text-[11px] text-muted-foreground">Peak Hour</span>
+            </div>
+            <p className="text-2xl font-bold text-foreground">8:30<span className="text-sm font-normal text-muted-foreground"> AM</span></p>
+            <div className="flex gap-0.5 mt-1">
+              {[0.3, 0.5, 0.8, 1.0, 0.9, 0.7, 0.4, 0.2].map((intensity, i) => (
+                <div key={i} className="w-2 h-4 rounded-sm" style={{ backgroundColor: `rgba(12,11,11,${intensity})` }} />
+              ))}
+            </div>
+          </SpotlightCard>
+        </ParallaxTilt>
+
+        <ParallaxTilt intensity={3}>
+          <SpotlightCard className="glass-stat p-3">
+            <div className="flex items-center gap-2 mb-1.5">
+              <div className="w-6 h-6 rounded-lg bg-cashew flex items-center justify-center">
+                <Clock className="w-3.5 h-3.5 text-foreground" />
+              </div>
+              <span className="text-[11px] text-muted-foreground">Avg Wait</span>
+            </div>
+            <p className="text-2xl font-bold text-foreground tabular-nums">~12<span className="text-sm font-normal text-muted-foreground"> min</span></p>
+            <div className="h-1.5 bg-muted rounded-full overflow-hidden mt-1.5">
+              <motion.div
+                className="h-full bg-foreground/30 rounded-full"
+                animate={{ width: '40%' }}
+                transition={{ duration: 1.5, ease: 'easeInOut' }}
+              />
+            </div>
+          </SpotlightCard>
+        </ParallaxTilt>
       </div>
+
+      {/* ── GlowingLine: after stat cards, before throughput ── */}
+      <GlowingLine className="my-3" />
 
       {/* ── Throughput Meter ────────────────────────────────────────────── */}
       <ThroughputMeter history={throughputHistory} />
+
+      {/* ── GlowingLine: after throughput, before passenger list ── */}
+      <GlowingLine className="my-3" />
 
       {/* ── Main Queue Display ──────────────────────────────────────────── */}
       <Card className="glass-card">
@@ -854,6 +923,17 @@ export function LiveQueue() {
                         </span>
                       </div>
                     </div>
+
+                    {/* CountdownRing for called entries */}
+                    {entry.status === 'called' && (
+                      <CountdownRing
+                        seconds={30 - Math.floor((nowMs - entry.joinTimestamp) / 1000) % 60}
+                        maxSeconds={30}
+                        size={32}
+                        strokeWidth={2}
+                        color="#eab308"
+                      />
+                    )}
 
                     {/* Actions */}
                     <div className="flex items-center gap-1.5 flex-shrink-0">

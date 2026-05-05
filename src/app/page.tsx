@@ -7,7 +7,8 @@ import {
   BarChart3, Users, UserCheck, UserPlus, Truck, Smartphone, Layers, Cable,
   DollarSign, AlertTriangle, Map, Bell, Moon, Sun, Radio,
   ChevronRight, X, Search, MoreHorizontal, Zap, Activity,
-  ChevronDown, ZapOff, Wifi, WifiOff, Thermometer, Target
+  ChevronDown, ZapOff, Wifi, WifiOff, Thermometer, Target,
+  CheckCircle2, Keyboard,
 } from 'lucide-react';
 import {
   OverviewDashboard
@@ -23,6 +24,102 @@ import { EdgeCasesView } from '@/components/queue-flow/edge-cases-view';
 import { RoadmapView } from '@/components/queue-flow/roadmap-view';
 import type { ActiveSection } from '@/lib/types';
 import { Input } from '@/components/ui/input';
+
+// ── Toast System ──────────────────────────────────────────────────────
+interface Toast {
+  id: string;
+  message: string;
+  type: 'info' | 'success' | 'warning';
+}
+
+const toastIcons = {
+  info: <Activity className="w-3.5 h-3.5" />,
+  success: <CheckCircle2 className="w-3.5 h-3.5" />,
+  warning: <AlertTriangle className="w-3.5 h-3.5" />,
+};
+
+const toastColors = {
+  info: 'bg-cashew border-border',
+  success: 'bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400',
+  warning: 'bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400',
+};
+
+// ── Marquee Ticker ────────────────────────────────────────────────────
+function MarqueeTicker({
+  items,
+  speed = 40,
+}: {
+  items: string[];
+  speed?: number;
+}) {
+  return (
+    <div className="relative overflow-hidden w-full">
+      <div
+        className="flex whitespace-nowrap animate-[marquee_40s_linear_infinite]"
+        style={{ animationDuration: `${speed}s` }}
+      >
+        {[...items, ...items, ...items].map((item, i) => (
+          <span key={i} className="inline-flex items-center gap-2 mx-6 text-xs text-soft">
+            <span className="w-1 h-1 rounded-full bg-foreground/30 flex-shrink-0" />
+            {item}
+          </span>
+        ))}
+      </div>
+      {/* Fade edges */}
+      <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent pointer-events-none" />
+      <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent pointer-events-none" />
+    </div>
+  );
+}
+
+// ── Glowing Line ──────────────────────────────────────────────────────
+function GlowingLine({ className = '' }: { className?: string }) {
+  return (
+    <div className={`relative h-px w-full ${className}`}>
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/20 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/60 to-transparent animate-[glow-slide_3s_ease-in-out_infinite]" />
+    </div>
+  );
+}
+
+// ── Sound Wave Visualizer ─────────────────────────────────────────────
+function SoundWave({
+  isPlaying = false,
+  barCount = 8,
+  className = '',
+}: {
+  isPlaying?: boolean;
+  barCount?: number;
+  className?: string;
+}) {
+  return (
+    <div className={`flex items-center gap-[2px] h-4 ${className}`}>
+      {Array.from({ length: barCount }, (_, i) => (
+        <motion.div
+          key={i}
+          className="w-[3px] rounded-full bg-foreground/40"
+          animate={
+            isPlaying
+              ? {
+                  height: [4, 12 + Math.random() * 8, 6, 14 + Math.random() * 6, 4],
+                }
+              : { height: 4 }
+          }
+          transition={
+            isPlaying
+              ? {
+                  repeat: Infinity,
+                  duration: 0.8 + i * 0.1,
+                  ease: 'easeInOut',
+                  delay: i * 0.05,
+                }
+              : { duration: 0.3 }
+          }
+        />
+      ))}
+    </div>
+  );
+}
 
 // ── Tab definitions ─────────────────────────────────────────────────────────
 interface TabDef {
@@ -222,6 +319,8 @@ export default function HomePage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(false);
   const [notificationBadge] = useState(notifications.filter(n => !n.read).length);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [showShortcuts, setShowShortcuts] = useState(false);
   const fabRef = useRef<HTMLDivElement>(null);
 
   // ── Dark mode ──
@@ -238,6 +337,59 @@ export default function HomePage() {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(() => {});
     }
+  }, []);
+
+  // ── Keyboard shortcuts ──
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      if (e.key === '?' && !e.metaKey && !e.ctrlKey) {
+        setShowShortcuts((prev) => !prev);
+        return;
+      }
+      if (e.key === 'Escape') {
+        setShowShortcuts(false);
+        setShowSearch(false);
+        setShowNotifications(false);
+        setShowMore(false);
+        setShowQuickActions(false);
+        return;
+      }
+      if (e.key === '/' && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        setShowSearch((prev) => !prev);
+        return;
+      }
+      if (e.key.toLowerCase() === 'd' && !e.metaKey && !e.ctrlKey) {
+        setDarkMode((prev) => !prev);
+        return;
+      }
+      if (e.key.toLowerCase() === 'q' && !e.metaKey && !e.ctrlKey) {
+        setShowQuickActions((prev) => !prev);
+        return;
+      }
+      const num = parseInt(e.key);
+      if (num >= 1 && num <= 5) {
+        const tabs = ['overview', 'queue', 'agent', 'driver', 'more'] as const;
+        if (tabs[num - 1] === 'more') {
+          setShowMore(true);
+        } else {
+          setActiveSection(tabs[num - 1]);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [setActiveSection]);
+
+  // ── Toast helper ──
+  const showToast = useCallback((message: string, type: Toast['type'] = 'success') => {
+    const id = `toast-${Date.now()}`;
+    setToasts((prev) => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 3000);
   }, []);
 
   // ── Section navigation helpers ──
@@ -264,17 +416,17 @@ export default function HomePage() {
     }, 1200);
   };
 
-  // ── Quick action handler ──
+  // ── Quick action handler (with toasts) ──
   const handleQuickAction = useCallback((action: string) => {
-    const messages: Record<string, string> = {
-      'add-passenger': 'New passenger added to queue',
-      'call-next': 'Calling next group of 5 passengers',
-      'emergency': 'Emergency pause activated',
-      'announce': 'Voice announcement queued',
+    const messages: Record<string, { text: string; type: Toast['type'] }> = {
+      'add-passenger': { text: 'Passenger added to queue', type: 'success' },
+      'call-next': { text: 'Calling next group of 5 passengers', type: 'info' },
+      'emergency': { text: 'Emergency pause activated!', type: 'warning' },
+      'announce': { text: 'Voice announcement queued', type: 'info' },
     };
-    // Could trigger toast here
-    console.log('[QuickAction]', action, messages[action]);
-  }, []);
+    const m = messages[action];
+    if (m) showToast(m.text, m.type);
+  }, [showToast]);
 
   // ── Determine direction for animation ──
   const [direction, setDirection] = useState(0);
@@ -324,9 +476,10 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Center: System Status (desktop only) */}
+          {/* Center: System Status + SoundWave (desktop only) */}
           <div className="hidden md:flex items-center gap-4">
             <SystemStatus />
+            <SoundWave isPlaying={activeSection === 'agent'} barCount={8} className="hidden md:flex" />
             <LiveClock />
           </div>
 
@@ -413,6 +566,26 @@ export default function HomePage() {
           )}
         </AnimatePresence>
       </header>
+
+      {/* ── Live Activity Ticker ── */}
+      <GlowingLine className="mx-4" />
+      <div className="flex-shrink-0 py-1.5 overflow-hidden">
+        <MarqueeTicker
+          items={[
+            'GW-4521-Y boarding at Bay 3',
+            'Queue #047 called to Gate A',
+            'Kwame Nkrumah Circle: 47 in queue',
+            'Avg wait time: 12 minutes',
+            '15 passengers boarded in last 10 min',
+            'Vehicle AW-7832-X arrived',
+            'System uptime: 99.97%',
+            'Peak hour forecast: 08:00-09:00',
+            'New driver registered: Yaw Adjei',
+          ]}
+          speed={40}
+        />
+      </div>
+      <GlowingLine className="mx-4" />
 
       {/* ── Main Content Area (scrollable) ── */}
       <main className="flex-1 overflow-hidden relative z-10">
@@ -678,6 +851,77 @@ export default function HomePage() {
                   <Zap className="w-6 h-6" />
                 </motion.div>
               </motion.button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* ── Toast Notifications ── */}
+      <div className="fixed top-20 right-4 z-[60] flex flex-col gap-2 pointer-events-none">
+        <AnimatePresence>
+          {toasts.map((toast) => (
+            <motion.div
+              key={toast.id}
+              initial={{ opacity: 0, x: 60, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 60, scale: 0.9 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              className={`pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-2xl border shadow-lg glass-card max-w-xs ${toastColors[toast.type]}`}
+            >
+              {toastIcons[toast.type]}
+              <span className="text-sm font-medium text-foreground">{toast.message}</span>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+
+      {/* ── Keyboard Shortcuts Overlay ── */}
+      <AnimatePresence>
+        {showShortcuts && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[70] bg-foreground/40 backdrop-blur-md"
+              onClick={() => setShowShortcuts(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-[80] glass-card rounded-3xl p-6 max-w-md mx-auto"
+            >
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-2">
+                  <Keyboard className="w-5 h-5 text-foreground" />
+                  <h2 className="font-semibold text-lg text-foreground">Keyboard Shortcuts</h2>
+                </div>
+                <button
+                  onClick={() => setShowShortcuts(false)}
+                  className="p-2 rounded-xl hover:bg-accent transition-colors"
+                >
+                  <X className="w-4 h-4 text-soft" />
+                </button>
+              </div>
+              <div className="space-y-3">
+                {[
+                  { key: '?', desc: 'Show shortcuts' },
+                  { key: 'Esc', desc: 'Close overlay / sheet' },
+                  { key: '/', desc: 'Search' },
+                  { key: '1-5', desc: 'Switch primary tabs' },
+                  { key: 'D', desc: 'Toggle dark mode' },
+                  { key: 'Q', desc: 'Toggle quick actions' },
+                ].map((s) => (
+                  <div key={s.key} className="flex items-center justify-between">
+                    <span className="text-sm text-foreground">{s.desc}</span>
+                    <kbd className="px-2.5 py-1 rounded-lg bg-muted text-xs font-mono font-medium text-foreground border border-border">
+                      {s.key}
+                    </kbd>
+                  </div>
+                ))}
+              </div>
             </motion.div>
           </>
         )}
