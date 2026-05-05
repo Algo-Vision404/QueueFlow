@@ -381,10 +381,10 @@ export function DriverPanel() {
                 {boardingTickets.map((ticket, idx) => (
                   <motion.div
                     key={ticket}
-                    initial={false}
                     animate={{
                       backgroundColor: idx < boardingProgress ? 'var(--cashew)' : 'var(--muted)',
                     }}
+                    transition={{ duration: 0.3 }}
                     className={`
                       text-center py-1.5 px-1 rounded-md text-[11px] font-mono border transition-colors
                       ${idx < boardingProgress

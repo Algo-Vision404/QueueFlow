@@ -121,7 +121,7 @@ function AnimatedStatCard({ stat, index }: { stat: typeof stats[0]; index: numbe
     <motion.div
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ delay: index * 0.08, duration: 0.5, cubicBezier: [0.16, 1, 0.3, 1] }}
+      transition={{ delay: index * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] as const }}
     >
       <Card className="glass-stat hover-lift ripple-container cursor-default">
         <CardContent className="p-3 sm:p-4">
@@ -164,7 +164,7 @@ function ActivityFeedItem({ boarding, index }: { boarding: typeof recentBoarding
     <motion.div
       initial={{ opacity: 0, x: -12 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.06, duration: 0.4, cubicBezier: [0.16, 1, 0.3, 1] }}
+      transition={{ delay: index * 0.06, duration: 0.4, ease: [0.16, 1, 0.3, 1] as const }}
       className="flex items-center gap-2.5 p-2.5 rounded-xl border border-border/60 bg-card hover:bg-accent/30 transition-colors hover-lift"
     >
       <div className={`w-2 h-2 rounded-full flex-shrink-0 ${

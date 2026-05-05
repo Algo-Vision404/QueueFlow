@@ -782,7 +782,7 @@ export function LiveQueue() {
                     transition={{
                       duration: 0.35,
                       delay: index * 0.04,
-                      ease: [0.16, 1, 0.3, 1],
+                      ease: [0.16, 1, 0.3, 1] as const,
                     }}
                     className={`flex items-center gap-2.5 p-2.5 rounded-xl border border-border/60 bg-card transition-colors hover-lift ${
                       entry.status === 'expired' ? 'ring-1 ring-destructive/30' : ''
