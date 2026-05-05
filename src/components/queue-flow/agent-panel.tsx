@@ -159,7 +159,7 @@ const mockPassengers: Passenger[] = Array.from({ length: 15 }, (_, i) => ({
     'Afia Osei', 'Emmanuel Tetteh', 'Grace Owusu', 'Daniel Asare', 'Esther Amponsah',
     'Samuel Annan', 'Rebecca Aidoo', 'Joseph Lamptey', 'Felicia Okai', 'Patrick Agyeman',
   ][i],
-  phone: `024${String(1000000 + Math.random() * 8999999 | 0)}`,
+  phone: `024${String(1000000 + ((i * 600137 + 3) % 8999999)).padStart(7, '0')}`,
   channel: (['agent', 'ussd', 'sms'] as const)[i % 3],
   status: i < 3 ? 'called' : i < 5 ? 'boarding' : 'waiting',
   waitMin: i * 3 + 2,

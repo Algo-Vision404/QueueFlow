@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
 import {
   Users, UserCheck, Clock, Car, TrendingUp, ArrowUpRight, Activity, Flame,
   Target, Thermometer, Zap, ArrowDownRight, CheckCircle2, Timer, BarChart3,
@@ -196,19 +196,33 @@ function ActivityFeedItem({ boarding, index }: { boarding: typeof recentBoarding
   );
 }
 
+/* ── useSyncExternalStore-based greeting (no hydration mismatch) ── */
+let _greetMinute = -1;
+let _greetSnap = { greeting: '', currentDate: '' };
+
+function _getGreetingSnapshot() {
+  const now = new Date();
+  const minute = now.getHours() * 60 + now.getMinutes();
+  if (minute !== _greetMinute) {
+    _greetMinute = minute;
+    const hour = now.getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    const currentDate = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    _greetSnap = { greeting, currentDate };
+  }
+  return _greetSnap;
+}
+
+const _emptyGreeting = { greeting: '', currentDate: '' };
+function _getServerGreetingSnapshot() { return _emptyGreeting; }
+
+function _subscribeGreeting(cb: () => void) {
+  const id = setInterval(cb, 60000);
+  return () => clearInterval(id);
+}
+
 function useGreeting() {
-  const [now, setNow] = useState(new Date());
-
-  useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 60000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const currentDate = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-  const hour = now.getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-
-  return { currentDate, greeting };
+  return useSyncExternalStore(_subscribeGreeting, _getGreetingSnapshot, _getServerGreetingSnapshot);
 }
 
 export function OverviewDashboard() {
@@ -224,11 +238,11 @@ export function OverviewDashboard() {
       >
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-sm text-muted-foreground">{greeting}</p>
+            <p className="text-sm text-muted-foreground">{greeting || <span className="inline-block w-28 h-4 rounded bg-muted animate-pulse" />}</p>
             <h1 className="text-xl font-bold tracking-tight text-foreground">Dashboard Overview</h1>
             <div className="flex items-center gap-2 mt-1">
               <Calendar className="w-3 h-3 text-soft" />
-              <p className="text-xs text-muted-foreground">{currentDate}</p>
+              <p className="text-xs text-muted-foreground">{currentDate || <span className="inline-block w-40 h-3 rounded bg-muted animate-pulse" />}</p>
             </div>
           </div>
           <motion.div

@@ -76,23 +76,37 @@ const filterOptions: { label: string; value: FilterStatus }[] = [
 
 const NO_SHOW_MS = 15 * 60 * 1000; // 15 minutes
 
+/* ── Seeded PRNG (mulberry32) for deterministic SSR hydration ──────────── */
+function mulberry32(seed: number) {
+  return function () {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const _sr = mulberry32(42);
+function sRand() { return _sr(); }
+function sRandInt(max: number) { return Math.floor(sRand() * max); }
+
 /* ══════════════════════════════════════════════════════════════════════════
    HELPERS
    ══════════════════════════════════════════════════════════════════════════ */
 
 function generateEntry(position: number, ageOffsetMs: number = 0): QueueEntry {
-  const name = sampleNames[Math.floor(Math.random() * sampleNames.length)];
-  const phone = samplePhones[Math.floor(Math.random() * samplePhones.length)];
-  const channel = channels[Math.floor(Math.random() * channels.length)];
+  const name = sampleNames[sRandInt(sampleNames.length)];
+  const phone = samplePhones[sRandInt(samplePhones.length)];
+  const channel = channels[sRandInt(channels.length)];
   const statuses: QueueStatus[] = ['waiting', 'waiting', 'waiting', 'called', 'called', 'boarding', 'boarded', 'boarded', 'boarded'];
-  const status = statuses[Math.floor(Math.random() * statuses.length)];
-  const ticketNum = String(100 + Math.floor(Math.random() * 900));
-  const waitMin = Math.floor(Math.random() * 25) + 2;
-  const hour = 7 + Math.floor(Math.random() * 2);
-  const minute = Math.floor(Math.random() * 60);
+  const status = statuses[sRandInt(statuses.length)];
+  const ticketNum = String(100 + sRandInt(900));
+  const waitMin = sRandInt(25) + 2;
+  const hour = 7 + sRandInt(2);
+  const minute = sRandInt(60);
 
   return {
-    id: crypto.randomUUID(),
+    id: `entry-${position}-${String(sRandInt(99999)).padStart(5, '0')}`,
     ticketNumber: ticketNum,
     name,
     phone,
@@ -101,7 +115,7 @@ function generateEntry(position: number, ageOffsetMs: number = 0): QueueEntry {
     position,
     estimatedWait: status === 'boarded' ? '0 min' : `~${waitMin} min`,
     joinTime: `${hour}:${String(minute).padStart(2, '0')} AM`,
-    joinTimestamp: Date.now() - ageOffsetMs,
+    joinTimestamp: 1700000000000 - ageOffsetMs, // fixed base timestamp
   };
 }
 
@@ -165,7 +179,7 @@ function makeTrend(seed: number, len: number = 8): number[] {
   const arr: number[] = [];
   let v = seed;
   for (let i = 0; i < len; i++) {
-    v += Math.floor(Math.random() * 5) - 2;
+    v += ((i * 7 + seed * 3) % 5) - 2; // deterministic pseudo-variation
     arr.push(Math.max(0, v));
   }
   return arr;
@@ -173,14 +187,11 @@ function makeTrend(seed: number, len: number = 8): number[] {
 
 /* ── Throughput data generator ─────────────────────────────────────────── */
 function makeThroughputHistory(): { time: string; value: number }[] {
-  const now = new Date();
-  return Array.from({ length: 20 }, (_, i) => {
-    const t = new Date(now.getTime() - (19 - i) * 60_000);
-    return {
-      time: t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
-      value: Math.floor(Math.random() * 6) + 1,
-    };
-  });
+  const baseHours = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2];
+  return baseHours.map((h) => ({
+    time: `${h % 12 || 12}:00 ${h < 12 ? 'AM' : 'PM'}`,
+    value: ((h * 3 + 7) % 6) + 1, // deterministic values 1-6
+  }));
 }
 
 /* ══════════════════════════════════════════════════════════════════════════

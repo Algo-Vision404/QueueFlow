@@ -142,7 +142,7 @@ export function USSDSimulator() {
   const [sessionLog, setSessionLog] = useState<LogEntry[]>([]);
   const [queueJoined, setQueueJoined] = useState(false);
   const [queueCancelled, setQueueCancelled] = useState(false);
-  const [sessionId] = useState(() => `ussd-${Date.now()}`);
+  const [sessionId] = useState('ussd-session');
   const inputRef = useRef<HTMLInputElement>(null);
   const logEndRef = useRef<HTMLDivElement>(null);
 
