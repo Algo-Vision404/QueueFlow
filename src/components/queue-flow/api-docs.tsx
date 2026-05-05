@@ -32,11 +32,11 @@ function CodeBlock({ code, label }: { code: string; label?: string }) {
   return (
     <div className="relative">
       {label && (
-        <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-1 bg-cashew rounded-t-md border border-border border-b-0">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+        <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-2 sm:px-3 py-1 bg-cashew rounded-t-md border border-border border-b-0">
+          <span className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
         </div>
       )}
-      <pre className={`bg-cashew rounded-md p-3 font-mono text-xs leading-relaxed overflow-x-auto ${label ? 'pt-8' : ''}`}>
+      <pre className={`bg-cashew rounded-md p-2 sm:p-3 font-mono text-[11px] sm:text-xs leading-relaxed overflow-x-auto ${label ? 'pt-7 sm:pt-8' : ''}`}>
         <code>{code}</code>
       </pre>
     </div>
@@ -57,14 +57,14 @@ function EndpointCard({ endpoint }: { endpoint: EndpointDef }) {
   return (
     <div className="border rounded-lg overflow-hidden hover:shadow-sm transition-shadow">
       {/* Header */}
-      <div className="flex flex-wrap items-center gap-2 px-4 py-3 bg-muted/50 border-b">
+      <div className="flex flex-wrap items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 bg-muted/50 border-b">
         <MethodBadge method={endpoint.method} />
-        <code className="text-sm font-mono font-semibold text-foreground break-all">{endpoint.path}</code>
+        <code className="text-xs sm:text-sm font-mono font-semibold text-foreground break-all">{endpoint.path}</code>
       </div>
 
       {/* Body */}
-      <div className="p-4 space-y-3">
-        <p className="text-sm text-muted-foreground">{endpoint.description}</p>
+      <div className="p-3 sm:p-4 space-y-3">
+        <p className="text-xs sm:text-sm text-muted-foreground">{endpoint.description}</p>
 
         {endpoint.body && (
           <CodeBlock code={endpoint.body} label={endpoint.bodyLabel || 'Request Body'} />
@@ -138,14 +138,14 @@ function QueueManagementTab() {
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       <Card className="glass-card border-border bg-cashew/50">
-        <CardContent className="p-4">
+        <CardContent className="p-3 sm:p-4">
           <div className="flex items-center gap-2 mb-1">
             <ClipboardList className="w-4 h-4" />
             <h3 className="font-semibold text-sm text-foreground">Queue Management</h3>
           </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed">
             Core queue operations for passengers and agents. All endpoints accept and return JSON. Authenticated agents get extended access.
           </p>
         </CardContent>
@@ -228,14 +228,14 @@ function AgentOperationsTab() {
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       <Card className="glass-card border-border bg-warm/50">
-        <CardContent className="p-4">
+        <CardContent className="p-3 sm:p-4">
           <div className="flex items-center gap-2 mb-1">
             <UserCheck className="w-4 h-4" />
             <h3 className="font-semibold text-sm text-foreground">Agent Operations</h3>
           </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed">
             Agent-specific endpoints for managing queues at physical locations. All agent endpoints require authentication via the login endpoint.
           </p>
         </CardContent>
@@ -303,14 +303,14 @@ function DriverOperationsTab() {
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       <Card className="glass-card border-border bg-linen/20">
-        <CardContent className="p-4">
+        <CardContent className="p-3 sm:p-4">
           <div className="flex items-center gap-2 mb-1">
             <Truck className="w-4 h-4" />
             <h3 className="font-semibold text-sm text-foreground">Driver Operations</h3>
           </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed">
             Driver endpoints for arrival reporting, passenger assignment, and boarding confirmation. Drivers can access via mobile web or USSD.
           </p>
         </CardContent>
@@ -374,14 +374,14 @@ function USSDHandlerTab() {
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       <Card className="glass-card border-border bg-cashew/50">
-        <CardContent className="p-4">
+        <CardContent className="p-3 sm:p-4">
           <div className="flex items-center gap-2 mb-1">
             <Smartphone className="w-4 h-4" />
             <h3 className="font-semibold text-sm text-foreground">USSD Handler</h3>
           </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed">
             USSD session handler processes multi-step menu interactions from telecom gateways. Supports Africa&apos;s Talking and MTN API formats.
           </p>
         </CardContent>
@@ -393,19 +393,19 @@ function USSDHandlerTab() {
 
       <Card className="glass-card">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">USSD Session Flow Examples</CardTitle>
-          <CardDescription>Step-by-step interaction examples showing the menu navigation</CardDescription>
+          <CardTitle className="text-sm sm:text-base">USSD Session Flow Examples</CardTitle>
+          <CardDescription className="text-xs">Step-by-step interaction examples showing the menu navigation</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {ussdFlows.map((flow) => (
               <div key={flow.step} className="border rounded-lg overflow-hidden">
-                <div className="flex items-center gap-2 px-3 py-2 bg-muted/50 border-b">
+                <div className="flex items-center gap-2 px-2.5 sm:px-3 py-2 bg-muted/50 border-b">
                   <Badge variant="outline" className="text-[10px] font-medium">{flow.step}</Badge>
-                  <code className="text-xs font-mono text-muted-foreground">Input: {flow.input}</code>
+                  <code className="text-[11px] sm:text-xs font-mono text-muted-foreground">Input: {flow.input}</code>
                 </div>
-                <div className="px-3 py-2.5">
-                  <pre className="text-xs font-mono leading-relaxed whitespace-pre-wrap text-foreground/80">
+                <div className="px-2.5 sm:px-3 py-2 sm:py-2.5">
+                  <pre className="text-[11px] sm:text-xs font-mono leading-relaxed whitespace-pre-wrap text-foreground/80">
                     {flow.response}
                   </pre>
                 </div>
@@ -423,7 +423,7 @@ function USSDHandlerTab() {
 // =============================================
 export function ApiDocs() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-1">
@@ -433,7 +433,7 @@ export function ApiDocs() {
             </svg>
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">API Documentation</h2>
+            <h2 className="text-xl font-bold tracking-tight">API Documentation</h2>
             <p className="text-sm text-muted-foreground">RESTful API reference for QueueFlow endpoints</p>
           </div>
         </div>
@@ -448,12 +448,14 @@ export function ApiDocs() {
 
       {/* Tabs */}
       <Tabs defaultValue="queue" className="w-full">
-        <TabsList className="w-full sm:w-auto grid grid-cols-2 sm:inline-grid h-auto gap-1 p-1 bg-muted">
-          <TabsTrigger value="queue" className="text-xs sm:text-sm px-3 py-2">Queue Management</TabsTrigger>
-          <TabsTrigger value="agent" className="text-xs sm:text-sm px-3 py-2">Agent Operations</TabsTrigger>
-          <TabsTrigger value="driver" className="text-xs sm:text-sm px-3 py-2">Driver Operations</TabsTrigger>
-          <TabsTrigger value="ussd" className="text-xs sm:text-sm px-3 py-2">USSD Handler</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+          <TabsList className="w-full sm:w-auto inline-grid grid-cols-4 sm:inline-grid h-auto gap-1 p-1 bg-muted min-w-[460px] sm:min-w-0">
+            <TabsTrigger value="queue" className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap">Queue</TabsTrigger>
+            <TabsTrigger value="agent" className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap">Agent</TabsTrigger>
+            <TabsTrigger value="driver" className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap">Driver</TabsTrigger>
+            <TabsTrigger value="ussd" className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap">USSD</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="queue" className="mt-4">
           <ScrollArea className="h-[calc(100vh-280px)] pr-4">

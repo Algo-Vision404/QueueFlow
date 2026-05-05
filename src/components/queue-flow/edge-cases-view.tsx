@@ -34,43 +34,43 @@ function EdgeCaseCard({ item }: { item: EdgeCaseItem }) {
 
   return (
     <Card className={`glass-card border ${item.accentBorder} hover:shadow-md transition-shadow`}>
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-2 sm:pb-3">
         <div className="flex items-start justify-between gap-2">
-          <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg ${item.accentBg}`}>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className={`p-1.5 sm:p-2 rounded-lg ${item.accentBg}`}>
               {item.icon}
             </div>
             <div>
-              <CardTitle className="text-sm sm:text-base">{item.title}</CardTitle>
+              <CardTitle className="text-sm">{item.title}</CardTitle>
             </div>
           </div>
-          <Badge variant="outline" className={`text-[10px] font-medium flex-shrink-0 ${sev.className}`}>
+          <Badge variant="outline" className={`text-[9px] sm:text-[10px] font-medium flex-shrink-0 px-1.5 sm:px-2 ${sev.className}`}>
             {sev.label}
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 sm:space-y-4">
         {/* Scenario */}
         <div>
-          <div className="flex items-center gap-1.5 mb-2">
-            <AlertTriangle className="w-3.5 h-3.5 text-muted-foreground" />
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Scenario</span>
+          <div className="flex items-center gap-1.5 mb-1.5 sm:mb-2">
+            <AlertTriangle className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-muted-foreground" />
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground">Scenario</span>
           </div>
-          <p className="text-sm text-foreground/80 leading-relaxed">{item.scenario}</p>
+          <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed">{item.scenario}</p>
         </div>
 
         <Separator />
 
         {/* Mitigations */}
         <div>
-          <div className="flex items-center gap-1.5 mb-2">
-            <Shield className="w-3.5 h-3.5 text-foreground" />
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Mitigations</span>
+          <div className="flex items-center gap-1.5 mb-1.5 sm:mb-2">
+            <Shield className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-foreground" />
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground">Mitigations</span>
           </div>
-          <ul className="space-y-1.5">
+          <ul className="space-y-1 sm:space-y-1.5">
             {item.mitigations.map((mit, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-sm text-foreground/80">
-                <CheckCircle className="w-3.5 h-3.5 text-foreground mt-0.5 flex-shrink-0" />
+              <li key={idx} className="flex items-start gap-1.5 sm:gap-2 text-xs sm:text-sm text-foreground/80">
+                <CheckCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-foreground mt-0.5 flex-shrink-0" />
                 <span className="leading-relaxed">{mit}</span>
               </li>
             ))}
@@ -82,14 +82,14 @@ function EdgeCaseCard({ item }: { item: EdgeCaseItem }) {
           <>
             <Separator />
             <div>
-              <div className="flex items-center gap-1.5 mb-2">
-                <Zap className="w-3.5 h-3.5 text-soft" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recovery</span>
+              <div className="flex items-center gap-1.5 mb-1.5 sm:mb-2">
+                <Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-soft" />
+                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recovery</span>
               </div>
-              <ul className="space-y-1.5">
+              <ul className="space-y-1 sm:space-y-1.5">
                 {item.recovery.map((rec, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-sm text-foreground/80">
-                    <Zap className="w-3.5 h-3.5 text-soft mt-0.5 flex-shrink-0" />
+                  <li key={idx} className="flex items-start gap-1.5 sm:gap-2 text-xs sm:text-sm text-foreground/80">
+                    <Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-soft mt-0.5 flex-shrink-0" />
                     <span className="leading-relaxed">{rec}</span>
                   </li>
                 ))}
@@ -108,7 +108,7 @@ function EdgeCaseCard({ item }: { item: EdgeCaseItem }) {
 export function EdgeCasesView() {
   const edgeCases: EdgeCaseItem[] = [
     {
-      icon: <WifiOff className="w-5 h-5 text-red-600 dark:text-red-400" />,
+      icon: <WifiOff className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 dark:text-red-400" />,
       title: 'Network Failure',
       severity: 'critical',
       scenario: 'USSD gateway timeout or SMS delivery failure leaves passengers without confirmation of their queue position. Telecom infrastructure in developing regions can be unreliable.',
@@ -128,7 +128,7 @@ export function EdgeCasesView() {
       accentBorder: 'border-border',
     },
     {
-      icon: <Smartphone className="w-5 h-5 text-foreground" />,
+      icon: <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />,
       title: 'Users Without Phones',
       severity: 'high',
       scenario: 'Some passengers may not own a phone at all — elderly, children, or extremely low-income individuals. They cannot join via USSD or receive SMS notifications.',
@@ -147,7 +147,7 @@ export function EdgeCasesView() {
       accentBorder: 'border-border',
     },
     {
-      icon: <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />,
+      icon: <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 dark:text-red-400" />,
       title: 'Drivers Ignoring System',
       severity: 'high',
       scenario: 'Drivers may pick up passengers outside the queue system, loading their vehicles directly and bypassing the organized queue. This undermines the system and frustrates compliant users.',
@@ -167,7 +167,7 @@ export function EdgeCasesView() {
       accentBorder: 'border-border',
     },
     {
-      icon: <Users className="w-5 h-5 text-foreground" />,
+      icon: <Users className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />,
       title: 'Queue Abuse',
       severity: 'high',
       scenario: 'Multiple queue entries per person, queue jumping, or selling positions. One person joining on behalf of a group and distributing positions for money.',
@@ -187,7 +187,7 @@ export function EdgeCasesView() {
       accentBorder: 'border-border',
     },
     {
-      icon: <Zap className="w-5 h-5 text-foreground" />,
+      icon: <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />,
       title: 'Peak Overload',
       severity: 'critical',
       scenario: 'During rush hours (morning/evening), 500+ people may attempt to join simultaneously. USSD gateway rate limits, API latency spikes, and agent dashboards lag.',
@@ -207,7 +207,7 @@ export function EdgeCasesView() {
       accentBorder: 'border-border',
     },
     {
-      icon: <Battery className="w-5 h-5 text-soft" />,
+      icon: <Battery className="w-4 h-4 sm:w-5 sm:h-5 text-soft" />,
       title: 'Power / Infrastructure Failure',
       severity: 'medium',
       scenario: 'Locations may experience power outages or internet downtime. Agent tablets run out of battery. Display boards go dark.',
@@ -227,7 +227,7 @@ export function EdgeCasesView() {
       accentBorder: 'border-border',
     },
     {
-      icon: <Globe className="w-5 h-5 text-foreground" />,
+      icon: <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />,
       title: 'Multilingual Support',
       severity: 'medium',
       scenario: 'Ghana has multiple official languages (English, Twi, Ga, Hausa, Ewe). USSD sessions and SMS must be comprehensible to users who may not read English well.',
@@ -242,7 +242,7 @@ export function EdgeCasesView() {
       accentBorder: 'border-border',
     },
     {
-      icon: <Shield className="w-5 h-5 text-foreground" />,
+      icon: <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-foreground" />,
       title: 'Data Privacy & Security',
       severity: 'high',
       scenario: 'Phone numbers displayed publicly on queue boards could expose user data. Data breaches could leak passenger information. Regulatory compliance (GDPR, Ghana DPA) required.',
@@ -272,7 +272,7 @@ export function EdgeCasesView() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-1">
@@ -280,7 +280,7 @@ export function EdgeCasesView() {
             <AlertTriangle className="w-5 h-5 text-foreground" />
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Edge Cases & Failure Modes</h2>
+            <h2 className="text-xl font-bold tracking-tight">Edge Cases & Failure Modes</h2>
             <p className="text-sm text-muted-foreground">Identified risks, mitigations, and recovery strategies</p>
           </div>
         </div>
@@ -289,11 +289,11 @@ export function EdgeCasesView() {
       {/* Severity summary */}
       <div className="flex flex-wrap gap-2">
         {severitySummary.map((s) => (
-          <Badge key={s.label} variant="outline" className={`text-xs font-medium ${s.className}`}>
+          <Badge key={s.label} variant="outline" className={`text-[10px] sm:text-xs font-medium ${s.className}`}>
             {s.label}: {s.count}
           </Badge>
         ))}
-        <Badge variant="outline" className="text-xs font-medium">
+        <Badge variant="outline" className="text-[10px] sm:text-xs font-medium">
           Total: {edgeCases.length}
         </Badge>
       </div>
@@ -301,7 +301,7 @@ export function EdgeCasesView() {
       <Separator />
 
       {/* Edge case cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         {edgeCases.map((item) => (
           <EdgeCaseCard key={item.title} item={item} />
         ))}
@@ -309,14 +309,14 @@ export function EdgeCasesView() {
 
       {/* Bottom note */}
       <Card className="glass-card border-dashed border-2 border-border bg-cashew/50">
-        <CardContent className="p-4">
-          <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-cashew mt-0.5">
-              <CheckCircle className="w-4 h-4 text-foreground" />
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex items-start gap-2 sm:gap-3">
+            <div className="p-1.5 sm:p-2 rounded-lg bg-cashew mt-0.5">
+              <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground" />
             </div>
             <div>
-              <h4 className="font-semibold text-sm mb-1">Defensive Design Philosophy</h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <h4 className="font-semibold text-xs sm:text-sm mb-1">Defensive Design Philosophy</h4>
+              <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed">
                 Every edge case is designed with a primary mitigation and a fallback recovery path. The system is built to degrade gracefully — 
                 even if all digital channels fail, the paper-ticket + agent workflow ensures the queue continues to function. 
                 Technology is an enhancement, not a dependency.

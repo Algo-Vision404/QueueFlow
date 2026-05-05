@@ -111,6 +111,12 @@ const vehicleStatusColors: Record<VehicleStatus, string> = {
   departed: 'bg-cashew text-soft',
 };
 
+const channelColors: Record<Channel, string> = {
+  agent: 'border-blue-300 text-blue-700 dark:border-blue-700 dark:text-blue-300',
+  ussd: 'border-green-300 text-green-700 dark:border-green-700 dark:text-green-300',
+  sms: 'border-orange-300 text-orange-700 dark:border-orange-700 dark:text-orange-300',
+};
+
 // ── Mock Data ───────────────────────────────────────────────────────────────
 const mockPassengers: Passenger[] = Array.from({ length: 15 }, (_, i) => ({
   id: `p-${i + 1}`,
@@ -280,74 +286,74 @@ export function AgentPanel() {
   const visibleQueue = passengers.slice(0, 15);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <Card className="glass-card">
-        <CardContent className="p-4 md:p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-foreground flex items-center justify-center text-background font-bold text-lg shadow-md">
+        <CardContent className="p-3 md:p-5">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-full bg-foreground flex items-center justify-center text-background font-bold text-sm shadow-md flex-shrink-0">
                 AM
               </div>
-              <div>
+              <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-semibold">Ama Mensah</h2>
-                  <Badge className="bg-cashew text-foreground border-0 text-[11px]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-foreground mr-1.5 inline-block animate-pulse" />
+                  <h2 className="text-base font-semibold truncate">Ama Mensah</h2>
+                  <Badge className="bg-cashew text-foreground border-0 text-[10px] flex-shrink-0">
+                    <span className="w-1.5 h-1.5 rounded-full bg-foreground mr-1 inline-block animate-pulse" />
                     Online
                   </Badge>
                 </div>
-                <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mt-0.5">
-                  <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> Kwame Nkrumah Circle</span>
-                  <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> Morning 5AM-12PM</span>
+                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                  <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> Kwame Nkrumah Circle</span>
+                  <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> 5AM-12PM</span>
                 </div>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold text-foreground">{passengers.filter(p => p.status === 'waiting').length}</p>
-              <p className="text-xs text-muted-foreground">Waiting in Queue</p>
+            <div className="text-right flex-shrink-0">
+              <p className="text-xl font-bold text-foreground">{passengers.filter(p => p.status === 'waiting').length}</p>
+              <p className="text-[10px] text-muted-foreground">Waiting</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* ── Quick Actions ──────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-2">
         <Button
           onClick={() => setShowForm(!showForm)}
-          className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background hover:bg-foreground/90 shadow-md"
+          className="h-auto py-3 px-2 flex flex-col items-center gap-1.5 bg-foreground text-background hover:bg-foreground/90 shadow-md rounded-xl"
         >
-          <UserPlus className="w-6 h-6" />
-          <span className="font-semibold text-sm">Add Passenger</span>
-          <span className="text-[11px] text-background/70">Register new passenger</span>
+          <UserPlus className="w-5 h-5" />
+          <span className="font-semibold text-xs leading-tight">Add Passenger</span>
+          <span className="text-[10px] text-background/70 hidden sm:block">Register new passenger</span>
         </Button>
 
         <Button
           onClick={handleCallNextGroup}
           disabled={queuePaused}
-          className="h-auto py-4 flex flex-col items-center gap-2 bg-cashew text-foreground border border-border hover:bg-linen shadow-md"
+          className="h-auto py-3 px-2 flex flex-col items-center gap-1.5 bg-cashew text-foreground border border-border hover:bg-linen shadow-md rounded-xl"
         >
-          <Megaphone className="w-6 h-6" />
-          <span className="font-semibold text-sm">Call Next Group</span>
-          <span className="text-[11px] text-soft">Next 5 passengers</span>
+          <Megaphone className="w-5 h-5" />
+          <span className="font-semibold text-xs leading-tight">Call Next</span>
+          <span className="text-[10px] text-soft hidden sm:block">Next 5 passengers</span>
         </Button>
 
         {queuePaused ? (
           <Button
             onClick={handleResume}
-            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background hover:bg-foreground/90 shadow-md"
+            className="h-auto py-3 px-2 flex flex-col items-center gap-1.5 bg-foreground text-background hover:bg-foreground/90 shadow-md rounded-xl"
           >
-            <Check className="w-6 h-6" />
-            <span className="font-semibold text-sm">Resume Queue</span>
-            <span className="text-[11px] text-background/70">Restore normal operations</span>
+            <Check className="w-5 h-5" />
+            <span className="font-semibold text-xs leading-tight">Resume Queue</span>
+            <span className="text-[10px] text-background/70 hidden sm:block">Restore operations</span>
           </Button>
         ) : (
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button className="h-auto py-4 flex flex-col items-center gap-2 bg-red-600 hover:bg-red-700 text-white shadow-md">
-                <PauseCircle className="w-6 h-6" />
-                <span className="font-semibold text-sm">Emergency Pause</span>
-                <span className="text-[11px] text-red-100">Pause queue operations</span>
+              <Button className="h-auto py-3 px-2 flex flex-col items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white shadow-md rounded-xl">
+                <PauseCircle className="w-5 h-5" />
+                <span className="font-semibold text-xs leading-tight">E-Stop</span>
+                <span className="text-[10px] text-red-100 hidden sm:block">Pause queue ops</span>
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -372,9 +378,9 @@ export function AgentPanel() {
       </div>
 
       {queuePaused && (
-        <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800">
+        <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800">
           <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0" />
-          <p className="text-sm text-red-700 dark:text-red-300 font-medium">Queue is currently paused. No passengers are being called.</p>
+          <p className="text-xs text-red-700 dark:text-red-300 font-medium">Queue is paused. No passengers being called.</p>
         </div>
       )}
 
@@ -382,36 +388,38 @@ export function AgentPanel() {
       {showForm && (
         <Card className="glass-card border-border">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
+            <CardTitle className="text-sm flex items-center gap-2">
               <UserPlus className="w-4 h-4 text-foreground" />
               Add New Passenger
             </CardTitle>
-            <CardDescription>Register a new passenger into the queue system</CardDescription>
+            <CardDescription className="text-xs">Register a new passenger into the queue system</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="p-name">Passenger Name *</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="p-name" className="text-xs">Passenger Name *</Label>
                 <Input
                   id="p-name"
                   placeholder="e.g. Kwame Adjei"
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
+                  className="h-11"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="p-phone">Phone Number</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="p-phone" className="text-xs">Phone Number</Label>
                 <Input
                   id="p-phone"
                   placeholder="e.g. 0241234567"
                   value={formPhone}
                   onChange={(e) => setFormPhone(e.target.value)}
+                  className="h-11"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="p-channel">Channel</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="p-channel" className="text-xs">Channel</Label>
                 <Select value={formChannel} onValueChange={(v) => setFormChannel(v as Channel)}>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full h-11">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -421,21 +429,22 @@ export function AgentPanel() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="p-dest">Destination (optional)</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="p-dest" className="text-xs">Destination (optional)</Label>
                 <Input
                   id="p-dest"
                   placeholder="e.g. Accra Central"
                   value={formDestination}
                   onChange={(e) => setFormDestination(e.target.value)}
+                  className="h-11"
                 />
               </div>
             </div>
-            <div className="flex justify-end gap-2 mt-4">
-              <Button variant="outline" onClick={() => setShowForm(false)}>
+            <div className="flex justify-end gap-2 mt-3">
+              <Button variant="outline" onClick={() => setShowForm(false)} className="h-11">
                 Cancel
               </Button>
-              <Button onClick={handleAddPassenger} className="bg-foreground text-background hover:bg-foreground/90">
+              <Button onClick={handleAddPassenger} className="h-11 bg-foreground text-background hover:bg-foreground/90">
                 <UserPlus className="w-4 h-4 mr-1.5" />
                 Add to Queue
               </Button>
@@ -444,10 +453,98 @@ export function AgentPanel() {
         </Card>
       )}
 
-      {/* ── Main Content Grid ──────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* ── Current Queue View (takes 2 cols) ─────────────────────────── */}
-        <Card className="glass-card xl:col-span-2">
+      {/* ── Mobile Queue Card List ─────────────────────────────────────── */}
+      <div className="xl:hidden">
+        <Card className="glass-card">
+          <CardHeader className="pb-2 pt-3 px-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-sm">Current Queue</CardTitle>
+                <CardDescription className="text-xs">Showing next 15</CardDescription>
+              </div>
+              <Badge variant="outline" className="text-[10px]">
+                {passengers.length} total
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="px-3 pb-3">
+            <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+              {visibleQueue.map((p) => (
+                <div
+                  key={p.id}
+                  className="flex items-center gap-2 p-2.5 rounded-lg border bg-card"
+                >
+                  {/* Ticket */}
+                  <span className="font-mono text-xs text-muted-foreground flex-shrink-0 w-10">
+                    {p.ticket}
+                  </span>
+
+                  {/* Name & Status */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{p.name}</p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="inline-flex items-center gap-1">
+                        <span className={`w-1.5 h-1.5 rounded-full ${statusDot[p.status]}`} />
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium capitalize ${statusColors[p.status]}`}>
+                          {p.status}
+                        </span>
+                      </span>
+                      <Badge
+                        variant="outline"
+                        className={`text-[10px] capitalize px-1.5 py-0 ${channelColors[p.channel]}`}
+                      >
+                        {p.channel}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="w-8 h-8 p-0 text-foreground hover:text-foreground/80 hover:bg-cashew"
+                      onClick={() => handleCall(p.id)}
+                      aria-label="Call passenger"
+                    >
+                      <Phone className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="w-8 h-8 p-0 text-foreground hover:text-foreground/80 hover:bg-cashew"
+                      onClick={() => handleSkip(p.id)}
+                      aria-label="Skip passenger"
+                    >
+                      <ArrowRight className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="w-8 h-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                      onClick={() => handleRemove(p.id)}
+                      aria-label="Remove passenger"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+              {visibleQueue.length === 0 && (
+                <div className="py-8 text-center text-muted-foreground">
+                  <Users className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                  <p className="text-xs">No passengers in queue</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* ── Main Content Grid (desktop) ────────────────────────────────── */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        {/* ── Current Queue Table (desktop only, takes 2 cols) ─────────── */}
+        <Card className="glass-card xl:col-span-2 hidden xl:block">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div>
@@ -473,7 +570,7 @@ export function AgentPanel() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {visibleQueue.map((p, idx) => (
+                  {visibleQueue.map((p) => (
                     <TableRow key={p.id} className="group">
                       <TableCell className="font-mono text-xs text-muted-foreground">
                         {p.ticket}
@@ -544,45 +641,45 @@ export function AgentPanel() {
         </Card>
 
         {/* ── Right Sidebar ────────────────────────────────────────────── */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Boarding Control Panel */}
           <Card className="glass-card">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-sm flex items-center gap-2">
                 <Truck className="w-4 h-4 text-foreground" />
                 Boarding Control
               </CardTitle>
-              <CardDescription>Manage vehicle boarding</CardDescription>
+              <CardDescription className="text-xs">Manage vehicle boarding</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3">
               {/* Available Vehicles */}
-              <div className="space-y-3">
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              <div className="space-y-2">
+                <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                   Available Vehicles
                 </p>
                 {vehicles.map((v) => (
                   <div
                     key={v.id}
-                    className="rounded-lg border p-3 space-y-2"
+                    className="rounded-lg border p-2.5 space-y-2"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-sm font-semibold">{v.plate}</span>
-                      <Badge className={`text-[11px] border-0 capitalize ${vehicleStatusColors[v.status]}`}>
+                      <span className="font-mono text-xs font-semibold">{v.plate}</span>
+                      <Badge className={`text-[10px] border-0 capitalize ${vehicleStatusColors[v.status]}`}>
                         {v.status}
                       </Badge>
                     </div>
-                    <div className="text-xs text-muted-foreground space-y-0.5">
+                    <div className="text-[11px] text-muted-foreground space-y-0.5">
                       <p>Driver: {v.driver}</p>
-                      <p>Capacity: {v.capacity} passengers</p>
+                      <p>Capacity: {v.capacity} pax</p>
                     </div>
 
                     {v.status === 'boarding' && (
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-muted-foreground">Loading passengers...</span>
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between text-[11px]">
+                          <span className="text-muted-foreground">Loading...</span>
                           <span className="font-semibold text-foreground">{v.loaded}/{v.capacity}</span>
                         </div>
-                        <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
+                        <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
                           <div
                             className="h-full rounded-full bg-foreground transition-all duration-500"
                             style={{ width: `${Math.min((v.loaded / v.capacity) * 100, 100)}%` }}
@@ -590,7 +687,7 @@ export function AgentPanel() {
                         </div>
                         <Button
                           size="sm"
-                          className="w-full bg-cashew text-foreground border border-border hover:bg-linen"
+                          className="w-full h-11 bg-cashew text-foreground border border-border hover:bg-linen"
                           onClick={() => handleCompleteBoarding(v.id)}
                         >
                           <Check className="w-3.5 h-3.5 mr-1.5" />
@@ -602,7 +699,7 @@ export function AgentPanel() {
                     {v.status === 'available' && (
                       <Button
                         size="sm"
-                        className="w-full bg-foreground text-background hover:bg-foreground/90"
+                        className="w-full h-11 bg-foreground text-background hover:bg-foreground/90"
                         onClick={() => handleStartBoarding(v.id)}
                       >
                         <Users className="w-3.5 h-3.5 mr-1.5" />
@@ -623,17 +720,17 @@ export function AgentPanel() {
               <Separator />
 
               {/* Recent Boardings */}
-              <div className="space-y-2">
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              <div className="space-y-1.5">
+                <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                   Recent Boardings
                 </p>
                 {recentBoardings.map((b) => (
-                  <div key={b.id} className="flex items-center justify-between text-sm py-1.5">
-                    <div className="flex items-center gap-2">
-                      <Truck className="w-3.5 h-3.5 text-muted-foreground" />
-                      <span className="font-mono text-xs">{b.plate}</span>
+                  <div key={b.id} className="flex items-center justify-between text-xs py-1">
+                    <div className="flex items-center gap-1.5">
+                      <Truck className="w-3 h-3 text-muted-foreground" />
+                      <span className="font-mono text-[11px]">{b.plate}</span>
                     </div>
-                    <div className="text-right text-xs text-muted-foreground">
+                    <div className="text-right text-[11px] text-muted-foreground">
                       <span>{b.passengers} pax</span>
                       <span className="ml-2">{b.time}</span>
                     </div>
@@ -646,16 +743,16 @@ export function AgentPanel() {
           {/* Exception Handling */}
           <Card className="glass-card">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-sm flex items-center gap-2">
                 <Shield className="w-4 h-4 text-foreground" />
                 Exception Handling
               </CardTitle>
-              <CardDescription>Report queue incidents</CardDescription>
+              <CardDescription className="text-xs">Report queue incidents</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
               <Button
                 variant="outline"
-                className="w-full justify-start gap-2 text-sm"
+                className="w-full justify-start gap-2 text-sm h-12"
                 onClick={handleNoShow}
               >
                 <X className="w-4 h-4 text-red-500" />
@@ -663,7 +760,7 @@ export function AgentPanel() {
               </Button>
               <Button
                 variant="outline"
-                className="w-full justify-start gap-2 text-sm"
+                className="w-full justify-start gap-2 text-sm h-12"
                 onClick={handleQueueJump}
               >
                 <AlertTriangle className="w-4 h-4 text-soft" />
@@ -671,7 +768,7 @@ export function AgentPanel() {
               </Button>
               <Button
                 variant="outline"
-                className="w-full justify-start gap-2 text-sm"
+                className="w-full justify-start gap-2 text-sm h-12"
                 onClick={handleLostItem}
               >
                 <MapPin className="w-4 h-4 text-soft" />
@@ -683,39 +780,39 @@ export function AgentPanel() {
           {/* Queue Analytics */}
           <Card className="glass-card">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-sm flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-foreground" />
                 Queue Analytics
               </CardTitle>
-              <CardDescription>Real-time queue performance</CardDescription>
+              <CardDescription className="text-xs">Real-time queue performance</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {/* Mini Stats */}
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-muted-foreground">
-                    <Clock className="w-3.5 h-3.5" />
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <Clock className="w-3 h-3" />
                     Avg. wait time
                   </span>
                   <span className="font-semibold">12 min</span>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-muted-foreground">
-                    <TrendingUp className="w-3.5 h-3.5" />
+                <div className="flex items-center justify-between text-xs">
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <TrendingUp className="w-3 h-3" />
                     Throughput
                   </span>
                   <span className="font-semibold">8 pax/min</span>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-muted-foreground">
-                    <UserX className="w-3.5 h-3.5" />
+                <div className="flex items-center justify-between text-xs">
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <UserX className="w-3 h-3" />
                     No-show rate
                   </span>
                   <span className="font-semibold">5.2%</span>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-muted-foreground">
-                    <Star className="w-3.5 h-3.5" />
+                <div className="flex items-center justify-between text-xs">
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <Star className="w-3 h-3" />
                     Satisfaction
                   </span>
                   <span className="font-semibold">4.6/5</span>
@@ -726,10 +823,10 @@ export function AgentPanel() {
 
               {/* Sparkline-style bar visualization */}
               <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">
+                <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
                   Hourly Throughput
                 </p>
-                <div className="flex items-end gap-1.5 h-10">
+                <div className="flex items-end gap-1 h-8">
                   {sparklineHeights.map((height, idx) => (
                     <div
                       key={idx}

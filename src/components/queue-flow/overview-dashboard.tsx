@@ -7,7 +7,6 @@ import {
   PieChart, Pie, Cell
 } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 
@@ -47,10 +46,10 @@ const locationQueues = [
 ];
 
 const stats = [
-  { icon: Users, label: 'Total in Queue', value: '47', trend: '+12%', trendLabel: 'vs yesterday', color: 'text-foreground' },
-  { icon: UserCheck, label: 'Total Served Today', value: '128', trend: '+8%', trendLabel: 'vs yesterday', color: 'text-foreground' },
-  { icon: Clock, label: 'Avg Wait Time', value: '~12 min', trend: '-3 min', trendLabel: 'vs yesterday', color: 'text-foreground' },
-  { icon: Car, label: 'Active Drivers', value: '8', trend: '+2', trendLabel: 'from last hour', color: 'text-foreground' },
+  { icon: Users, label: 'In Queue', value: '47', trend: '+12%', trendLabel: 'vs yesterday', color: 'text-foreground' },
+  { icon: UserCheck, label: 'Served Today', value: '128', trend: '+8%', trendLabel: 'vs yesterday', color: 'text-foreground' },
+  { icon: Clock, label: 'Avg Wait', value: '~12m', trend: '-3m', trendLabel: 'vs yesterday', color: 'text-foreground' },
+  { icon: Car, label: 'Drivers', value: '8', trend: '+2', trendLabel: 'from last hr', color: 'text-foreground' },
 ];
 
 // Peak hours heatmap data: 7 days x 4 time slots
@@ -92,10 +91,10 @@ const peakHoursData = [
 
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const timeSlots = [
-  { label: 'Morning', sub: '5 - 9 AM' },
-  { label: 'Midday', sub: '9 AM - 3 PM' },
-  { label: 'Evening', sub: '3 - 7 PM' },
-  { label: 'Night', sub: '7 - 11 PM' },
+  { label: 'Morning', sub: '5-9 AM' },
+  { label: 'Midday', sub: '9 AM-3 PM' },
+  { label: 'Evening', sub: '3-7 PM' },
+  { label: 'Night', sub: '7-11 PM' },
 ];
 
 function getIntensityColor(intensity: number): string {
@@ -126,40 +125,40 @@ function PieLabel({ name, value }: { name: string; value: number }) {
 
 export function OverviewDashboard() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Dashboard Overview</h1>
-        <p className="text-muted-foreground mt-1">Real-time queue metrics and performance analytics</p>
+        <h1 className="text-xl font-bold tracking-tight text-foreground">Dashboard Overview</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">Real-time queue metrics and performance analytics</p>
       </div>
 
-      {/* Top Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Top Stats Grid - 2 columns on mobile */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {stats.map((stat) => (
           <Card key={stat.label} className="glass-stat hover:border-border transition-colors">
-            <CardContent className="p-5">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center justify-between">
-                <div className={`p-2.5 rounded-xl bg-cashew`}>
-                  <stat.icon className="w-5 h-5 text-foreground" />
+                <div className={`p-2 rounded-lg bg-cashew`}>
+                  <stat.icon className="w-4 h-4 text-foreground" />
                 </div>
-                <Badge variant="secondary" className="text-foreground bg-cashew text-[11px] gap-0.5">
-                  <ArrowUpRight className="w-3 h-3" />
+                <Badge variant="secondary" className="text-foreground bg-cashew text-[10px] gap-0 px-1.5 py-0">
+                  <ArrowUpRight className="w-2.5 h-2.5" />
                   {stat.trend}
                 </Badge>
               </div>
-              <div className="mt-4">
-                <p className="text-2xl font-bold tracking-tight text-foreground">{stat.value}</p>
-                <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+              <div className="mt-2">
+                <p className="text-3xl font-bold tracking-tight text-foreground leading-none">{stat.value}</p>
+                <p className="text-[11px] text-muted-foreground mt-1 leading-tight">{stat.label}</p>
               </div>
-              <p className="text-[11px] text-muted-foreground mt-2">{stat.trendLabel}</p>
+              <p className="text-[10px] text-muted-foreground mt-1 hidden sm:block">{stat.trendLabel}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {/* Queue Activity Chart */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        {/* Queue Activity Chart - shorter on mobile */}
         <Card className="glass-card lg:col-span-3">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
@@ -171,7 +170,7 @@ export function OverviewDashboard() {
             </div>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="h-64">
+            <div className="h-48 sm:h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={queueActivityData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
                   <XAxis
@@ -198,7 +197,7 @@ export function OverviewDashboard() {
           </CardContent>
         </Card>
 
-        {/* Channel Breakdown */}
+        {/* Channel Breakdown - shorter on mobile */}
         <Card className="glass-card lg:col-span-2">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
@@ -210,15 +209,15 @@ export function OverviewDashboard() {
             </div>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="h-52">
+            <div className="h-40 sm:h-52">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={channelData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={55}
-                    outerRadius={85}
+                    innerRadius={45}
+                    outerRadius={70}
                     paddingAngle={3}
                     dataKey="value"
                   >
@@ -252,51 +251,54 @@ export function OverviewDashboard() {
       </div>
 
       {/* Bottom Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Boarding Sessions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Recent Boarding Sessions - compact mobile card list */}
         <Card className="glass-card lg:col-span-2">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-semibold">Recent Boarding Sessions</CardTitle>
             <CardDescription className="text-xs">Last 5 vehicle boarding events</CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-xs">Vehicle Plate</TableHead>
-                  <TableHead className="text-xs">Driver</TableHead>
-                  <TableHead className="text-xs text-center">Passengers</TableHead>
-                  <TableHead className="text-xs">Time</TableHead>
-                  <TableHead className="text-xs">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recentBoardings.map((boarding) => (
-                  <TableRow key={boarding.vehicle}>
-                    <TableCell className="text-sm font-medium font-mono">{boarding.vehicle}</TableCell>
-                    <TableCell className="text-sm">{boarding.driver}</TableCell>
-                    <TableCell className="text-sm text-center">{boarding.passengers}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{boarding.time}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="secondary"
-                        className={
-                          boarding.status === 'Completed'
-                            ? 'bg-cashew text-foreground text-[11px]'
-                            : 'bg-warm text-foreground text-[11px]'
-                        }
-                      >
-                        {boarding.status}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <div className="space-y-2">
+              {recentBoardings.map((boarding) => (
+                <div
+                  key={boarding.vehicle}
+                  className="flex items-center gap-2.5 p-2.5 rounded-lg border border-border/60 bg-card"
+                >
+                  {/* Vehicle plate - bold mono */}
+                  <span className="font-bold font-mono text-sm text-foreground whitespace-nowrap">
+                    {boarding.vehicle}
+                  </span>
+                  {/* Driver name */}
+                  <span className="text-sm text-foreground truncate min-w-0 flex-1">
+                    {boarding.driver}
+                  </span>
+                  {/* Passenger count badge */}
+                  <Badge variant="secondary" className="text-[11px] bg-cashew text-foreground flex-shrink-0">
+                    {boarding.passengers} pax
+                  </Badge>
+                  {/* Time */}
+                  <span className="text-xs text-muted-foreground flex-shrink-0 hidden sm:inline">
+                    {boarding.time}
+                  </span>
+                  {/* Status badge */}
+                  <Badge
+                    variant="secondary"
+                    className={
+                      boarding.status === 'Completed'
+                        ? 'bg-cashew text-foreground text-[11px] flex-shrink-0'
+                        : 'bg-warm text-foreground text-[11px] flex-shrink-0'
+                    }
+                  >
+                    {boarding.status}
+                  </Badge>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
 
-        {/* Queue by Location */}
+        {/* Queue by Location - kept as is (already compact) */}
         <Card className="glass-card">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-semibold">Queue by Location</CardTitle>
@@ -317,7 +319,7 @@ export function OverviewDashboard() {
         </Card>
       </div>
 
-      {/* Peak Hours Analysis */}
+      {/* Peak Hours Analysis - cells touch-friendly (min 32px) */}
       <Card className="glass-card">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
@@ -359,7 +361,7 @@ export function OverviewDashboard() {
                     return (
                       <div
                         key={`${day}-${slot.label}`}
-                        className="relative h-12 rounded-lg flex items-center justify-center transition-transform hover:scale-105 cursor-default group"
+                        className="relative min-h-[32px] h-10 rounded-lg flex items-center justify-center transition-transform hover:scale-105 cursor-default group"
                         style={{
                           backgroundColor: `rgba(12, 11, 11, ${opacity})`,
                         }}

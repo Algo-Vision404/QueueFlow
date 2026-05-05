@@ -42,7 +42,6 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  /* Custom tokens */
   --color-cream: var(--cream);
   --color-rock: var(--rock);
   --color-soft: var(--soft);
@@ -57,7 +56,7 @@
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 0.75rem;
 
   --background: #faf8f0;
   --foreground: #0c0b0b;
@@ -87,12 +86,10 @@
   --sand: #fcfae9;
   --warm: #f3f2e6;
 
-  /* Glassmorphism tokens */
-  --glass: rgba(255, 255, 255, 0.45);
-  --glass-border: rgba(255, 255, 255, 0.25);
-  --glass-strong: rgba(255, 255, 255, 0.65);
+  --glass: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-strong: rgba(255, 255, 255, 0.75);
 
-  /* Warm earth-tone chart palette */
   --chart-1: #0c0b0b;
   --chart-2: #979585;
   --chart-3: #dddbca;
@@ -112,17 +109,17 @@
 .dark {
   --background: #1a1916;
   --foreground: #f2f0e6;
-  --card: rgba(37, 36, 32, 0.6);
+  --card: rgba(37, 36, 32, 0.65);
   --card-foreground: #f2f0e6;
-  --popover: rgba(37, 36, 32, 0.8);
+  --popover: rgba(37, 36, 32, 0.85);
   --popover-foreground: #f2f0e6;
   --primary: #f2f0e6;
   --primary-foreground: #0c0b0b;
-  --secondary: rgba(48, 46, 40, 0.6);
+  --secondary: rgba(48, 46, 40, 0.65);
   --secondary-foreground: #f2f0e6;
-  --muted: rgba(48, 46, 40, 0.6);
+  --muted: rgba(48, 46, 40, 0.65);
   --muted-foreground: #979585;
-  --accent: rgba(48, 46, 40, 0.6);
+  --accent: rgba(48, 46, 40, 0.65);
   --accent-foreground: #f2f0e6;
   --destructive: #ef4444;
   --border: rgba(58, 56, 48, 0.6);
@@ -138,9 +135,9 @@
   --sand: rgba(37, 36, 24, 0.6);
   --warm: rgba(48, 46, 40, 0.6);
 
-  --glass: rgba(37, 36, 32, 0.5);
+  --glass: rgba(37, 36, 32, 0.55);
   --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-strong: rgba(37, 36, 32, 0.7);
+  --glass-strong: rgba(37, 36, 32, 0.75);
 
   --chart-1: #f2f0e6;
   --chart-2: #b8a88a;
@@ -166,10 +163,11 @@
     @apply bg-background text-foreground;
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
   }
 }
 
-/* Glassmorphism utility classes */
+/* ── Glassmorphism ────────────────────────────────────────────────────── */
 .glass {
   background: var(--glass);
   backdrop-filter: blur(16px) saturate(180%);
@@ -184,11 +182,17 @@
   border: 1px solid var(--glass-border);
 }
 
-.glass-sidebar {
-  background: var(--sidebar);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-right: 1px solid var(--sidebar-border);
+.glass-header {
+  background: var(--glass-strong);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.glass-tab-bar {
+  background: var(--glass-strong);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
 }
 
 .glass-card {
@@ -209,13 +213,6 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.glass-header {
-  background: var(--glass-strong);
-  backdrop-filter: blur(20px) saturate(200%);
-  -webkit-backdrop-filter: blur(20px) saturate(200%);
-  border-bottom: 1px solid var(--glass-border);
-}
-
 .glass-stat {
   background: var(--glass);
   backdrop-filter: blur(12px) saturate(160%);
@@ -232,7 +229,14 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-/* Subtle animated gradient background */
+.glass-sidebar {
+  background: var(--sidebar);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-right: 1px solid var(--sidebar-border);
+}
+
+/* ── Background ────────────────────────────────────────────────────────── */
 .bg-mesh {
   background-image:
     radial-gradient(at 20% 30%, rgba(221, 219, 202, 0.3) 0px, transparent 50%),
@@ -247,9 +251,55 @@
     radial-gradient(at 50% 50%, rgba(37, 36, 32, 0.3) 0px, transparent 50%);
 }
 
-/* Custom scrollbar */
+/* ── Mobile App Utilities ──────────────────────────────────────────────── */
+
+/* Prevent text selection on interactive elements */
+.select-none {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Dynamic viewport height for mobile */
+.h-dvh {
+  height: 100dvh;
+}
+
+/* Touch-action for swipe gestures */
+.touch-pan-y {
+  touch-action: pan-y;
+}
+
+/* Safe area padding */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Active press effect */
+.press-effect {
+  transition: transform 0.1s ease;
+}
+.press-effect:active {
+  transform: scale(0.97);
+}
+
+/* Haptic-like visual feedback */
+.tap-highlight {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth scrolling for mobile */
+.scroll-smooth-mobile {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* ── Custom scrollbar ──────────────────────────────────────────────────── */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
+  width: 3px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
@@ -260,4 +310,55 @@
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: var(--soft);
+}
+
+/* Hide scrollbar on mobile for native feel */
+@media (max-width: 768px) {
+  .custom-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .custom-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* ── Pull-to-refresh indicator ─────────────────────────────────────────── */
+.pull-indicator {
+  transition: transform 0.2s ease;
+}
+
+/* ── Bottom sheet drag area ────────────────────────────────────────────── */
+.bottom-sheet-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  margin: 8px auto 0;
+}
+
+/* ── FAB shadow ────────────────────────────────────────────────────────── */
+.fab-shadow {
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.15),
+    0 6px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Mobile typography scale ───────────────────────────────────────────── */
+@media (max-width: 640px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+/* ── Prevent overscroll bounce on iOS ──────────────────────────────────── */
+html, body {
+  overscroll-behavior: none;
+}
+
+/* ── Landscape warning overlay ─────────────────────────────────────────── */
+@media (orientation: landscape) and (max-height: 500px) {
+  .landscape-warning {
+    display: flex;
+  }
 }

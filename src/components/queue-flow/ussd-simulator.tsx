@@ -301,26 +301,26 @@ export function USSDSimulator() {
   }, [sessionLog]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Title */}
       <div className="text-center space-y-1">
-        <h2 className="text-2xl font-bold">USSD Simulator</h2>
+        <h2 className="text-xl font-bold">USSD Simulator</h2>
         <p className="text-muted-foreground text-sm">
           Interactive simulation of the QueueFlow USSD menu experience
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
         {/* Phone Frame */}
-        <div className="lg:col-span-2 flex justify-center">
-          <div className="w-full max-w-sm">
+        <div className="lg:col-span-2 flex justify-center order-1">
+          <div className="w-full max-w-xs mx-auto lg:max-w-sm lg:mx-0">
             {/* Phone outer shell */}
-            <div className="rounded-[2.5rem] border-[3px] border-zinc-800 dark:border-zinc-600 bg-zinc-900 dark:bg-zinc-800 shadow-2xl overflow-hidden">
+            <div className="rounded-[2rem] sm:rounded-[2.5rem] border-[3px] border-zinc-800 dark:border-zinc-600 bg-zinc-900 dark:bg-zinc-800 shadow-2xl overflow-hidden">
               {/* Notch / Status Bar */}
-              <div className="bg-zinc-900 dark:bg-zinc-800 px-6 pt-2 pb-1">
+              <div className="bg-zinc-900 dark:bg-zinc-800 px-4 sm:px-6 pt-2 pb-1">
                 <div className="flex items-center justify-between text-[10px] text-zinc-400 font-medium">
                   <span>9:41</span>
-                  <div className="w-20 h-5 bg-zinc-900 dark:bg-zinc-800 rounded-b-2xl border-x border-b border-zinc-700 mx-auto" />
+                  <div className="w-16 sm:w-20 h-5 bg-zinc-900 dark:bg-zinc-800 rounded-b-2xl border-x border-b border-zinc-700 mx-auto" />
                   <div className="flex items-center gap-1.5">
                     <Signal className="w-3 h-3" />
                     <Wifi className="w-3 h-3" />
@@ -330,9 +330,9 @@ export function USSDSimulator() {
               </div>
 
               {/* Screen */}
-              <div className="bg-zinc-100 dark:bg-zinc-950 min-h-[420px] flex flex-col">
+              <div className="bg-zinc-100 dark:bg-zinc-950 min-h-[380px] sm:min-h-[420px] flex flex-col">
                 {/* Session header with latency indicator */}
-                <div className="bg-foreground px-4 py-2 flex items-center justify-between">
+                <div className="bg-foreground px-3 sm:px-4 py-2 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-white">
                     <Smartphone className="w-3.5 h-3.5" />
                     <span className="text-xs font-semibold">*384*200#</span>
@@ -353,14 +353,14 @@ export function USSDSimulator() {
                 </div>
 
                 {/* USSD Display */}
-                <div className="flex-1 p-4 space-y-3 overflow-y-auto max-h-[240px]">
-                  <pre className="whitespace-pre-wrap font-mono text-sm text-zinc-800 dark:text-zinc-200 leading-relaxed">
+                <div className="flex-1 p-3 sm:p-4 space-y-3 overflow-y-auto max-h-[200px] sm:max-h-[240px]">
+                  <pre className="whitespace-pre-wrap font-mono text-xs sm:text-sm text-zinc-800 dark:text-zinc-200 leading-relaxed">
                     {getPrompt(currentStep)}
                   </pre>
                 </div>
 
                 {/* Input Area */}
-                <div className="border-t border-zinc-200 dark:border-zinc-800 p-3 bg-white dark:bg-zinc-900">
+                <div className="border-t border-zinc-200 dark:border-zinc-800 p-2 sm:p-3 bg-white dark:bg-zinc-900">
                   <div className="flex gap-2">
                     <input
                       ref={inputRef}
@@ -369,12 +369,12 @@ export function USSDSimulator() {
                       onChange={(e) => setInputValue(e.target.value)}
                       onKeyDown={handleKeyDown}
                       placeholder={menus[currentStep].inputHint}
-                      className="flex-1 h-10 px-3 text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-soft/20 focus:border-soft font-mono"
+                      className="flex-1 h-11 min-w-0 px-3 text-sm bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-soft/20 focus:border-soft font-mono"
                       aria-label="USSD input"
                     />
                     <Button
                       size="sm"
-                      className="h-10 px-4 bg-foreground text-background"
+                      className="h-11 min-w-[44px] px-4 bg-foreground text-background"
                       onClick={handleSend}
                       disabled={!inputValue.trim()}
                     >
@@ -390,7 +390,7 @@ export function USSDSimulator() {
                       <button
                         key={key}
                         onClick={() => handleKeyPress(key)}
-                        className="h-11 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-sm font-semibold text-zinc-700 dark:text-zinc-300 active:bg-zinc-100 dark:active:bg-zinc-700 transition-colors shadow-sm"
+                        className="min-h-12 h-12 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-sm font-semibold text-zinc-700 dark:text-zinc-300 active:bg-zinc-100 dark:active:bg-zinc-700 transition-colors shadow-sm"
                         aria-label={`Key ${key}`}
                       >
                         {key}
@@ -401,7 +401,7 @@ export function USSDSimulator() {
                     <div />
                     <button
                       onClick={() => setInputValue((prev) => prev.slice(0, -1))}
-                      className="h-9 rounded-lg bg-zinc-200 dark:bg-zinc-700 text-sm font-medium text-zinc-600 dark:text-zinc-400 active:bg-zinc-300 dark:active:bg-zinc-600 transition-colors"
+                      className="min-h-11 h-11 rounded-lg bg-zinc-200 dark:bg-zinc-700 text-sm font-medium text-zinc-600 dark:text-zinc-400 active:bg-zinc-300 dark:active:bg-zinc-600 transition-colors"
                       aria-label="Backspace"
                     >
                       Delete
@@ -420,7 +420,7 @@ export function USSDSimulator() {
         </div>
 
         {/* Right Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-4 order-2">
           {/* Info Panel */}
           <Card className="glass-card">
             <CardHeader className="pb-3">
@@ -482,7 +482,7 @@ export function USSDSimulator() {
           {/* Controls */}
           <Button
             variant="outline"
-            className="w-full gap-2"
+            className="w-full h-11 gap-2"
             onClick={handleReset}
           >
             <RotateCcw className="w-4 h-4" />

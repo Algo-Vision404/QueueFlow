@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -14,24 +14,38 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#faf8f0" },
+    { media: "(prefers-color-scheme: dark)", color: "#1a1916" },
+  ],
+};
+
 export const metadata: Metadata = {
-  title: "QueueFlow — Smart Transport Queue Management",
-  description: "Digital queue management system for organized, fair, and efficient public transport boarding. Multi-channel access via USSD, SMS, Web, and Agent-assisted modes.",
-  keywords: ["QueueFlow", "transport", "queue management", "USSD", "public transit", "developing cities", "boarding system"],
+  title: "QueueFlow",
+  description: "Smart Transport Queue Management — Organized, fair, and efficient boarding",
+  keywords: ["QueueFlow", "transport", "queue management", "USSD", "public transit"],
   authors: [{ name: "QueueFlow Team" }],
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "QueueFlow",
+  },
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "/icons/icon-192.png",
+    apple: "/icons/icon-192.png",
   },
   openGraph: {
     title: "QueueFlow — Smart Transport Queue Management",
     description: "Eliminate chaotic boarding at transport pickups with digital queue management",
     siteName: "QueueFlow",
     type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "QueueFlow — Smart Transport Queue Management",
-    description: "Eliminate chaotic boarding at transport pickups with digital queue management",
   },
 };
 
@@ -42,6 +56,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >

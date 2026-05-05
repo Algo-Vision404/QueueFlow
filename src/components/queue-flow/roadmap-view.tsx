@@ -158,13 +158,13 @@ function PhaseCard({ phase, isLast }: { phase: RoadmapPhase; isLast: boolean }) 
   const progress = Math.round((completedCount / phase.items.length) * 100);
 
   return (
-    <div className="flex gap-4 sm:gap-6">
+    <div className="flex gap-3 sm:gap-6">
       {/* Timeline column */}
       <div className="flex flex-col items-center flex-shrink-0">
         {/* Phase dot */}
-        <div className={`w-10 h-10 rounded-full ${config.dot} ${config.dotRing} flex items-center justify-center text-white font-bold text-sm shadow-sm`}>
+        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full ${config.dot} ${config.dotRing} flex items-center justify-center text-white font-bold text-xs sm:text-sm shadow-sm`}>
           {phase.status === 'completed' ? (
-            <CheckCircle className="w-5 h-5" />
+            <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
           ) : (
             <span>{phase.phase}</span>
           )}
@@ -172,12 +172,12 @@ function PhaseCard({ phase, isLast }: { phase: RoadmapPhase; isLast: boolean }) 
 
         {/* Connecting line */}
         {!isLast && (
-          <div className={`w-0.5 flex-1 min-h-[60px] ${phase.status === 'future' ? 'border-l-2 border-dashed border-border' : config.line}`} />
+          <div className={`w-0.5 flex-1 min-h-[40px] sm:min-h-[60px] ${phase.status === 'future' ? 'border-l-2 border-dashed border-border' : config.line}`} />
         )}
       </div>
 
       {/* Content */}
-      <div className={`flex-1 pb-8 ${isLast ? 'pb-0' : ''}`}>
+      <div className={`flex-1 pb-6 sm:pb-8 ${isLast ? 'pb-0' : ''}`}>
         <Card className={`glass-card overflow-hidden transition-shadow hover:shadow-md ${
           phase.status === 'in-progress' 
             ? 'border-border shadow-sm' 
@@ -185,27 +185,27 @@ function PhaseCard({ phase, isLast }: { phase: RoadmapPhase; isLast: boolean }) 
               ? 'border-dashed border-border opacity-75'
               : ''
         }`}>
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-2 sm:pb-3">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="flex items-center gap-2">
-                <span className="text-base">{phase.icon}</span>
+                <span className="text-sm sm:text-base">{phase.icon}</span>
                 <div>
-                  <CardTitle className="text-sm sm:text-base">
+                  <CardTitle className="text-sm">
                     Phase {phase.phase}: {phase.title}
                   </CardTitle>
                   <CardDescription className="text-xs mt-0.5">{phase.timeline}</CardDescription>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className={`text-[10px] font-medium ${config.badge}`}>
+                <Badge variant="outline" className={`text-[9px] sm:text-[10px] font-medium ${config.badge}`}>
                   {config.label}
                 </Badge>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4">
             {/* Progress bar */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all duration-500 ${
@@ -215,19 +215,19 @@ function PhaseCard({ phase, isLast }: { phase: RoadmapPhase; isLast: boolean }) 
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <span className="text-xs font-medium text-muted-foreground w-16 text-right">
+              <span className="text-[11px] sm:text-xs font-medium text-muted-foreground w-14 sm:w-16 text-right">
                 {completedCount}/{phase.items.length}
               </span>
             </div>
 
             {/* Items checklist */}
-            <ul className="space-y-2">
+            <ul className="space-y-1.5 sm:space-y-2">
               {phase.items.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-2.5 text-sm">
+                <li key={idx} className="flex items-start gap-2 sm:gap-2.5 text-sm">
                   {item.done ? (
-                    <CheckCircle className="w-4 h-4 text-foreground mt-0.5 flex-shrink-0" />
+                    <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground mt-0.5 flex-shrink-0" />
                   ) : (
-                    <Circle className="w-4 h-4 text-soft mt-0.5 flex-shrink-0" />
+                    <Circle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-soft mt-0.5 flex-shrink-0" />
                   )}
                   <span className={item.done ? 'text-foreground/70 line-through' : 'text-foreground/90'}>
                     {item.text}
@@ -237,15 +237,15 @@ function PhaseCard({ phase, isLast }: { phase: RoadmapPhase; isLast: boolean }) 
             </ul>
 
             {/* Target & Metrics */}
-            <div className="flex flex-wrap items-center gap-2 pt-1">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-1">
               {phase.target && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-muted text-xs font-medium">
+                <div className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-md bg-muted text-[11px] sm:text-xs font-medium">
                   <Target className="w-3 h-3 text-muted-foreground" />
                   <span>{phase.target}</span>
                 </div>
               )}
               {phase.metrics && phase.metrics.map((m) => (
-                <Badge key={m} variant="outline" className="text-[10px]">
+                <Badge key={m} variant="outline" className="text-[9px] sm:text-[10px]">
                   {m}
                 </Badge>
               ))}
@@ -253,9 +253,9 @@ function PhaseCard({ phase, isLast }: { phase: RoadmapPhase; isLast: boolean }) 
 
             {/* Deliverable */}
             {phase.deliverable && (
-              <div className="flex items-start gap-2 p-2.5 rounded-md bg-muted/50 border border-border">
-                <Rocket className="w-3.5 h-3.5 text-muted-foreground mt-0.5 flex-shrink-0" />
-                <span className="text-xs text-muted-foreground leading-relaxed">
+              <div className="flex items-start gap-2 p-2 sm:p-2.5 rounded-md bg-muted/50 border border-border">
+                <Rocket className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-muted-foreground mt-0.5 flex-shrink-0" />
+                <span className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed">
                   <span className="font-semibold text-foreground/70">Deliverable:</span> {phase.deliverable}
                 </span>
               </div>
@@ -280,29 +280,29 @@ function RoadmapSummary() {
   const doneItems = phases.reduce((sum, p) => sum + p.items.filter(i => i.done).length, 0);
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
       <Card className="glass-card glass-stat border-border bg-cashew">
-        <CardContent className="p-3 text-center">
-          <p className="text-2xl font-bold text-foreground">{completed}</p>
-          <p className="text-[11px] text-muted-foreground font-medium">Completed</p>
+        <CardContent className="p-2.5 sm:p-3 text-center">
+          <p className="text-xl sm:text-2xl font-bold text-foreground">{completed}</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground font-medium">Completed</p>
         </CardContent>
       </Card>
       <Card className="glass-card glass-stat border-border bg-linen/50">
-        <CardContent className="p-3 text-center">
-          <p className="text-2xl font-bold text-foreground">{inProgress}</p>
-          <p className="text-[11px] text-muted-foreground font-medium">In Progress</p>
+        <CardContent className="p-2.5 sm:p-3 text-center">
+          <p className="text-xl sm:text-2xl font-bold text-foreground">{inProgress}</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground font-medium">In Progress</p>
         </CardContent>
       </Card>
       <Card className="glass-card glass-stat border-border bg-cashew/50">
-        <CardContent className="p-3 text-center">
-          <p className="text-2xl font-bold text-soft">{planned}</p>
-          <p className="text-[11px] text-muted-foreground font-medium">Planned</p>
+        <CardContent className="p-2.5 sm:p-3 text-center">
+          <p className="text-xl sm:text-2xl font-bold text-soft">{planned}</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground font-medium">Planned</p>
         </CardContent>
       </Card>
       <Card className="glass-card glass-stat border-border">
-        <CardContent className="p-3 text-center">
-          <p className="text-2xl font-bold text-soft">{future}</p>
-          <p className="text-[11px] text-muted-foreground font-medium">Future</p>
+        <CardContent className="p-2.5 sm:p-3 text-center">
+          <p className="text-xl sm:text-2xl font-bold text-soft">{future}</p>
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground font-medium">Future</p>
         </CardContent>
       </Card>
     </div>
@@ -320,18 +320,18 @@ function OverallProgress() {
 
   return (
     <Card className="glass-card">
-      <CardContent className="p-4">
+      <CardContent className="p-3 sm:p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-semibold">Overall Progress</span>
-          <span className="text-sm font-bold text-foreground">{progress}%</span>
+          <span className="text-xs sm:text-sm font-semibold">Overall Progress</span>
+          <span className="text-xs sm:text-sm font-bold text-foreground">{progress}%</span>
         </div>
-        <div className="h-3 rounded-full bg-muted overflow-hidden">
+        <div className="h-2.5 sm:h-3 rounded-full bg-muted overflow-hidden">
           <div
             className="h-full rounded-full bg-foreground transition-all duration-700"
             style={{ width: `${progress}%` }}
           />
         </div>
-        <p className="text-xs text-muted-foreground mt-2">
+        <p className="text-[11px] sm:text-xs text-muted-foreground mt-1.5 sm:mt-2">
           {doneItems} of {totalItems} milestones completed across {phases.length} phases
         </p>
       </CardContent>
@@ -344,7 +344,7 @@ function OverallProgress() {
 // =============================================
 export function RoadmapView() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-1">
@@ -352,7 +352,7 @@ export function RoadmapView() {
             <Clock className="w-5 h-5 text-foreground" />
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">MVP Roadmap</h2>
+            <h2 className="text-xl font-bold tracking-tight">MVP Roadmap</h2>
             <p className="text-sm text-muted-foreground">6-month development timeline from prototype to city-wide deployment</p>
           </div>
         </div>
@@ -381,14 +381,14 @@ export function RoadmapView() {
 
       {/* Bottom note */}
       <Card className="glass-card border-dashed border-2 border-border bg-cashew/50">
-        <CardContent className="p-4">
-          <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-cashew mt-0.5">
-              <TrendingUp className="w-4 h-4 text-foreground" />
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex items-start gap-2 sm:gap-3">
+            <div className="p-1.5 sm:p-2 rounded-lg bg-cashew mt-0.5">
+              <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground" />
             </div>
             <div>
-              <h4 className="font-semibold text-sm mb-1">Agile & Iterative Approach</h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <h4 className="font-semibold text-xs sm:text-sm mb-1">Agile & Iterative Approach</h4>
+              <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed">
                 This roadmap follows a lean startup methodology — each phase builds on validated learnings from the previous one. 
                 Phase gates require meeting minimum usage targets before progressing. The timeline is ambitious but 
                 achievable, with buffer built into each phase for iteration based on real user feedback.

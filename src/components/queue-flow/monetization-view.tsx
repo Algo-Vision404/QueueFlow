@@ -113,92 +113,94 @@ export function MonetizationView() {
   const totalMonthlyCost = costBreakdownData.reduce((sum, d) => sum + d.cost, 0);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Monetization & Financial Model</h1>
-        <p className="text-muted-foreground mt-1">Revenue streams, cost structure, and scaling economics</p>
+        <h1 className="text-xl font-bold tracking-tight text-foreground">Monetization & Financial Model</h1>
+        <p className="text-muted-foreground mt-1 text-sm">Revenue streams, cost structure, and scaling economics</p>
       </div>
 
       {/* Revenue Model Header Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {revenueCards.map((card) => (
           <Card key={card.label} className="glass-card glass-stat border-border/60 hover:border-border transition-colors">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-3">
-                <div className={`p-2.5 rounded-xl ${card.bgColor}`}>
-                  <card.icon className={`w-5 h-5 ${card.color}`} />
+            <CardContent className="p-3 sm:p-5">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className={`p-2 sm:p-2.5 rounded-xl ${card.bgColor}`}>
+                  <card.icon className={`w-4 h-4 sm:w-5 sm:h-5 ${card.color}`} />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold tracking-tight text-foreground">{card.value}</p>
-                  <p className="text-xs text-muted-foreground">{card.label}</p>
+                  <p className="text-lg sm:text-2xl font-bold tracking-tight text-foreground">{card.value}</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">{card.label}</p>
                 </div>
               </div>
-              <p className="text-[11px] text-muted-foreground mt-3">{card.subtext}</p>
+              <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-2 sm:mt-3">{card.subtext}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
       {/* Unit Economics + Cost Breakdown */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Unit Economics Table */}
         <Card className="glass-card border-border/60">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base font-semibold">Unit Economics</CardTitle>
+            <CardTitle className="text-sm sm:text-base font-semibold">Unit Economics</CardTitle>
             <CardDescription className="text-xs">Per-passenger financial breakdown</CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-xs">Item</TableHead>
-                  <TableHead className="text-xs text-right">Value</TableHead>
-                  <TableHead className="text-xs">Note</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {unitEconomics.map((row) => (
-                  <TableRow key={row.item}>
-                    <TableCell className="text-sm">
-                      <div className="flex items-center gap-2">
-                        {row.type === 'revenue' && (
-                          <div className="w-1.5 h-1.5 rounded-full bg-foreground" />
-                        )}
-                        {row.type === 'cost' && (
-                          <div className="w-1.5 h-1.5 rounded-full bg-destructive" />
-                        )}
-                        {row.type === 'profit' && (
-                          <div className="w-1.5 h-1.5 rounded-full bg-foreground" />
-                        )}
-                        {row.type === 'metric' && (
-                          <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-                        )}
-                        <span className={
-                          row.item === 'Net revenue per passenger' || row.item === 'Daily net revenue'
-                            ? 'font-semibold text-foreground'
-                            : 'text-muted-foreground'
-                        }>
-                          {row.item}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-sm text-right font-medium font-mono">
-                      <span className={
-                        row.type === 'profit'
-                          ? 'text-foreground'
-                          : row.type === 'cost'
-                            ? 'text-destructive'
-                            : 'text-foreground'
-                      }>
-                        {row.value}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">{row.note}</TableCell>
+            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-xs">Item</TableHead>
+                    <TableHead className="text-xs text-right">Value</TableHead>
+                    <TableHead className="text-xs hidden sm:table-cell">Note</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {unitEconomics.map((row) => (
+                    <TableRow key={row.item}>
+                      <TableCell className="text-xs sm:text-sm">
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                          {row.type === 'revenue' && (
+                            <div className="w-1.5 h-1.5 rounded-full bg-foreground" />
+                          )}
+                          {row.type === 'cost' && (
+                            <div className="w-1.5 h-1.5 rounded-full bg-destructive" />
+                          )}
+                          {row.type === 'profit' && (
+                            <div className="w-1.5 h-1.5 rounded-full bg-foreground" />
+                          )}
+                          {row.type === 'metric' && (
+                            <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                          )}
+                          <span className={
+                            row.item === 'Net revenue per passenger' || row.item === 'Daily net revenue'
+                              ? 'font-semibold text-foreground'
+                              : 'text-muted-foreground'
+                          }>
+                            {row.item}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-xs sm:text-sm text-right font-medium font-mono">
+                        <span className={
+                          row.type === 'profit'
+                            ? 'text-foreground'
+                            : row.type === 'cost'
+                              ? 'text-destructive'
+                              : 'text-foreground'
+                        }>
+                          {row.value}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground hidden sm:table-cell">{row.note}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
 
@@ -207,21 +209,21 @@ export function MonetizationView() {
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-base font-semibold">Monthly Cost Breakdown</CardTitle>
+                <CardTitle className="text-sm sm:text-base font-semibold">Monthly Cost Breakdown</CardTitle>
                 <CardDescription className="text-xs mt-0.5">Total: ${totalMonthlyCost}/month (1 location)</CardDescription>
               </div>
-              <Badge variant="secondary" className="text-foreground bg-cashew text-[11px]">
+              <Badge variant="secondary" className="text-foreground bg-cashew text-[10px] sm:text-[11px]">
                 ${totalMonthlyCost}/mo
               </Badge>
             </div>
           </CardHeader>
           <CardContent className="pt-2">
-            <div className="h-64">
+            <div className="h-48 sm:h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={costBreakdownData} layout="vertical" margin={{ top: 5, right: 30, left: 120, bottom: 5 }}>
+                <BarChart data={costBreakdownData} layout="vertical" margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
                   <XAxis
                     type="number"
-                    tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     axisLine={false}
                     tickLine={false}
                     tickFormatter={(v) => `$${v}`}
@@ -229,10 +231,10 @@ export function MonetizationView() {
                   <YAxis
                     type="category"
                     dataKey="category"
-                    tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     axisLine={false}
                     tickLine={false}
-                    width={115}
+                    width={90}
                   />
                   <Tooltip
                     formatter={(value: number) => [`$${value}`, 'Cost']}
@@ -240,10 +242,10 @@ export function MonetizationView() {
                       backgroundColor: 'hsl(var(--popover))',
                       border: '1px solid hsl(var(--border))',
                       borderRadius: '8px',
-                      fontSize: '12px',
+                      fontSize: '11px',
                     }}
                   />
-                  <Bar dataKey="cost" radius={[0, 4, 4, 0]} maxBarSize={28}>
+                  <Bar dataKey="cost" radius={[0, 4, 4, 0]} maxBarSize={24}>
                     {costBreakdownData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
@@ -260,32 +262,32 @@ export function MonetizationView() {
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base font-semibold">Revenue Projections</CardTitle>
+              <CardTitle className="text-sm sm:text-base font-semibold">Revenue Projections</CardTitle>
               <CardDescription className="text-xs mt-0.5">Monthly revenue as locations scale from 1 to 10</CardDescription>
             </div>
             <TrendingUp className="w-4 h-4 text-foreground" />
           </div>
         </CardHeader>
         <CardContent className="pt-2">
-          <div className="h-72">
+          <div className="h-48 sm:h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={revenueProjectionsData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+              <LineChart data={revenueProjectionsData} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
                 <XAxis
                   dataKey="month"
-                  tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                  tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                  tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                   axisLine={false}
                   tickLine={false}
                   tickFormatter={(v) => `$${v}`}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend
-                  wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }}
+                  wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }}
                 />
                 <Line
                   type="monotone"
@@ -313,9 +315,9 @@ export function MonetizationView() {
 
       {/* Pricing Strategy */}
       <div>
-        <h2 className="text-lg font-semibold text-foreground mb-1">Pricing Strategy</h2>
-        <p className="text-sm text-muted-foreground mb-4">Three service tiers for different passenger segments</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <h2 className="text-base sm:text-lg font-semibold text-foreground mb-1">Pricing Strategy</h2>
+        <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">Three service tiers for different passenger segments</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {pricingTiers.map((tier) => (
             <Card key={tier.name} className={`glass-card relative border ${tier.color} ${tier.recommended ? 'ring-1 ring-foreground shadow-sm' : ''}`}>
               {tier.recommended && (
@@ -326,23 +328,23 @@ export function MonetizationView() {
                 </div>
               )}
               <CardHeader className="pb-3 pt-5">
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2 sm:gap-2.5">
                   <div className={`p-2 rounded-lg ${tier.iconBg}`}>
                     <tier.icon className={`w-4 h-4 ${tier.iconColor}`} />
                   </div>
                   <div>
-                    <CardTitle className="text-base font-semibold">{tier.name}</CardTitle>
+                    <CardTitle className="text-sm sm:text-base font-semibold">{tier.name}</CardTitle>
                     <p className="text-xs text-muted-foreground">{tier.channel}</p>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3 sm:space-y-4">
                 <div>
-                  <p className="text-xl font-bold text-foreground">{tier.price}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{tier.revenue}</p>
+                  <p className="text-lg sm:text-xl font-bold text-foreground">{tier.price}</p>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">{tier.revenue}</p>
                 </div>
                 <Separator />
-                <ul className="space-y-2">
+                <ul className="space-y-1.5 sm:space-y-2">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2 text-xs text-muted-foreground">
                       <CheckCircle className="w-3.5 h-3.5 text-foreground mt-0.5 flex-shrink-0" />
@@ -359,20 +361,20 @@ export function MonetizationView() {
       {/* Scaling Economics */}
       <Card className="glass-card border-border/60">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold">Scaling Economics</CardTitle>
+          <CardTitle className="text-sm sm:text-base font-semibold">Scaling Economics</CardTitle>
           <CardDescription className="text-xs">Revenue and cost projections at scale</CardDescription>
         </CardHeader>
         <CardContent className="pt-0">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="text-xs">Locations</TableHead>
-                  <TableHead className="text-xs text-center">Daily Passengers</TableHead>
-                  <TableHead className="text-xs text-center">Daily Revenue</TableHead>
-                  <TableHead className="text-xs text-center">Monthly Revenue</TableHead>
-                  <TableHead className="text-xs text-center">Monthly Costs</TableHead>
-                  <TableHead className="text-xs text-center">Monthly Profit</TableHead>
+                  <TableHead className="text-xs text-center hidden sm:table-cell">Daily Psg.</TableHead>
+                  <TableHead className="text-xs text-center">Daily Rev.</TableHead>
+                  <TableHead className="text-xs text-center hidden sm:table-cell">Monthly Rev.</TableHead>
+                  <TableHead className="text-xs text-center hidden md:table-cell">Monthly Costs</TableHead>
+                  <TableHead className="text-xs text-center">Profit</TableHead>
                   <TableHead className="text-xs text-center">Margin</TableHead>
                 </TableRow>
               </TableHeader>
@@ -381,30 +383,30 @@ export function MonetizationView() {
                   const margin = Math.round((row.profit / row.monthlyRevenue) * 100);
                   return (
                     <TableRow key={row.locations}>
-                      <TableCell className="text-sm font-medium">
-                        <Badge variant="secondary" className="font-mono">
+                      <TableCell className="text-xs sm:text-sm font-medium">
+                        <Badge variant="secondary" className="font-mono text-[10px] sm:text-xs">
                           {row.locations} {row.locations === 1 ? 'location' : 'locations'}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-sm text-center font-mono">
+                      <TableCell className="text-xs sm:text-sm text-center font-mono hidden sm:table-cell">
                         {row.dailyPassengers.toLocaleString()}
                       </TableCell>
-                      <TableCell className="text-sm text-center font-mono text-foreground">
+                      <TableCell className="text-xs sm:text-sm text-center font-mono text-foreground">
                         ${row.dailyRevenue}
                       </TableCell>
-                      <TableCell className="text-sm text-center font-mono text-foreground font-medium">
+                      <TableCell className="text-xs sm:text-sm text-center font-mono text-foreground font-medium hidden sm:table-cell">
                         ${row.monthlyRevenue.toLocaleString()}
                       </TableCell>
-                      <TableCell className="text-sm text-center font-mono text-destructive">
+                      <TableCell className="text-xs sm:text-sm text-center font-mono text-destructive hidden md:table-cell">
                         ${row.monthlyCosts.toLocaleString()}
                       </TableCell>
-                      <TableCell className="text-sm text-center font-mono font-semibold text-foreground">
+                      <TableCell className="text-xs sm:text-sm text-center font-mono font-semibold text-foreground">
                         ${row.profit.toLocaleString()}
                       </TableCell>
                       <TableCell className="text-center">
                         <Badge
                           variant="secondary"
-                          className="bg-cashew text-foreground text-[11px]"
+                          className="bg-cashew text-foreground text-[10px] sm:text-[11px]"
                         >
                           {margin}%
                         </Badge>
@@ -415,8 +417,8 @@ export function MonetizationView() {
               </TableBody>
             </Table>
           </div>
-          <div className="mt-4 p-3 rounded-lg bg-cashew/50 border border-border">
-            <p className="text-xs text-foreground">
+          <div className="mt-3 sm:mt-4 p-3 rounded-lg bg-cashew/50 border border-border">
+            <p className="text-[11px] sm:text-xs text-foreground">
               <strong>Key Insight:</strong> Profit margins increase from 28% at 1 location to 63% at 25 locations due to economies of scale. Fixed costs (cloud, maintenance) are distributed across more locations while variable costs grow linearly.
             </p>
           </div>

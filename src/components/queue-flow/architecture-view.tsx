@@ -37,72 +37,72 @@ import {
 // =============================================
 function ArchitectureDiagram() {
   const channels: { icon: React.ReactNode; label: string }[] = [
-    { icon: <Phone className="w-4 h-4" />, label: 'USSD' },
-    { icon: <MessageSquare className="w-4 h-4" />, label: 'SMS' },
-    { icon: <Globe className="w-4 h-4" />, label: 'Web App' },
-    { icon: <UserCheck className="w-4 h-4" />, label: 'Agent App' },
-    { icon: <Headphones className="w-4 h-4" />, label: 'IVR' },
+    { icon: <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4" />, label: 'USSD' },
+    { icon: <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" />, label: 'SMS' },
+    { icon: <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4" />, label: 'Web App' },
+    { icon: <UserCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />, label: 'Agent App' },
+    { icon: <Headphones className="w-3.5 h-3.5 sm:w-4 sm:h-4" />, label: 'IVR' },
   ];
 
   const engine: { icon: React.ReactNode; label: string }[] = [
-    { icon: <GitBranch className="w-4 h-4" />, label: 'API Gateway' },
-    { icon: <Zap className="w-4 h-4" />, label: 'Queue Engine' },
-    { icon: <Bus className="w-4 h-4" />, label: 'Boarding Controller' },
-    { icon: <Bell className="w-4 h-4" />, label: 'Notification Service' },
+    { icon: <GitBranch className="w-3.5 h-3.5 sm:w-4 sm:h-4" />, label: 'API Gateway' },
+    { icon: <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" />, label: 'Queue Engine' },
+    { icon: <Bus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />, label: 'Boarding Ctrl' },
+    { icon: <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4" />, label: 'Notifications' },
   ];
 
   const infra: { icon: React.ReactNode; label: string }[] = [
-    { icon: <Database className="w-4 h-4" />, label: 'PostgreSQL' },
-    { icon: <Zap className="w-4 h-4" />, label: 'Redis Cache' },
-    { icon: <Cable className="w-4 h-4" />, label: 'WebSocket Server' },
-    { icon: <Radio className="w-4 h-4" />, label: 'Telecom Gateway' },
+    { icon: <Database className="w-3.5 h-3.5 sm:w-4 sm:h-4" />, label: 'PostgreSQL' },
+    { icon: <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" />, label: 'Redis Cache' },
+    { icon: <Cable className="w-3.5 h-3.5 sm:w-4 sm:h-4" />, label: 'WebSocket' },
+    { icon: <Radio className="w-3.5 h-3.5 sm:w-4 sm:h-4" />, label: 'Telecom GW' },
   ];
 
   return (
-    <div className="relative bg-gradient-to-b from-cashew to-linen/30 dark:from-cashew dark:to-linen/20 rounded-xl p-4 sm:p-6 lg:p-8 overflow-x-auto">
+    <div className="relative bg-gradient-to-b from-cashew to-linen/30 dark:from-cashew dark:to-linen/20 rounded-xl p-3 sm:p-4 lg:p-8 overflow-x-auto">
       {/* Access Channels Layer */}
       <div className="mb-2">
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-2 mb-2 sm:mb-3">
           <div className="w-2 h-2 rounded-full bg-foreground" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-foreground">
+          <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-foreground">
             Access Channels
           </span>
         </div>
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+        <div className="flex flex-wrap justify-center gap-1.5 sm:gap-3">
           {channels.map((ch) => (
             <div
               key={ch.label}
-              className="flex items-center gap-2 bg-foreground hover:bg-foreground/90 text-primary-foreground px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg shadow-sm transition-colors min-w-[80px] sm:min-w-[100px] justify-center"
+              className="flex items-center gap-1.5 sm:gap-2 bg-foreground hover:bg-foreground/90 text-primary-foreground px-2 sm:px-4 py-2 sm:py-3 rounded-lg shadow-sm transition-colors min-w-[60px] sm:min-w-[100px] justify-center"
             >
-              <span className="text-sm sm:text-base flex items-center">{ch.icon}</span>
-              <span className="text-xs sm:text-sm font-medium">{ch.label}</span>
+              <span className="text-xs sm:text-base flex items-center">{ch.icon}</span>
+              <span className="text-[10px] sm:text-sm font-medium">{ch.label}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Arrow connector 1 */}
-      <div className="flex justify-center my-3">
+      <div className="flex justify-center my-2 sm:my-3">
         <div className="flex flex-col items-center">
-          <div className="w-px h-6 bg-soft" />
-          <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-soft" />
+          <div className="w-px h-4 sm:h-6 bg-soft" />
+          <div className="w-0 h-0 border-l-[5px] sm:border-l-[6px] border-r-[5px] sm:border-r-[6px] border-t-[6px] sm:border-t-[8px] border-l-transparent border-r-transparent border-t-soft" />
         </div>
       </div>
 
       {/* API Gateway & Queue Engine Layer */}
       <div className="mb-2">
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-2 mb-2 sm:mb-3">
           <div className="w-2 h-2 rounded-full bg-soft" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-foreground">
+          <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-foreground">
             API Gateway & Queue Engine
           </span>
         </div>
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+        <div className="flex flex-wrap justify-center gap-1.5 sm:gap-3">
           {engine.map((item, idx) => (
             <React.Fragment key={item.label}>
-              <div className="flex items-center gap-2 bg-soft hover:bg-soft/80 text-foreground px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg shadow-sm transition-colors min-w-[100px] sm:min-w-[120px] justify-center">
-                <span className="text-sm sm:text-base flex items-center">{item.icon}</span>
-                <span className="text-xs sm:text-sm font-medium">{item.label}</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 bg-soft hover:bg-soft/80 text-foreground px-2 sm:px-4 py-2 sm:py-3 rounded-lg shadow-sm transition-colors min-w-[70px] sm:min-w-[120px] justify-center">
+                <span className="text-xs sm:text-base flex items-center">{item.icon}</span>
+                <span className="text-[10px] sm:text-sm font-medium">{item.label}</span>
               </div>
               {idx < engine.length - 1 && (
                 <div className="hidden sm:flex items-center text-foreground/60">
@@ -117,29 +117,29 @@ function ArchitectureDiagram() {
       </div>
 
       {/* Arrow connector 2 */}
-      <div className="flex justify-center my-3">
+      <div className="flex justify-center my-2 sm:my-3">
         <div className="flex flex-col items-center">
-          <div className="w-px h-6 bg-soft" />
-          <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-soft" />
+          <div className="w-px h-4 sm:h-6 bg-soft" />
+          <div className="w-0 h-0 border-l-[5px] sm:border-l-[6px] border-r-[5px] sm:border-r-[6px] border-t-[6px] sm:border-t-[8px] border-l-transparent border-r-transparent border-t-soft" />
         </div>
       </div>
 
       {/* Data & Infrastructure Layer */}
       <div>
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-2 mb-2 sm:mb-3">
           <div className="w-2 h-2 rounded-full bg-linen" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-soft">
+          <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-soft">
             Data & Infrastructure
           </span>
         </div>
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+        <div className="flex flex-wrap justify-center gap-1.5 sm:gap-3">
           {infra.map((item) => (
             <div
               key={item.label}
-              className="flex items-center gap-2 bg-linen hover:bg-linen/80 text-foreground px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg shadow-sm transition-colors min-w-[100px] sm:min-w-[120px] justify-center"
+              className="flex items-center gap-1.5 sm:gap-2 bg-linen hover:bg-linen/80 text-foreground px-2 sm:px-4 py-2 sm:py-3 rounded-lg shadow-sm transition-colors min-w-[70px] sm:min-w-[120px] justify-center"
             >
-              <span className="text-sm sm:text-base flex items-center">{item.icon}</span>
-              <span className="text-xs sm:text-sm font-medium">{item.label}</span>
+              <span className="text-xs sm:text-base flex items-center">{item.icon}</span>
+              <span className="text-[10px] sm:text-sm font-medium">{item.label}</span>
             </div>
           ))}
         </div>
@@ -227,24 +227,24 @@ function DataFlowDiagram() {
     <div className="space-y-3">
       {steps.map((step, idx) => (
         <React.Fragment key={step.num}>
-          <div className="flex items-start gap-3 sm:gap-4">
+          <div className="flex items-start gap-2 sm:gap-4">
             {/* Timeline dot and line */}
             <div className="flex flex-col items-center pt-0.5">
-              <div className={`w-7 h-7 rounded-full ${dotColorMap[step.color]} flex items-center justify-center text-white text-xs font-bold shadow-sm flex-shrink-0`}>
+              <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full ${dotColorMap[step.color]} flex items-center justify-center text-white text-[10px] sm:text-xs font-bold shadow-sm flex-shrink-0`}>
                 {step.num}
               </div>
               {idx < steps.length - 1 && (
-                <div className="w-px h-full min-h-[40px] bg-border my-1" />
+                <div className="w-px h-full min-h-[32px] sm:min-h-[40px] bg-border my-1" />
               )}
             </div>
 
             {/* Step content */}
-            <div className={`flex-1 border rounded-lg p-3 sm:p-4 ${colorMap[step.color]} transition-shadow hover:shadow-sm`}>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-base flex items-center">{step.icon}</span>
-                <span className="font-semibold text-sm">{step.title}</span>
+            <div className={`flex-1 border rounded-lg p-2.5 sm:p-4 ${colorMap[step.color]} transition-shadow hover:shadow-sm`}>
+              <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
+                <span className="text-sm sm:text-base flex items-center">{step.icon}</span>
+                <span className="font-semibold text-xs sm:text-sm">{step.title}</span>
               </div>
-              <p className="text-xs sm:text-sm opacity-80 leading-relaxed">{step.desc}</p>
+              <p className="text-[11px] sm:text-sm opacity-80 leading-relaxed">{step.desc}</p>
             </div>
           </div>
         </React.Fragment>
@@ -284,12 +284,12 @@ function TechStackTable() {
   };
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/50">
-            <TableHead className="w-[120px] sm:w-[140px]">Layer</TableHead>
-            <TableHead className="w-[160px] sm:w-[180px]">Technology</TableHead>
+            <TableHead className="w-[100px] sm:w-[140px]">Layer</TableHead>
+            <TableHead className="w-[130px] sm:w-[180px]">Technology</TableHead>
             <TableHead>Purpose</TableHead>
           </TableRow>
         </TableHeader>
@@ -297,13 +297,13 @@ function TechStackTable() {
           {rows.map((row) => (
             <TableRow key={row.layer} className="group hover:bg-muted/30 transition-colors">
               <TableCell>
-                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${layerColorMap[row.layer]}`}>
+                <span className={`inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-medium ${layerColorMap[row.layer]}`}>
                   {row.icon}
                   {row.layer}
                 </span>
               </TableCell>
-              <TableCell className="font-mono text-sm font-medium">{row.tech}</TableCell>
-              <TableCell className="text-sm text-muted-foreground">{row.purpose}</TableCell>
+              <TableCell className="font-mono text-xs sm:text-sm font-medium">{row.tech}</TableCell>
+              <TableCell className="text-xs sm:text-sm text-muted-foreground">{row.purpose}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -365,7 +365,7 @@ function MultiChannelView() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
       {channels.map((ch) => {
         const colors = colorClasses[ch.color];
         return (
@@ -379,15 +379,15 @@ function MultiChannelView() {
               <CardDescription className="text-xs">{ch.description}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-wrap items-center gap-1.5">
+              <div className="flex flex-wrap items-center gap-1 sm:gap-1.5">
                 {ch.flow.map((step, idx) => (
                   <React.Fragment key={step}>
-                    <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium border ${colors.border} bg-white dark:bg-background`}>
+                    <div className={`flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium border ${colors.border} bg-white dark:bg-background`}>
                       <div className={`w-1.5 h-1.5 rounded-full ${colors.dot}`} />
                       {step}
                     </div>
                     {idx < ch.flow.length - 1 && (
-                      <svg width="16" height="12" viewBox="0 0 16 12" className={`${colors.arrow} flex-shrink-0`}>
+                      <svg width="16" height="12" viewBox="0 0 16 12" className={`${colors.arrow} flex-shrink-0 hidden sm:block`}>
                         <path d="M0 6H14M14 6L8 2M14 6L8 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     )}
@@ -407,7 +407,7 @@ function MultiChannelView() {
 // =============================================
 export function ArchitectureView() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-1">
@@ -415,7 +415,7 @@ export function ArchitectureView() {
             <Layers className="w-5 h-5 text-foreground" />
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">System Architecture</h2>
+            <h2 className="text-xl font-bold tracking-tight">System Architecture</h2>
             <p className="text-sm text-muted-foreground">QueueFlow transport queue management system design</p>
           </div>
         </div>
@@ -423,60 +423,62 @@ export function ArchitectureView() {
 
       {/* Main Tabs */}
       <Tabs defaultValue="diagram" className="w-full">
-        <TabsList className="w-full sm:w-auto grid grid-cols-2 sm:inline-grid h-auto gap-1 p-1 bg-muted">
-          <TabsTrigger value="diagram" className="text-xs sm:text-sm px-3 py-2">Architecture Diagram</TabsTrigger>
-          <TabsTrigger value="dataflow" className="text-xs sm:text-sm px-3 py-2">Data Flow</TabsTrigger>
-          <TabsTrigger value="techstack" className="text-xs sm:text-sm px-3 py-2">Tech Stack</TabsTrigger>
-          <TabsTrigger value="channels" className="text-xs sm:text-sm px-3 py-2">Multi-Channel</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+          <TabsList className="w-full sm:w-auto inline-grid grid-cols-4 sm:inline-grid h-auto gap-1 p-1 bg-muted min-w-[420px] sm:min-w-0">
+            <TabsTrigger value="diagram" className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap">Architecture</TabsTrigger>
+            <TabsTrigger value="dataflow" className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap">Data Flow</TabsTrigger>
+            <TabsTrigger value="techstack" className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap">Tech Stack</TabsTrigger>
+            <TabsTrigger value="channels" className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap">Channels</TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* Tab 1: Architecture Diagram */}
-        <TabsContent value="diagram" className="mt-4 space-y-4">
+        <TabsContent value="diagram" className="mt-4 space-y-3 sm:space-y-4">
           <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
+            <CardHeader className="pb-2 sm:pb-3">
+              <CardTitle className="text-sm sm:text-base flex items-center gap-2">
                 <Server className="w-4 h-4 text-foreground" />
                 High-Level Architecture
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs">
                 Three-tier architecture: Access Channels → Processing Engine → Data Infrastructure
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0 sm:pt-0">
               <ArchitectureDiagram />
             </CardContent>
           </Card>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Card className="glass-card border-border">
-              <CardContent className="p-4">
+              <CardContent className="p-3 sm:p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-3 h-3 rounded-full bg-foreground" />
-                  <span className="font-semibold text-sm text-foreground">Access Channels</span>
+                  <span className="font-semibold text-xs sm:text-sm text-foreground">Access Channels</span>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">
+                <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed">
                   Multiple input channels ensure all passengers can join regardless of device capability — from basic feature phones to smartphones.
                 </p>
               </CardContent>
             </Card>
             <Card className="glass-card border-border">
-              <CardContent className="p-4">
+              <CardContent className="p-3 sm:p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-3 h-3 rounded-full bg-soft" />
-                  <span className="font-semibold text-sm text-foreground">Processing Engine</span>
+                  <span className="font-semibold text-xs sm:text-sm text-foreground">Processing Engine</span>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">
+                <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed">
                   The core queue logic handles ticket assignment, wait calculation, boarding orchestration, and multi-channel notifications.
                 </p>
               </CardContent>
             </Card>
             <Card className="glass-card border-border">
-              <CardContent className="p-4">
+              <CardContent className="p-3 sm:p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-3 h-3 rounded-full bg-linen" />
-                  <span className="font-semibold text-sm text-soft">Infrastructure</span>
+                  <span className="font-semibold text-xs sm:text-sm text-soft">Infrastructure</span>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">
+                <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed">
                   Persistent storage, caching for performance, real-time WebSocket updates, and telecom gateway integration.
                 </p>
               </CardContent>
@@ -487,12 +489,12 @@ export function ArchitectureView() {
         {/* Tab 2: Data Flow */}
         <TabsContent value="dataflow" className="mt-4">
           <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
+            <CardHeader className="pb-2 sm:pb-3">
+              <CardTitle className="text-sm sm:text-base flex items-center gap-2">
                 <Zap className="w-4 h-4 text-foreground" />
                 Data Flow — Queue Lifecycle
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs">
                 Step-by-step flow from passenger joining to driver departure
               </CardDescription>
             </CardHeader>
@@ -505,12 +507,12 @@ export function ArchitectureView() {
         {/* Tab 3: Tech Stack */}
         <TabsContent value="techstack" className="mt-4">
           <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
+            <CardHeader className="pb-2 sm:pb-3">
+              <CardTitle className="text-sm sm:text-base flex items-center gap-2">
                 <Server className="w-4 h-4 text-foreground" />
                 Technology Stack
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs">
                 Complete technology choices for each layer of the system
               </CardDescription>
             </CardHeader>
@@ -521,14 +523,14 @@ export function ArchitectureView() {
         </TabsContent>
 
         {/* Tab 4: Multi-Channel */}
-        <TabsContent value="channels" className="mt-4 space-y-4">
+        <TabsContent value="channels" className="mt-4 space-y-3 sm:space-y-4">
           <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
+            <CardHeader className="pb-2 sm:pb-3">
+              <CardTitle className="text-sm sm:text-base flex items-center gap-2">
                 <Smartphone className="w-4 h-4 text-foreground" />
                 Multi-Channel Architecture
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs">
                 Every channel feeds into the same unified Queue API backend for consistent data management
               </CardDescription>
             </CardHeader>
@@ -538,14 +540,14 @@ export function ArchitectureView() {
           </Card>
 
           <Card className="glass-card border-dashed border-2 border-border bg-cashew/50">
-            <CardContent className="p-4">
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-cashew mt-0.5">
-                  <Shield className="w-4 h-4 text-foreground" />
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-start gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-cashew mt-0.5">
+                  <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm mb-1">Unified Backend Design</h4>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
+                  <h4 className="font-semibold text-xs sm:text-sm mb-1">Unified Backend Design</h4>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed">
                     All access channels converge at the Queue API, ensuring a single source of truth for queue state.
                     This means a passenger who joins via USSD can check their position on the web, and the agent sees the same
                     data regardless of how the passenger enrolled. The system maintains channel-awareness for optimized

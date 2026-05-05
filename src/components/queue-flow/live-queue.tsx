@@ -207,13 +207,13 @@ export function LiveQueue() {
   }, [entries]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight text-foreground">Live Queue</h1>
+              <h1 className="text-xl font-bold tracking-tight text-foreground">Live Queue</h1>
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-foreground opacity-75" />
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-foreground" />
@@ -222,10 +222,10 @@ export function LiveQueue() {
                 Live
               </span>
             </div>
-            <p className="text-muted-foreground mt-1 text-sm">Real-time queue monitoring and management</p>
+            <p className="text-muted-foreground mt-0.5 text-sm">Real-time queue monitoring and management</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Badge variant="outline" className="text-sm px-3 py-1">
             <Users className="w-3.5 h-3.5 mr-1.5 text-foreground" />
             {entries.filter((e) => e.status !== 'boarded' && e.status !== 'cancelled').length} in queue
@@ -236,11 +236,12 @@ export function LiveQueue() {
             className="gap-2 border-border text-foreground hover:bg-cashew"
           >
             <Download className="w-4 h-4" />
-            Export
+            <span className="hidden sm:inline">Export</span>
           </Button>
           <Button onClick={handleSimulate} className="bg-foreground text-background hover:bg-foreground/90 gap-2">
             <ArrowUpCircle className="w-4 h-4" />
-            Simulate New Entry
+            <span className="hidden sm:inline">Simulate New Entry</span>
+            <span className="sm:hidden">+ Entry</span>
           </Button>
         </div>
       </div>
@@ -286,48 +287,48 @@ export function LiveQueue() {
         </div>
       </div>
 
-      {/* Queue Stats Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {/* Queue Stats Bar - compact 2x2 grid */}
+      <div className="grid grid-cols-2 gap-3">
         <Card className="glass-stat bg-cashew">
-          <CardContent className="p-3 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-foreground flex items-center justify-center">
-              <Clock className="w-4.5 h-4.5 text-background" />
+          <CardContent className="p-2.5 flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center flex-shrink-0">
+              <Clock className="w-4 h-4 text-background" />
             </div>
-            <div>
-              <p className="text-xl font-bold text-foreground">{waitingCount}</p>
+            <div className="min-w-0">
+              <p className="text-xl font-bold text-foreground leading-none">{waitingCount}</p>
               <p className="text-[11px] text-muted-foreground">Waiting</p>
             </div>
           </CardContent>
         </Card>
         <Card className="glass-stat bg-linen">
-          <CardContent className="p-3 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-foreground/70 flex items-center justify-center">
-              <Megaphone className="w-4.5 h-4.5 text-background" />
+          <CardContent className="p-2.5 flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-foreground/70 flex items-center justify-center flex-shrink-0">
+              <Megaphone className="w-4 h-4 text-background" />
             </div>
-            <div>
-              <p className="text-xl font-bold text-foreground">{calledCount}</p>
+            <div className="min-w-0">
+              <p className="text-xl font-bold text-foreground leading-none">{calledCount}</p>
               <p className="text-[11px] text-muted-foreground">Called</p>
             </div>
           </CardContent>
         </Card>
         <Card className="glass-stat bg-warm">
-          <CardContent className="p-3 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-foreground/50 flex items-center justify-center">
-              <Car className="w-4.5 h-4.5 text-background" />
+          <CardContent className="p-2.5 flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-foreground/50 flex items-center justify-center flex-shrink-0">
+              <Car className="w-4 h-4 text-background" />
             </div>
-            <div>
-              <p className="text-xl font-bold text-foreground">{boardingCount}</p>
+            <div className="min-w-0">
+              <p className="text-xl font-bold text-foreground leading-none">{boardingCount}</p>
               <p className="text-[11px] text-muted-foreground">Boarding</p>
             </div>
           </CardContent>
         </Card>
         <Card className="glass-stat bg-foreground/5">
-          <CardContent className="p-3 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-foreground/20 flex items-center justify-center">
-              <UserCheck className="w-4.5 h-4.5 text-background" />
+          <CardContent className="p-2.5 flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-foreground/20 flex items-center justify-center flex-shrink-0">
+              <UserCheck className="w-4 h-4 text-background" />
             </div>
-            <div>
-              <p className="text-xl font-bold text-soft">{servedCount}</p>
+            <div className="min-w-0">
+              <p className="text-xl font-bold text-soft leading-none">{servedCount}</p>
               <p className="text-[11px] text-muted-foreground">Served</p>
             </div>
           </CardContent>
@@ -356,70 +357,72 @@ export function LiveQueue() {
               {filteredEntries.map((entry) => (
                 <div
                   key={entry.id}
-                  className="flex items-center gap-3 p-3 rounded-xl border border-border/60 bg-card hover:bg-accent/30 transition-colors"
+                  className="flex items-center gap-2.5 p-2.5 rounded-xl border border-border/60 bg-card hover:bg-accent/30 transition-colors"
                 >
-                  {/* Ticket Number Circle */}
+                  {/* Ticket Number Circle - smaller for mobile */}
                   <div
-                    className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center font-bold text-sm ${getTicketCircleColor(entry.status)}`}
+                    className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs ${getTicketCircleColor(entry.status)}`}
                   >
                     #{entry.ticketNumber}
                   </div>
 
-                  {/* Info */}
+                  {/* Info - badges stacked vertically */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-2">
                       <span className="font-medium text-sm text-foreground truncate">
                         {entry.name}
                       </span>
-                      <span className="text-xs text-muted-foreground">{entry.phone}</span>
+                      <span className="text-xs text-muted-foreground hidden sm:inline">{entry.phone}</span>
                     </div>
-                    <div className="flex items-center gap-2 mt-1 flex-wrap">
-                      <Badge variant="secondary" className="text-[11px] gap-1">
-                        {getChannelIcon(entry.channel)}
-                        {entry.channel}
-                      </Badge>
-                      <Badge className={`text-[11px] ${getStatusColor(entry.status)}`}>
-                        {entry.status.charAt(0).toUpperCase() + entry.status.slice(1)}
-                      </Badge>
+                    <div className="flex flex-col gap-0.5 mt-0.5">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <Badge variant="secondary" className="text-[11px] gap-1">
+                          {getChannelIcon(entry.channel)}
+                          {entry.channel}
+                        </Badge>
+                        <Badge className={`text-[11px] ${getStatusColor(entry.status)}`}>
+                          {entry.status.charAt(0).toUpperCase() + entry.status.slice(1)}
+                        </Badge>
+                      </div>
                       <span className="text-[11px] text-muted-foreground">
                         Pos #{entry.position} &middot; {entry.estimatedWait}
                       </span>
                     </div>
                   </div>
 
-                  {/* Actions */}
+                  {/* Actions - touch-friendly min size */}
                   <div className="flex items-center gap-1.5 flex-shrink-0">
                     {entry.status === 'waiting' && (
                       <Button
                         size="sm"
                         variant="outline"
-                        className="h-8 text-xs gap-1 border-border text-foreground hover:bg-cashew"
+                        className="h-9 min-w-[44px] text-xs gap-1 border-border text-foreground hover:bg-cashew"
                         onClick={() => handleCall(entry.id)}
                       >
                         <Megaphone className="w-3 h-3" />
-                        Call
+                        <span className="hidden sm:inline">Call</span>
                       </Button>
                     )}
                     {entry.status === 'called' && (
                       <Button
                         size="sm"
                         variant="outline"
-                        className="h-8 text-xs gap-1 border-border text-foreground hover:bg-linen"
+                        className="h-9 min-w-[44px] text-xs gap-1 border-border text-foreground hover:bg-linen"
                         onClick={() => handleBoard(entry.id)}
                       >
                         <Car className="w-3 h-3" />
-                        Board
+                        <span className="hidden sm:inline">Board</span>
                       </Button>
                     )}
                     {(entry.status === 'waiting' || entry.status === 'called') && (
                       <Button
                         size="sm"
                         variant="ghost"
-                        className="h-8 text-xs gap-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
+                        className="h-9 min-w-[44px] text-xs gap-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
                         onClick={() => handleCancel(entry.id)}
                       >
                         <XCircle className="w-3 h-3" />
-                        Cancel
+                        <span className="hidden sm:inline">Cancel</span>
                       </Button>
                     )}
                     {(entry.status === 'boarded' || entry.status === 'cancelled') && (

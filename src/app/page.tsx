@@ -1,16 +1,16 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useQueueFlowStore } from '@/lib/store';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  BarChart3, Users, UserCheck, Truck, Smartphone, Layers, Cable,
-  DollarSign, AlertTriangle, Map, Search, Moon, Sun, Bell, Settings,
-  X, Radio
+  BarChart3, Users, UserCheck, UserPlus, Truck, Smartphone, Layers, Cable,
+  DollarSign, AlertTriangle, Map, Bell, Moon, Sun, Radio,
+  ChevronRight, X, Search, MoreHorizontal
 } from 'lucide-react';
-
-// Section imports
-import { OverviewDashboard } from '@/components/queue-flow/overview-dashboard';
+import {
+  OverviewDashboard
+} from '@/components/queue-flow/overview-dashboard';
 import { LiveQueue } from '@/components/queue-flow/live-queue';
 import { AgentPanel } from '@/components/queue-flow/agent-panel';
 import { DriverPanel } from '@/components/queue-flow/driver-panel';
@@ -22,29 +22,71 @@ import { EdgeCasesView } from '@/components/queue-flow/edge-cases-view';
 import { RoadmapView } from '@/components/queue-flow/roadmap-view';
 import type { ActiveSection } from '@/lib/types';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 
-const navigationItems: { id: ActiveSection; label: string; icon: React.ReactNode }[] = [
-  { id: 'overview', label: 'Overview', icon: <BarChart3 className="w-4 h-4" /> },
-  { id: 'queue', label: 'Live Queue', icon: <Users className="w-4 h-4" /> },
-  { id: 'agent', label: 'Agent Panel', icon: <UserCheck className="w-4 h-4" /> },
-  { id: 'driver', label: 'Driver Panel', icon: <Truck className="w-4 h-4" /> },
-  { id: 'ussd', label: 'USSD Simulator', icon: <Smartphone className="w-4 h-4" /> },
-  { id: 'architecture', label: 'Architecture', icon: <Layers className="w-4 h-4" /> },
-  { id: 'api-docs', label: 'API Docs', icon: <Cable className="w-4 h-4" /> },
-  { id: 'monetization', label: 'Monetization', icon: <DollarSign className="w-4 h-4" /> },
-  { id: 'edge-cases', label: 'Edge Cases', icon: <AlertTriangle className="w-4 h-4" /> },
-  { id: 'roadmap', label: 'Roadmap', icon: <Map className="w-4 h-4" /> },
+// ── Tab definitions ─────────────────────────────────────────────────────────
+interface TabDef {
+  id: ActiveSection;
+  label: string;
+  shortLabel?: string;
+  icon: React.ReactNode;
+  activeIcon: React.ReactNode;
+}
+
+const primaryTabs: TabDef[] = [
+  { id: 'overview', label: 'Home', icon: <BarChart3 className="w-5 h-5" />, activeIcon: <BarChart3 className="w-5 h-5" /> },
+  { id: 'queue', label: 'Queue', icon: <Users className="w-5 h-5" />, activeIcon: <Users className="w-5 h-5" /> },
+  { id: 'agent', label: 'Agent', icon: <UserCheck className="w-5 h-5" />, activeIcon: <UserCheck className="w-5 h-5" /> },
+  { id: 'driver', label: 'Driver', icon: <Truck className="w-5 h-5" />, activeIcon: <Truck className="w-5 h-5" /> },
+  { id: 'more', label: 'More', icon: <MoreHorizontal className="w-5 h-5" />, activeIcon: <MoreHorizontal className="w-5 h-5" /> },
 ];
 
+const moreTabs: TabDef[] = [
+  { id: 'ussd', label: 'USSD Simulator', icon: <Smartphone className="w-5 h-5" />, activeIcon: <Smartphone className="w-5 h-5" /> },
+  { id: 'architecture', label: 'Architecture', icon: <Layers className="w-5 h-5" />, activeIcon: <Layers className="w-5 h-5" /> },
+  { id: 'api-docs', label: 'API Docs', icon: <Cable className="w-5 h-5" />, activeIcon: <Cable className="w-5 h-5" /> },
+  { id: 'monetization', label: 'Monetization', icon: <DollarSign className="w-5 h-5" />, activeIcon: <DollarSign className="w-5 h-5" /> },
+  { id: 'edge-cases', label: 'Edge Cases', icon: <AlertTriangle className="w-5 h-5" />, activeIcon: <AlertTriangle className="w-5 h-5" /> },
+  { id: 'roadmap', label: 'Roadmap', icon: <Map className="w-5 h-5" />, activeIcon: <Map className="w-5 h-5" /> },
+];
+
+const allSectionIds: ActiveSection[] = ['overview', 'queue', 'agent', 'driver', 'ussd', 'architecture', 'api-docs', 'monetization', 'edge-cases', 'roadmap'];
+
+const notifications = [
+  { id: 1, text: 'Vehicle GW-4521-Y arrived at Circle', time: '2m ago', type: 'info' as const },
+  { id: 2, text: 'Queue paused at Kaneshie Station', time: '8m ago', type: 'warning' as const },
+  { id: 3, text: '15 passengers boarded successfully', time: '12m ago', type: 'success' as const },
+  { id: 4, text: 'New driver registered: Emmanuel Tetteh', time: '25m ago', type: 'info' as const },
+];
+
+// ── Section render ─────────────────────────────────────────────────────────
+function SectionRenderer({ section }: { section: ActiveSection }) {
+  switch (section) {
+    case 'overview': return <OverviewDashboard />;
+    case 'queue': return <LiveQueue />;
+    case 'agent': return <AgentPanel />;
+    case 'driver': return <DriverPanel />;
+    case 'ussd': return <USSDSimulator />;
+    case 'architecture': return <ArchitectureView />;
+    case 'api-docs': return <ApiDocs />;
+    case 'monetization': return <MonetizationView />;
+    case 'edge-cases': return <EdgeCasesView />;
+    case 'roadmap': return <RoadmapView />;
+    default: return <OverviewDashboard />;
+  }
+}
+
+// ── Main component ─────────────────────────────────────────────────────────
 export default function HomePage() {
   const { activeSection, setActiveSection } = useQueueFlowStore();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [showMore, setShowMore] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [pullY] = useState(0);
 
+  // ── Dark mode ──
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
@@ -53,291 +95,363 @@ export default function HomePage() {
     }
   }, [darkMode]);
 
-  const toggleDarkMode = () => setDarkMode(!darkMode);
+  // ── Register service worker ──
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+  }, []);
 
-  const filteredNav = navigationItems.filter((item) =>
-    item.label.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const notifications = [
-    { id: 1, text: 'Vehicle GW-4521-Y arrived at Circle', time: '2m ago', type: 'info' },
-    { id: 2, text: 'Queue paused at Kaneshie Station', time: '8m ago', type: 'warning' },
-    { id: 3, text: '15 passengers boarded successfully', time: '12m ago', type: 'success' },
-    { id: 4, text: 'New driver registered: Emmanuel Tetteh', time: '25m ago', type: 'info' },
-  ];
-
-  const renderSection = () => {
-    switch (activeSection) {
-      case 'overview': return <OverviewDashboard />;
-      case 'queue': return <LiveQueue />;
-      case 'agent': return <AgentPanel />;
-      case 'driver': return <DriverPanel />;
-      case 'ussd': return <USSDSimulator />;
-      case 'architecture': return <ArchitectureView />;
-      case 'api-docs': return <ApiDocs />;
-      case 'monetization': return <MonetizationView />;
-      case 'edge-cases': return <EdgeCasesView />;
-      case 'roadmap': return <RoadmapView />;
-      default: return <OverviewDashboard />;
+  // ── Section navigation helpers ──
+  const currentIndex = allSectionIds.indexOf(activeSection);
+  const handleTabPress = (tab: TabDef) => {
+    if (tab.id === 'more') {
+      setShowMore(true);
+    } else {
+      setActiveSection(tab.id);
+      setShowMore(false);
     }
   };
 
+  const handleMoreItem = (id: ActiveSection) => {
+    setActiveSection(id);
+    setShowMore(false);
+  };
+
+  // ── Pull to refresh simulation ──
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      setIsRefreshing(false);
+      setPullY(0);
+    }, 1200);
+  };
+
+  // ── Determine direction for animation ──
+  const [direction, setDirection] = useState(0);
+  const handleSectionChange = (id: ActiveSection) => {
+    const newIndex = allSectionIds.indexOf(id);
+    setDirection(newIndex > currentIndex ? 1 : -1);
+    setActiveSection(id);
+  };
+
+  const slideVariants = {
+    enter: (dir: number) => ({ x: dir > 0 ? '100%' : '-100%', opacity: 0.8 }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({ x: dir > 0 ? '-100%' : '100%', opacity: 0.8 }),
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-background bg-mesh">
-      {/* Top bar - mobile glass header */}
-      <header className="lg:hidden sticky top-0 z-50 glass-header px-4 py-3 flex items-center justify-between">
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 rounded-lg hover:bg-accent transition-colors"
-          aria-label="Toggle navigation"
-        >
-          {sidebarOpen ? (
-            <X className="w-5 h-5" />
-          ) : (
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          )}
-        </button>
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-foreground flex items-center justify-center shadow-sm">
-            <span className="text-background text-[10px] font-bold tracking-tight">QF</span>
+    <div className="h-dvh flex flex-col bg-background bg-mesh overflow-hidden select-none">
+      {/* ── App Header ── */}
+      <header className="flex-shrink-0 glass-header px-4 pt-[env(safe-area-inset-top)] z-40">
+        <div className="flex items-center justify-between h-14">
+          {/* Left: Logo + Location */}
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-9 h-9 rounded-2xl bg-foreground flex items-center justify-center shadow-sm flex-shrink-0">
+              <span className="text-background text-[11px] font-bold tracking-tight">QF</span>
+            </div>
+            <div className="min-w-0">
+              <h1 className="font-bold text-sm tracking-tight truncate">QueueFlow</h1>
+              <div className="flex items-center gap-1.5">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
+                </span>
+                <span className="text-[11px] text-soft truncate">Kwame Nkrumah Circle</span>
+              </div>
+            </div>
           </div>
-          <span className="font-semibold text-sm tracking-tight">QueueFlow</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => setShowNotifications(!showNotifications)}
-            className="relative p-2 rounded-lg hover:bg-accent transition-colors"
-            aria-label="Notifications"
-          >
-            <Bell className="w-4.5 h-4.5" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-destructive" />
-          </button>
-          <button
-            onClick={toggleDarkMode}
-            className="p-2 rounded-lg hover:bg-accent transition-colors"
-            aria-label="Toggle dark mode"
-          >
-            {darkMode ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
-          </button>
-        </div>
-      </header>
 
-      <div className="flex flex-1">
-        {/* Sidebar — Glassmorphism */}
-        <aside className={`
-          fixed inset-y-0 left-0 z-50 w-[260px] glass-sidebar transform transition-transform duration-300 ease-out lg:relative lg:translate-x-0 lg:z-auto
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        `}>
-          {/* Logo */}
-          <div className="h-16 flex items-center gap-3 px-5 border-b border-sidebar-border">
-            <div className="w-9 h-9 rounded-xl bg-foreground flex items-center justify-center shadow-sm">
-              <span className="text-background text-xs font-bold tracking-tight">QF</span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <h1 className="font-bold text-[15px] leading-tight tracking-tight">QueueFlow</h1>
-              <p className="text-[11px] text-soft leading-tight">Transport Queue System</p>
-            </div>
+          {/* Right: Actions */}
+          <div className="flex items-center gap-1 flex-shrink-0">
             <button
-              onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-1 rounded-md hover:bg-accent transition-colors"
-              aria-label="Close sidebar"
+              onClick={() => setShowSearch(!showSearch)}
+              className="p-2.5 rounded-xl active:scale-95 transition-transform"
+              aria-label="Search"
             >
-              <X className="w-4 h-4" />
+              <Search className="w-[18px] h-[18px] text-foreground" />
             </button>
-          </div>
-
-          {/* Search */}
-          <div className="px-3 py-3 border-b border-sidebar-border">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-soft" />
-              <Input
-                placeholder="Search sections..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 h-8 text-xs bg-accent/50 border-sidebar-border focus:ring-1 focus:ring-soft/30 rounded-lg"
-              />
-            </div>
-          </div>
-
-          {/* Location selector */}
-          <div className="px-4 py-2.5 border-b border-sidebar-border">
-            <label className="text-[10px] uppercase tracking-[0.08em] text-soft font-medium">Active Location</label>
-            <select className="mt-1 w-full text-sm bg-accent/50 border border-sidebar-border rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-soft/30 transition-colors">
-              <option>Kwame Nkrumah Circle</option>
-              <option>Kaneshie Station</option>
-              <option>Tema Station</option>
-            </select>
-          </div>
-
-          {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto py-2 px-3 custom-scrollbar" role="navigation" aria-label="Main navigation">
-            <div className="space-y-0.5">
-              {filteredNav.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setActiveSection(item.id);
-                    setSidebarOpen(false);
-                  }}
-                  className={`
-                    w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200
-                    ${activeSection === item.id
-                      ? 'bg-foreground text-background shadow-md shadow-foreground/10'
-                      : 'text-soft hover:text-foreground hover:bg-accent/50'
-                    }
-                  `}
-                  aria-current={activeSection === item.id ? 'page' : undefined}
-                >
-                  <span className={`flex-shrink-0 ${activeSection === item.id ? 'text-background' : 'text-foreground'}`}>
-                    {item.icon}
-                  </span>
-                  <span>{item.label}</span>
-                  {item.id === 'queue' && (
-                    <span className="ml-auto flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-green-500 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-          </nav>
-
-          {/* Footer */}
-          <div className="p-4 border-t border-sidebar-border">
-            {/* Dark mode toggle */}
-            <button
-              onClick={toggleDarkMode}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[13px] font-medium text-soft hover:text-foreground hover:bg-accent/50 transition-all duration-200 mb-2"
-            >
-              {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-              <span>{darkMode ? 'Light Mode' : 'Dark Mode'}</span>
-            </button>
-
-            {/* Notifications */}
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[13px] font-medium text-soft hover:text-foreground hover:bg-accent/50 transition-all duration-200 mb-3"
+              className="relative p-2.5 rounded-xl active:scale-95 transition-transform"
+              aria-label="Notifications"
             >
-              <div className="relative">
-                <Bell className="w-4 h-4" />
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-destructive border-2 border-background" />
-              </div>
-              <span>Notifications</span>
-              <Badge variant="secondary" className="ml-auto text-[10px] h-5 px-1.5">4</Badge>
+              <Bell className="w-[18px] h-[18px] text-foreground" />
+              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-destructive" />
             </button>
-
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-[11px] text-soft">System Online</span>
-              <span className="text-[10px] text-soft/50 ml-auto">v1.0.0</span>
-            </div>
-          </div>
-        </aside>
-
-        {/* Overlay */}
-        {sidebarOpen && (
-          <div
-            className="fixed inset-0 z-40 bg-rock/20 backdrop-blur-sm lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-            aria-hidden="true"
-          />
-        )}
-
-        {/* Notification Panel */}
-        <AnimatePresence>
-          {showNotifications && (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.2 }}
-              className="fixed right-4 top-16 lg:top-4 z-50 w-80 glass-card rounded-2xl overflow-hidden shadow-xl"
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-2.5 rounded-xl active:scale-95 transition-transform"
+              aria-label="Toggle dark mode"
             >
-              <div className="flex items-center justify-between px-4 py-3 border-b border-glass-border">
-                <h3 className="font-semibold text-sm">Notifications</h3>
-                <button onClick={() => setShowNotifications(false)} className="p-1 rounded-md hover:bg-accent">
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
-              <div className="max-h-80 overflow-y-auto custom-scrollbar">
-                {notifications.map((n) => (
-                  <div key={n.id} className="px-4 py-3 border-b border-glass-border hover:bg-accent/30 transition-colors cursor-pointer">
-                    <div className="flex items-start gap-2">
-                      <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${
-                        n.type === 'info' ? 'bg-blue-500' : n.type === 'warning' ? 'bg-amber-500' : 'bg-green-500'
-                      }`} />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs text-foreground leading-relaxed">{n.text}</p>
-                        <p className="text-[10px] text-soft mt-1">{n.time}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="px-4 py-2.5 border-t border-glass-border">
-                <button className="text-xs text-soft hover:text-foreground transition-colors font-medium">
-                  View all notifications
-                </button>
+              {darkMode ? <Sun className="w-[18px] h-[18px]" /> : <Moon className="w-[18px] h-[18px]" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Search bar (collapsible) */}
+        <AnimatePresence>
+          {showSearch && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <div className="pb-3">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-soft" />
+                  <Input
+                    placeholder="Search passengers, tickets..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    autoFocus
+                    className="pl-10 h-10 text-sm bg-accent/50 border-border rounded-2xl"
+                  />
+                </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
+      </header>
 
-        {/* Main content */}
-        <main className="flex-1 min-w-0">
-          <div className="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto">
-            {/* Top action bar */}
-            <div className="hidden lg:flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 px-3 py-1.5 glass-stat rounded-full">
-                  <Radio className="w-3.5 h-3.5 text-green-500" />
-                  <span className="text-xs font-medium">Live</span>
-                  <span className="text-xs text-soft">47 in queue</span>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-1.5 glass-stat rounded-full">
-                  <Truck className="w-3.5 h-3.5 text-foreground" />
-                  <span className="text-xs font-medium">8 active drivers</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setShowNotifications(!showNotifications)}
-                  className="relative p-2.5 glass-stat rounded-xl hover:bg-accent/50 transition-colors"
-                  aria-label="Notifications"
-                >
-                  <Bell className="w-4 h-4" />
-                  <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-destructive" />
-                </button>
-                <button
-                  onClick={toggleDarkMode}
-                  className="p-2.5 glass-stat rounded-xl hover:bg-accent/50 transition-colors"
-                  aria-label="Toggle dark mode"
-                >
-                  {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                </button>
-                <button className="p-2.5 glass-stat rounded-xl hover:bg-accent/50 transition-colors">
-                  <Settings className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
+      {/* ── Main Content Area (scrollable) ── */}
+      <main className="flex-1 overflow-hidden relative">
+        <div
+          className="h-full overflow-y-auto overscroll-y-contain custom-scrollbar"
+          style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}
+        >
+          {/* Refresh indicator */}
+          <AnimatePresence>
+            {isRefreshing && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center justify-center py-3"
+              >
+                <div className="w-5 h-5 border-2 border-foreground/30 border-t-foreground rounded-full animate-spin" />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-            <AnimatePresence mode="wait">
+          {/* Section with slide transition */}
+          <div className="px-4 pt-2">
+            <AnimatePresence mode="wait" custom={direction}>
               <motion.div
                 key={activeSection}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.2, ease: 'easeOut' }}
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
               >
-                {renderSection()}
+                <SectionRenderer section={activeSection} />
               </motion.div>
             </AnimatePresence>
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
+
+      {/* ── Bottom Tab Bar ── */}
+      <nav
+        className="flex-shrink-0 glass-tab-bar z-40 border-t border-glass-border"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+        role="navigation"
+        aria-label="Main navigation"
+      >
+        <div className="flex items-center justify-around h-16 px-2">
+          {primaryTabs.map((tab) => {
+            const isActive = tab.id !== 'more' && activeSection === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => handleTabPress(tab)}
+                className={`
+                  flex flex-col items-center justify-center gap-0.5 min-w-[56px] py-1 px-2 rounded-2xl transition-all duration-200
+                  ${isActive ? 'text-foreground' : 'text-soft active:text-foreground'}
+                `}
+                aria-current={isActive ? 'page' : undefined}
+                aria-label={tab.label}
+              >
+                <div className={`relative transition-transform duration-200 ${isActive ? 'scale-110' : ''}`}>
+                  {tab.icon}
+                  {tab.id === 'queue' && (
+                    <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-green-500 ring-2 ring-background" />
+                  )}
+                </div>
+                <span className={`text-[10px] font-medium transition-colors ${isActive ? 'text-foreground' : ''}`}>
+                  {tab.label}
+                </span>
+                {isActive && (
+                  <motion.div
+                    layoutId="tabIndicator"
+                    className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full bg-foreground"
+                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* ── More Menu (Bottom Sheet) ── */}
+      <AnimatePresence>
+        {showMore && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-foreground/30 backdrop-blur-sm"
+              onClick={() => setShowMore(false)}
+            />
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              drag="y"
+              dragConstraints={{ top: 0 }}
+              dragElastic={0.2}
+              onDragEnd={(_, info) => {
+                if (info.offset.y > 100) setShowMore(false);
+              }}
+              className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl bg-card border-t border-border max-h-[70vh] overflow-hidden"
+              style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+            >
+              {/* Drag handle */}
+              <div className="flex justify-center pt-3 pb-2">
+                <div className="w-10 h-1 rounded-full bg-border" />
+              </div>
+
+              {/* Header */}
+              <div className="px-5 pb-3">
+                <h2 className="font-semibold text-base">More Sections</h2>
+                <p className="text-xs text-soft mt-0.5">System documentation and tools</p>
+              </div>
+
+              {/* Items */}
+              <div className="px-3 pb-4 space-y-1 max-h-[50vh] overflow-y-auto custom-scrollbar">
+                {moreTabs.map((tab, idx) => (
+                  <motion.button
+                    key={tab.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    onClick={() => handleMoreItem(tab.id)}
+                    className={`
+                      w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-sm font-medium transition-all
+                      ${activeSection === tab.id
+                        ? 'bg-foreground text-background'
+                        : 'text-foreground active:bg-accent'
+                      }
+                    `}
+                  >
+                    <span className={activeSection === tab.id ? 'text-background' : 'text-foreground'}>
+                      {tab.icon}
+                    </span>
+                    <span className="flex-1 text-left">{tab.label}</span>
+                    <ChevronRight className={`w-4 h-4 ${activeSection === tab.id ? 'text-background/50' : 'text-soft'}`} />
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* ── Notification Sheet ── */}
+      <AnimatePresence>
+        {showNotifications && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-foreground/30 backdrop-blur-sm"
+              onClick={() => setShowNotifications(false)}
+            />
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              drag="y"
+              dragConstraints={{ top: 0 }}
+              dragElastic={0.2}
+              onDragEnd={(_, info) => {
+                if (info.offset.y > 100) setShowNotifications(false);
+              }}
+              className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl bg-card border-t border-border max-h-[70vh] overflow-hidden"
+              style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+            >
+              <div className="flex justify-center pt-3 pb-2">
+                <div className="w-10 h-1 rounded-full bg-border" />
+              </div>
+              <div className="px-5 pb-3 flex items-center justify-between">
+                <div>
+                  <h2 className="font-semibold text-base">Notifications</h2>
+                  <p className="text-xs text-soft mt-0.5">{notifications.length} new</p>
+                </div>
+                <button
+                  onClick={() => setShowNotifications(false)}
+                  className="p-2 rounded-xl active:bg-accent transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="px-3 pb-4 space-y-1 max-h-[50vh] overflow-y-auto custom-scrollbar">
+                {notifications.map((n, idx) => (
+                  <motion.div
+                    key={n.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="flex items-start gap-3 px-4 py-3 rounded-2xl active:bg-accent transition-colors"
+                  >
+                    <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${
+                      n.type === 'info' ? 'bg-blue-500' : n.type === 'warning' ? 'bg-amber-500' : 'bg-green-500'
+                    }`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-foreground leading-relaxed">{n.text}</p>
+                      <p className="text-[11px] text-soft mt-1">{n.time}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* ── FAB (Floating Action Button) ── */}
+      <AnimatePresence>
+        {(activeSection === 'queue' || activeSection === 'agent') && !showMore && !showNotifications && (
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+            className="fixed bottom-20 right-4 z-30"
+          >
+            <button
+              className="w-14 h-14 rounded-full bg-foreground text-background shadow-lg shadow-foreground/25 flex items-center justify-center active:scale-95 transition-transform"
+              aria-label="Quick action"
+            >
+              {activeSection === 'queue' ? (
+                <Users className="w-6 h-6" />
+              ) : (
+                <UserPlus className="w-6 h-6" />
+              )}
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
