@@ -117,7 +117,8 @@ export type ActiveSection =
   | 'api-docs' 
   | 'monetization' 
   | 'edge-cases'
-  | 'roadmap';
+  | 'roadmap'
+  | 'ml';
 
 export interface USSDStep {
   prompt: string;

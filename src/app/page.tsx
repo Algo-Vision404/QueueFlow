@@ -5,7 +5,7 @@ import { useQueueFlowStore } from '@/lib/store';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   BarChart3, Users, UserCheck, Truck, Smartphone, Activity, Cable,
-  DollarSign, ShieldAlert, ListChecks, Bell, Moon, Sun, MoreHorizontal,
+  DollarSign, ShieldAlert, ListChecks, Brain, Bell, Moon, Sun, MoreHorizontal,
   ChevronRight, X, Search,
 } from 'lucide-react';
 import {
@@ -20,6 +20,7 @@ import { ApiDocs } from '@/components/queue-flow/api-console';
 import { MonetizationView } from '@/components/queue-flow/revenue-analytics';
 import { EdgeCasesView } from '@/components/queue-flow/alerts-panel';
 import { RoadmapView } from '@/components/queue-flow/task-tracker';
+import { MLInsights } from '@/components/queue-flow/ml-insights';
 import type { ActiveSection } from '@/lib/types';
 import { Input } from '@/components/ui/input';
 
@@ -41,6 +42,7 @@ const primaryTabs: TabDef[] = [
 
 const moreTabs: TabDef[] = [
   { id: 'ussd', label: 'USSD Simulator', icon: <Smartphone className="w-5 h-5" /> },
+  { id: 'ml', label: 'ML Insights', icon: <Brain className="w-5 h-5" /> },
   { id: 'architecture', label: 'System Monitor', icon: <Activity className="w-5 h-5" /> },
   { id: 'api-docs', label: 'API Console', icon: <Cable className="w-5 h-5" /> },
   { id: 'monetization', label: 'Revenue', icon: <DollarSign className="w-5 h-5" /> },
@@ -67,6 +69,7 @@ function SectionRenderer({ section }: { section: ActiveSection }) {
     case 'monetization': return <MonetizationView />;
     case 'edge-cases': return <EdgeCasesView />;
     case 'roadmap': return <RoadmapView />;
+    case 'ml': return <MLInsights />;
     default: return <OverviewDashboard />;
   }
 }
