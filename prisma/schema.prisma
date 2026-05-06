@@ -147,3 +147,17 @@ model ActivityLog {
   details     String?  // JSON string
   createdAt   DateTime @default(now())
 }
+
+// Tasks for roadmap / project management
+model Task {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  status      String   @default("todo") // todo, in_progress, done, blocked
+  priority    String   @default("medium") // low, medium, high, critical
+  phase       Int      @default(1) // roadmap phase 1-5
+  dueDate     String?  // ISO date
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

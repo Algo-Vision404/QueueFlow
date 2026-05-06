@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useQueueFlowStore } from '@/lib/store';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  BarChart3, Users, UserCheck, Truck, Smartphone, Layers, Cable,
-  DollarSign, AlertTriangle, Map, Bell, Moon, Sun, MoreHorizontal,
+  BarChart3, Users, UserCheck, Truck, Smartphone, Activity, Cable,
+  DollarSign, ShieldAlert, ListChecks, Bell, Moon, Sun, MoreHorizontal,
   ChevronRight, X, Search,
 } from 'lucide-react';
 import {
@@ -15,11 +15,11 @@ import { LiveQueue } from '@/components/queue-flow/live-queue';
 import { AgentPanel } from '@/components/queue-flow/agent-panel';
 import { DriverPanel } from '@/components/queue-flow/driver-panel';
 import { USSDSimulator } from '@/components/queue-flow/ussd-simulator';
-import { ArchitectureView } from '@/components/queue-flow/architecture-view';
-import { ApiDocs } from '@/components/queue-flow/api-docs';
-import { MonetizationView } from '@/components/queue-flow/monetization-view';
-import { EdgeCasesView } from '@/components/queue-flow/edge-cases-view';
-import { RoadmapView } from '@/components/queue-flow/roadmap-view';
+import { ArchitectureView } from '@/components/queue-flow/system-monitor';
+import { ApiDocs } from '@/components/queue-flow/api-console';
+import { MonetizationView } from '@/components/queue-flow/revenue-analytics';
+import { EdgeCasesView } from '@/components/queue-flow/alerts-panel';
+import { RoadmapView } from '@/components/queue-flow/task-tracker';
 import type { ActiveSection } from '@/lib/types';
 import { Input } from '@/components/ui/input';
 
@@ -41,11 +41,11 @@ const primaryTabs: TabDef[] = [
 
 const moreTabs: TabDef[] = [
   { id: 'ussd', label: 'USSD Simulator', icon: <Smartphone className="w-5 h-5" /> },
-  { id: 'architecture', label: 'Architecture', icon: <Layers className="w-5 h-5" /> },
-  { id: 'api-docs', label: 'API Docs', icon: <Cable className="w-5 h-5" /> },
-  { id: 'monetization', label: 'Monetization', icon: <DollarSign className="w-5 h-5" /> },
-  { id: 'edge-cases', label: 'Edge Cases', icon: <AlertTriangle className="w-5 h-5" /> },
-  { id: 'roadmap', label: 'Roadmap', icon: <Map className="w-5 h-5" /> },
+  { id: 'architecture', label: 'System Monitor', icon: <Activity className="w-5 h-5" /> },
+  { id: 'api-docs', label: 'API Console', icon: <Cable className="w-5 h-5" /> },
+  { id: 'monetization', label: 'Revenue', icon: <DollarSign className="w-5 h-5" /> },
+  { id: 'edge-cases', label: 'Alerts', icon: <ShieldAlert className="w-5 h-5" /> },
+  { id: 'roadmap', label: 'Tasks', icon: <ListChecks className="w-5 h-5" /> },
 ];
 
 const notifications = [
@@ -279,8 +279,8 @@ export default function HomePage() {
                 <div className="w-10 h-1 rounded-full bg-border" />
               </div>
               <div className="px-5 pb-3">
-                <h2 className="font-semibold text-base">More Sections</h2>
-                <p className="text-xs text-soft mt-0.5">System documentation and tools</p>
+                <h2 className="font-semibold text-base">More</h2>
+                <p className="text-xs text-soft mt-0.5">Monitoring, tools & management</p>
               </div>
               <div className="px-3 pb-4 space-y-1 max-h-[50vh] overflow-y-auto custom-scrollbar">
                 {moreTabs.map((tab) => (
