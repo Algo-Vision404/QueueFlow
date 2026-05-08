@@ -6,7 +6,7 @@ QueueFlow handles the entire passenger lifecycle, from joining the queue across 
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
 *   **Multi-Channel Queueing**: Passengers can join queues via USSD, SMS, Web, or physical Agents, catering to both smartphone users and those with basic feature phones.
 *   **Driver & Vehicle Management**: Real-time tracking of driver availability, vehicle capacity, and live boarding status.
@@ -31,7 +31,7 @@ QueueFlow handles the entire passenger lifecycle, from joining the queue across 
 
 ---
 
-## 🧠 Machine Learning Engine
+## Machine Learning Engine
 
 QueueFlow features a custom, zero-dependency ML engine (`src/lib/ml/engine.ts`) specifically tuned for transport logistics:
 
@@ -44,7 +44,7 @@ QueueFlow features a custom, zero-dependency ML engine (`src/lib/ml/engine.ts`) 
 
 ---
 
-## 🏗 Database Architecture
+## Database Architecture
 
 The system uses a highly relational schema to mirror real-world transport stations:
 
@@ -57,7 +57,7 @@ The system uses a highly relational schema to mirror real-world transport statio
 
 ---
 
-## 🚦 Getting Started
+## Getting Started
 
 ### Prerequisites
 *   Node.js (v18+)
@@ -98,7 +98,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the dashboard.
 
 ---
 
-## 🗺 Roadmap
+## Roadmap
 
 *   [x] Core Queue Management Logic
 *   [x] USSD/SMS Integration Simulation
@@ -109,6 +109,6 @@ Open [http://localhost:3000](http://localhost:3000) to view the dashboard.
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
