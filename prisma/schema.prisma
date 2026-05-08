@@ -161,3 +161,13 @@ model Task {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+// Machine Learning insights and activities
+model MLActivity {
+  id          String   @id @default(cuid())
+  modelType   String   // demand_forecast, no_show_prediction, anomaly_detection, throughput, revenue
+  insight     String   // human-readable summary
+  confidence  Float    @default(0.0)
+  impact      String   @default("medium") // low, medium, high, critical
+  details     String?  // JSON string of full model results
+  createdAt   DateTime @default(now())
+}

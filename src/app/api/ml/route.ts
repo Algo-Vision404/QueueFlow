@@ -221,6 +221,26 @@ export async function GET() {
       ? stdDev(sessionDurations)
       : { mean: 0, std: 0, min: 0, max: 0 };
 
+    // 11. Log ML Activity
+    try {
+      await db.mLActivity.create({
+        data: {
+          modelType: 'orchestrator',
+          insight: `ML run completed: ${totalInQueue} in queue, ${demandForecast.trend} demand, ${Math.round(avgNoShowRisk * 100)}% no-show risk.`,
+          confidence: linearRegression(dailyRevenue.map(d => d.revenue)).r2,
+          impact: totalInQueue > 40 ? 'high' : 'medium',
+          details: JSON.stringify({
+            demand: demandForecast.trend,
+            risk: Math.round(avgNoShowRisk * 100),
+            efficiency: throughputOpt.efficiencyScore,
+            dataPoints: todayEntries.length
+          })
+        }
+      });
+    } catch (logError) {
+      console.warn('Failed to log ML activity:', logError);
+    }
+
     return NextResponse.json({
       success: true,
       generatedAt: now.toISOString(),
