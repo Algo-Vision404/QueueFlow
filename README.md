@@ -94,7 +94,7 @@ The system uses a highly relational schema to mirror real-world transport statio
     npm run dev
     ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the dashboard.
+Open [http://localhost:3000](https://queue-flow-lemon.vercel.app/) to view the dashboard.
 
 ---
 
