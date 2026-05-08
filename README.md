@@ -19,7 +19,7 @@ QueueFlow handles the entire passenger lifecycle, from joining the queue across 
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 *   **Framework**: [Next.js](https://nextjs.org/) (React 19, App Router)
 *   **Language**: [TypeScript](https://www.typescriptlang.org/)
