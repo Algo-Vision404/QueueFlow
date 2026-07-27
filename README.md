@@ -1,5 +1,5 @@
 # QueueFlow
-
+After having several issues trying to get a car to school, I decided to build queueflow.
 **QueueFlow** is a modern, full-stack transport queue management system built to streamline and optimize passenger boarding at pickup locations. It transforms chaotic physical queues into a data-driven, transparent, and monetized operation.
 
 QueueFlow handles the entire passenger lifecycle, from joining the queue across multiple channels (USSD, SMS, web, agent) to boarding vehicles. It also provides advanced analytics, live system monitoring, and machine learning-powered predictions.
